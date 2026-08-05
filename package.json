@@ -1,0 +1,33 @@
+{
+  "name": "@luxfi/tel",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "prod": "next start",
+    "cn": "rm -rf ./.next",
+    "clean": "rm -rf ./.next && rm -rf node_modules",
+    "tc": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
+  },
+  "dependencies": {
+    "lucide-react": "0.470.0",
+    "next": "15.1.6",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "22.10.6",
+    "@types/react": "18.3.14",
+    "@types/react-dom": "18.3.2",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "postcss-import": "^15.1.0",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.7.3"
+  },
+  "packageManager": "pnpm@10.12.4"
+}
