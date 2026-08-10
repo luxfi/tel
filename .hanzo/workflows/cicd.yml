@@ -1,0 +1,70 @@
+name: CI/CD
+
+# Native lane, end to end: git.hanzo.ai holds the source, ci.hanzo.ai runs this,
+# and the deploy is one call to OUR static-site API. There is no Cloudflare
+# account in this path and no `wrangler` — the site is an artifact our own object
+# store serves, versioned and rollback-able like every other Hanzo site.
+#
+# The gate runs on every push; the deploy runs on main only, and only after it.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: tel-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    runs-on: lux-build-amd64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tc
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+
+  deploy:
+    needs: gate
+    if: github.ref == 'refs/heads/main'
+    runs-on: lux-build-amd64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # A tar.gz, not a JSON file manifest. /v1/sites/deploy casts each file's
+      # `content` straight to bytes, and a JSON string cannot carry the Druk Wide
+      # and Inter faces this site self-hosts — the fonts would arrive corrupt with
+      # a 200. The artifact path sniffs the archive and preserves every byte.
+      - name: Pack the export
+        run: tar -czf site.tar.gz -C out .
+
+      # The token is minted from KMS by the runner, like every other credential in
+      # the fleet. Nothing here holds a static key and no browser ever sees one.
+      - name: Deploy to lux.tel
+        env:
+          HANZO_API: https://api.hanzo.ai
+          HANZO_TOKEN: ${{ secrets.LUX_DEPLOY_TOKEN }}
+        run: |
+          set -euo pipefail
+          code=$(curl -sS -o response.json -w '%{http_code}' \
+            -X POST "$HANZO_API/v1/projects/tel/deploy" \
+            -H "Authorization: Bearer $HANZO_TOKEN" \
+            -H 'Content-Type: application/gzip' \
+            --data-binary @site.tar.gz)
+          cat response.json
+          # A deploy that answers 402 or 503 has changed nothing, and a green step
+          # over a body nobody read is how a site sits stale for a week.
+          [ "$code" = "200" ] || { echo "::error::deploy answered $code"; exit 1; }
