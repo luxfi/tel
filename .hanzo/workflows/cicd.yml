@@ -1,16 +1,30 @@
 name: CI/CD
 
-# Native lane, end to end: git.hanzo.ai holds the source, ci.hanzo.ai runs this,
-# and the deploy is one call to OUR static-site API. There is no Cloudflare
-# account in this path and no `wrangler` — the site is an artifact our own object
-# store serves, versioned and rollback-able like every other Hanzo site.
+# Two cars, and the order is the whole point: the gate proves the tree, then the
+# image is BUILT AND PUSHED — nothing here deploys.
 #
-# The gate runs on every push; the deploy runs on main only, and only after it.
+# Deploying is a tag pinned in lux/universe, which Hanzo CD reconciles. A workflow
+# that pushed bytes at a running site would be a second way to deploy, and the one
+# that is not declared state is the one that silently disagrees with it.
+#
+#   push        -> gate -> image  (ghcr.io/luxfi/tel:sha-<sha7>)
+#   tag v*      -> gate -> image  (ghcr.io/luxfi/tel:vX.Y.Z)   <- the release
+#   universe    -> pin that tag                                 <- the deploy
+#   Hanzo CD    -> reconcile
+#
+# Semver only: a branch push produces an immutable sha- tag and never a floating
+# one, so nothing that reaches a cluster can move under it.
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
+
+permissions:
+  contents: read
+  packages: write
 
 concurrency:
   group: tel-${{ github.ref }}
@@ -29,42 +43,20 @@ jobs:
       - run: pnpm tc
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
+      # Drives the BUILT export, so what the gate proves is what the image carries:
+      # the 44px tap targets, no horizontal overflow, no supplier named on any page,
+      # and a console that offers Lux ID and holds no credential.
       - run: pnpm test:e2e
 
-  deploy:
+  # The one build lane the fleet has. It builds for the luxfi registry on the luxfi
+  # pools — labels never cross orgs, and a cross-org runs-on queues silently until
+  # it cancels at the 24h timeout.
+  image:
     needs: gate
-    if: github.ref == 'refs/heads/main'
-    runs-on: lux-build-amd64
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with: { version: 10 }
-      - uses: actions/setup-node@v4
-        with: { node-version: '22', cache: pnpm }
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-
-      # A tar.gz, not a JSON file manifest. /v1/sites/deploy casts each file's
-      # `content` straight to bytes, and a JSON string cannot carry the Druk Wide
-      # and Inter faces this site self-hosts — the fonts would arrive corrupt with
-      # a 200. The artifact path sniffs the archive and preserves every byte.
-      - name: Pack the export
-        run: tar -czf site.tar.gz -C out .
-
-      # The token is minted from KMS by the runner, like every other credential in
-      # the fleet. Nothing here holds a static key and no browser ever sees one.
-      - name: Deploy to lux.tel
-        env:
-          HANZO_API: https://api.hanzo.ai
-          HANZO_TOKEN: ${{ secrets.LUX_DEPLOY_TOKEN }}
-        run: |
-          set -euo pipefail
-          code=$(curl -sS -o response.json -w '%{http_code}' \
-            -X POST "$HANZO_API/v1/projects/tel/deploy" \
-            -H "Authorization: Bearer $HANZO_TOKEN" \
-            -H 'Content-Type: application/gzip' \
-            --data-binary @site.tar.gz)
-          cat response.json
-          # A deploy that answers 402 or 503 has changed nothing, and a green step
-          # over a body nobody read is how a site sits stale for a week.
-          [ "$code" = "200" ] || { echo "::error::deploy answered $code"; exit 1; }
+    if: github.event_name != 'pull_request'
+    uses: hanzoai/.github/.github/workflows/docker-build.yml@main
+    with:
+      image: ghcr.io/luxfi/tel
+      runner-amd64: '["self-hosted","linux","amd64"]'
+      runner-deploy: '["self-hosted","linux","amd64"]'
+    secrets: inherit

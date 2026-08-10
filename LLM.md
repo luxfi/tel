@@ -107,13 +107,57 @@ bg-neutral-900/50 p-6`, opacity ladder in 5-point steps. Type is Druk Wide
 (display) + Inter (body), self-hosted from `public/fonts`, matching
 `@luxfi/ui`. Icons: Lucide only.
 
-## Deploy
+## Deploy — CI builds, CD deploys, and they are different repos
 
-`pnpm build && npx wrangler@3 deploy` — Worker `lux-tel`, custom domains
-`lux.tel` + `www.lux.tel`, both proxied. The account is at its Pages project
-limit, so this is a Worker with `[assets]`, never a Pages project.
+**Nothing in this repo deploys.** `.hanzo/workflows/cicd.yml` has two cars and the
+order is the point:
 
-## Contact
+    push        -> gate -> image   ghcr.io/luxfi/tel:sha-<sha7>
+    tag v*      -> gate -> image   ghcr.io/luxfi/tel:vX.Y.Z      <- the release
+    lux/universe -> pin that tag   deploy/hanzo/lux-tel.yaml     <- the deploy
+    Hanzo CD    -> reconcile
+
+The gate proves the tree (`tc`, `build`, then Playwright against the BUILT export).
+The image car is `hanzoai/.github`'s `docker-build.yml@main` — the fleet's one build
+lane — on the luxfi pools, because runner labels never cross orgs and a cross-org
+`runs-on` queues silently until it cancels at the 24h timeout.
+
+Deploying is a tag written in `lux/universe`, in declared state, where a reviewer
+sees it change. A workflow that pushed bytes at a running site would be a second way
+to deploy, and the one that is not declared state is the one that silently
+disagrees with it.
+
+**Semver only.** A branch push produces an immutable `sha-<sha7>` and never a
+floating tag, so nothing that reaches a cluster can move under it. Pin a `v*` in
+universe; `sha-` exists for forensics and as a rollback target.
+
+**Cloudflare is gone.** This site was a Worker deployed with `wrangler`; the account
+held the routes, the deploy ran from a laptop, and the whole lane sat outside
+git.hanzo.ai / ci.hanzo.ai / cd.hanzo.ai. `wrangler.toml` is deleted and there is no
+Cloudflare account in this path.
+
+**The Dockerfile builds in-image, on purpose.** The sibling static sites `COPY out
+/public` from a pre-built export, which makes the image a function of whatever was
+on the builder's disk — an export from an older commit ships silently and
+`docker build` alone cannot reproduce it. This one runs `pnpm build` in a first
+stage, so the image is a function of the source.
+
+The base is `ghcr.io/hanzoai/spa` — the one static server in the k8s stack, never
+nginx and never caddy — **pinned to a semver rather than `:latest`**, because the
+base is most of the bytes that reach the cluster and a floating tag there is a
+floating deploy wearing a pinned one. Measured while pinning: `spa:latest` and
+`spa:1.4.11` are DIFFERENT digests, so every sibling on `:latest` is running an
+unknown base.
+
+**`/v1/sites/deploy` cannot carry this site, and that is worth knowing before
+reaching for it.** That endpoint casts each file's `content` straight to `[]byte`
+and JSON strings must be valid UTF-8, so the self-hosted Druk Wide and Inter faces
+would arrive CORRUPT under a 200. The artifact path (`POST /v1/projects/:slug/deploy`,
+a tar.gz or zip it sniffs) preserves bytes. Neither is used here — the site ships as
+an image — but the JSON manifest is quietly wrong for any build output with a binary
+in it.
+
+## Contact## Contact
 
 `hi@lux.tel` — the domain's MX is Google Workspace. The site links to it as a
 `mailto:`; there is no form and no backend.
