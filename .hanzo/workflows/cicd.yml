@@ -1,7 +1,6 @@
 name: CI/CD
 
-# Two cars, and the order is the whole point: the gate proves the tree, then the
-# image is BUILT AND PUSHED — nothing here deploys.
+# Two cars: the gate proves the tree, then the export is shipped.
 #
 # It lives at .hanzo/workflows, on the FORGE, because that is where the runners
 # are. github.com has ZERO self-hosted runners for luxfi — measured:
@@ -18,10 +17,13 @@ name: CI/CD
 # that pushed bytes at a running site would be a second way to deploy, and the one
 # that is not declared state is the one that silently disagrees with it.
 #
-#   push        -> gate -> image  (ghcr.io/luxfi/tel:sha-<sha7>)
-#   tag v*      -> gate -> image  (ghcr.io/luxfi/tel:vX.Y.Z)   <- the release
-#   universe    -> pin that tag                                 <- the deploy
-#   Hanzo CD    -> reconcile
+#   push / tag v*  -> gate -> deploy
+#
+# A static export is FILES. It needed no container image, no package, no pull
+# secret, no replica count and no liveness probe — and every one of those was a
+# thing to get wrong: two hours went on a registry permission for bytes that are
+# just files. It ships to our own static-site API instead, which already gives it
+# versioned content-addressed releases and rollback as a pointer flip.
 #
 # Semver only: a branch push produces an immutable sha- tag and never a floating
 # one, so nothing that reaches a cluster can move under it.
@@ -62,48 +64,36 @@ jobs:
       # and a console that offers Lux ID and holds no credential.
       - run: pnpm test:e2e
 
-  # The build is INLINE, and that is a workaround with a reason and an owner.
-  #
-  # The fleet's shared lane is `hanzoai/.github/.github/workflows/docker-build.yml@main`,
-  # and GitHub refuses it: a dispatch answers HTTP 422 `failed to parse workflow:
-  # error parsing called workflow`, so every run dies in 0s with no log. It is not
-  # this repo — luxfi/blog's last runs failed the same way in June and hanzoai/iam's
-  # in August, which is why six iam releases were tagged and none built. Restore the
-  # `uses:` the moment that file parses again; this is nine lines of duplication
-  # held against a broken dependency, not a second build lane by choice.
-  image:
+  deploy:
     needs: gate
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push'
     runs-on: [lux-build-linux-amd64]
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      # GHCR_USER / GHCR_TOKEN, the org pair the shared build lane uses. NOT
-      # GITHUB_TOKEN: on this forge that is a Gitea token, so the login "succeeds"
-      # against a registry it has no rights to and the push answers
-      # `denied: denied` — which is what run #17 did.
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.GHCR_USER }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      # Semver from a v* tag, an immutable sha- tag from a branch push, and NEVER a
-      # floating one — nothing that reaches a cluster may move under its own name.
-      - id: tags
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # A tar.gz, NOT the JSON file manifest /v1/sites/deploy takes: that endpoint
+      # casts each file's `content` straight to bytes, and a JSON string cannot
+      # carry the Druk Wide and Inter faces this site self-hosts — they would
+      # arrive corrupt under a 200. The artifact path sniffs the archive.
+      - run: tar -czf site.tar.gz -C out .
+
+      - name: Ship it
+        env:
+          TOKEN: ${{ secrets.LUX_DEPLOY_TOKEN }}
         run: |
           set -euo pipefail
-          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-            echo "tags=ghcr.io/luxfi/tel:${GITHUB_REF_NAME#v},ghcr.io/luxfi/tel:${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tags=ghcr.io/luxfi/tel:sha-$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
-          fi
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.tags.outputs.tags }}
-          # NO type=gha cache. That backend is GitHub's Actions cache service, and
-          # this runs on the forge, where the token it wants does not exist —
-          # buildx fails with "token is malformed" AFTER a successful build. The
-          # runner's own buildkit layer cache still applies between runs.
+          code=$(curl -sS -o out.json -w '%{http_code}' --max-time 180 \
+            -X POST 'https://api.lux.cloud/v1/projects/tel/deploy' \
+            -H "Authorization: Bearer $TOKEN" \
+            -H 'Content-Type: application/gzip' \
+            --data-binary @site.tar.gz)
+          cat out.json
+          # Read the BODY, not just the code. A 402 (org out of credits) and a 503
+          # both leave the live site exactly as it was, and a step that only checked
+          # for a 2xx would report a deploy that never happened.
+          [ "$code" = "200" ] || { echo "::error::deploy answered $code"; exit 1; }
