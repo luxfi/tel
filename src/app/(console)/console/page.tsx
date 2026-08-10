@@ -71,10 +71,10 @@ export default function Console() {
 
   return (
     <div className='p-4 sm:p-6'>
-      {/* The highlight band. The reference fills it with a green gradient; this one
-          is a hairline card and a white CTA, so the only bright thing on the page
-          is the action. */}
-      <section className='rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.07] to-transparent p-6 sm:p-8'>
+      {/* The highlight band. The reference fills it with a green gradient; this is
+          a glass pane and a white CTA, so the only bright thing on the page is the
+          action. */}
+      <section className='glass p-6 sm:p-8'>
         <p className='eyebrow'>Product highlight</p>
         <h1 className='h2 mt-3 max-w-[22ch]'>Conversational AI on your own numbers</h1>
         <p className='mt-4 max-w-2xl text-sm leading-relaxed text-white/60 sm:text-base'>

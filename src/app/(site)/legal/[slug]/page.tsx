@@ -30,7 +30,7 @@ export default async function Policy({ params }: { params: Promise<{ slug: strin
             draft terms as though they were in force is the risk; saying so is
             cheap, and it disappears the moment counsel flips REVIEWED. */}
         {!REVIEWED ? (
-          <p className="mt-6 rounded-xl border border-amber-300/30 bg-amber-300/5 p-4 text-sm leading-relaxed text-amber-200/90">
+          <p className="mt-6 rounded-xl border border-white/20 bg-white/5 p-4 text-sm leading-relaxed text-white/70">
             <strong className="font-semibold">Draft — not yet in force.</strong> This policy is
             published for review. It states how the network operates and what we intend to commit
             to, and it has not completed legal review. It does not yet form part of any agreement.

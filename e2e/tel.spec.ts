@@ -19,8 +19,6 @@ test('renders the page', async ({ page }) => {
   for (const pillar of ['Orbit', 'Communications', 'Wireless', 'Intelligence']) {
     await expect(page.getByRole('heading', { name: pillar, exact: true })).toBeVisible()
   }
-  // Text only, one entry per signed-off partnership.
-  await expect(page.getByText('ManSat')).toBeVisible()
   await expect(page.getByText('Lux Industries Inc.')).toBeVisible()
   expect(errors).toEqual([])
 })
@@ -59,15 +57,18 @@ for (const width of WIDTHS) {
 }
 
 /*
-  Nothing on this site names a supplier. The rule is in LLM.md and it covers copy,
-  meta tags, alt text and markup — so it is checked against the rendered DOM of
-  every page rather than against the source of one.
+  Nothing on this site names anyone but Lux. Carriers, satellite operators,
+  spectrum partners and the platform behind the wire are implementation; the
+  product is Lux Industries. The rule covers copy, meta tags, alt text and markup,
+  so it is checked against the rendered DOM of every page rather than the source of
+  one — an alt attribute is exactly where a name survives a copy edit.
 */
-test('no third-party supplier is named anywhere', async ({ page }) => {
-  for (const path of ['/', '/network', '/products', '/solutions', '/company', '/legal', '/console']) {
+test('nobody but Lux is named anywhere', async ({ page }) => {
+  const forbidden = ['telnyx', 'starlink', 'spacex', 'mansat', 'hanzo']
+  for (const path of ['/', '/network', '/products', '/solutions', '/pricing', '/company', '/legal', '/console']) {
     await page.goto(path)
     const html = (await page.content()).toLowerCase()
-    for (const name of ['telnyx', 'starlink', 'spacex']) {
+    for (const name of forbidden) {
       expect(html, `${name} appears on ${path}`).not.toContain(name)
     }
   }

@@ -97,11 +97,18 @@
     @apply max-w-[68ch] leading-relaxed text-white/60;
   }
 
+  /* A card is a glass pane. The brand's card recipe (rounded-xl on neutral-800
+     over neutral-900/50) is what this replaces — same geometry, same weight, with
+     the refraction the surface asks for. */
   .card {
-    @apply block rounded-xl border border-neutral-800 bg-neutral-900/50 p-6;
+    @apply glass block p-6;
+    @apply rounded-xl;
   }
   a.card {
-    @apply transition-colors hover:border-neutral-700;
+    @apply transition-colors;
+  }
+  a.card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   /* Tap targets stay at 44px — the e2e suite measures them at 390/768/1280. */
@@ -115,16 +122,46 @@
     @apply border border-white/20 hover:border-white/40;
   }
 
-  /* Status is information, so it is the one place a hue appears. */
+  /* Status without hue. A filled dot is in service, a ring is in field trial —
+     the difference is FORM, which survives a monochrome brand and colour
+     blindness alike, where green-vs-amber survives neither. Every entry also
+     carries its status in words, so the dot is a glance and never the only
+     carrier of the fact. */
   .dot {
     @apply inline-block h-1.5 w-1.5 flex-none rounded-full;
   }
   .dot-live {
-    @apply bg-emerald-400;
+    @apply bg-white;
   }
   .dot-beta,
   .dot-soon {
-    @apply bg-amber-300;
+    @apply bg-transparent ring-1 ring-inset ring-white/70;
+    height: 7px;
+    width: 7px;
+  }
+
+  /* Liquid glass, monochrome. A pane is a blurred slab of the page behind it with
+     a bright top edge and a dark bottom one — refraction read as light entering
+     the top face and falling off the bottom. No hue: the prism is in the GRADIENT
+     and the blur, not in a spectrum, which is what keeps it Lux rather than a
+     screensaver. */
+  .glass {
+    @apply relative overflow-hidden rounded-2xl border border-white/10;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02) 42%, rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.45);
+  }
+  /* The specular sweep: one soft band across the top face, which is what makes a
+     flat panel read as a surface with thickness. Decorative, so it is aria-hidden
+     by being a pseudo-element rather than an element. */
+  .glass::before {
+    content: '';
+    position: absolute;
+    inset: -40% -20% auto -20%;
+    height: 70%;
+    background: radial-gradient(60% 100% at 50% 0%, rgba(255, 255, 255, 0.13), transparent 70%);
+    pointer-events: none;
   }
 
   .tabular {
