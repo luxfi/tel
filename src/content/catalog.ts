@@ -86,7 +86,7 @@ export const PILLARS: readonly Pillar[] = [
         blurb: 'Orbital transport for tower sites',
         status: 'live',
         detail:
-          'Backhaul for mobile operators at sites where trenching fibre never pays back. Lux terminates the tower into its own backbone and hands off at the operator’s core, so coverage extends without a civil works programme.',
+          'Backhaul for mobile operators at sites where trenching fibre never pays back. The tower terminates into the Lux backbone and hands off at the operator’s core, so coverage extends without a civil works programme.',
         facts: [
           'Carrier hand-off at the operator core, not at a public exchange',
           'Latency budgets suitable for standard voice and data profiles',
@@ -100,7 +100,7 @@ export const PILLARS: readonly Pillar[] = [
     slug: 'network',
     name: 'Network',
     summary:
-      'The physical layer, owned. Fibre, peering, points of presence and the wireless edge — the parts most providers rent and therefore cannot tune.',
+      'The physical layer. Fibre, peering, points of presence and the wireless edge, configured in one place instead of assembled from several and reconciled afterwards.',
     primitives: [
       {
         slug: 'global-ip',
@@ -151,7 +151,7 @@ export const PILLARS: readonly Pillar[] = [
           'A private LTE or 5G network for a site — port, mine, campus, factory floor — with the core hosted by Lux and the spectrum handled for you. Devices roam onto the public network at the gate without changing identity.',
         facts: [
           'Hosted core; the site runs radios, not a telco',
-          'SIM identity shared with the public network, so devices roam seamlessly',
+          'SIM identity shared with the public network, so a device keeps one identity as it roams',
           'Site-local breakout keeps machine traffic on the factory floor',
         ],
       },
@@ -221,7 +221,7 @@ export const PILLARS: readonly Pillar[] = [
     slug: 'communications',
     name: 'Communications',
     summary:
-      'Numbers, voice and messaging, delivered on our own carrier network. The interconnect is ours, so quality is something we fix rather than escalate.',
+      'Numbers, voice and messaging on carrier-grade interconnect. One relationship rather than several, so a quality problem is something you raise once and we carry.',
     primitives: [
       {
         slug: 'numbers',

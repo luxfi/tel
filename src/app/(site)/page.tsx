@@ -7,6 +7,7 @@ import { ArrowRight } from 'lucide-react'
 import { Globe } from '@/components/Globe'
 import { PILLARS, STATUS_LABEL } from '@/content/catalog'
 import { CAPABILITIES, DIFFERENTIATORS, STACK } from '@/content/company'
+import { SOLUTIONS } from '@/content/solutions'
 import { CONTACT_EMAIL, contactHref } from '@/site'
 import { onConsoleHost } from '@/console/auth'
 
@@ -72,6 +73,19 @@ export default function Page() {
         </div>
       </section>
 
+      {/* The argument, once, at full size. Every other section on this page is a
+          heading over a grid; this one is a sentence over nothing, because the
+          claim it makes is the reason to read the rest and it was previously
+          buried as the fourth paragraph of the fourth band. */}
+      <section className='band'>
+        <div className='wrap'>
+          <p className='display max-w-[20ch]'>
+            A call, a SIM, a terminal, and the model that answers.{' '}
+            <span className='text-white/40'>One network, one API, one invoice.</span>
+          </p>
+        </div>
+      </section>
+
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>The stack</p>
@@ -92,6 +106,34 @@ export default function Page() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* What people actually buy this for. It lived only on /solutions, which is
+          the page nobody reaches from a home page that never mentions it — and a
+          named operating problem persuades where a feature list does not. */}
+      <section className='band'>
+        <div className='wrap'>
+          <p className='eyebrow'>What it is bought for</p>
+          <h2 className='h2 mt-4 max-w-[24ch]'>Six problems, named.</h2>
+          <div className='mt-10 divide-y divide-white/10 border-y border-white/10'>
+            {SOLUTIONS.map((s) => (
+              <Link
+                key={s.slug}
+                href={`/solutions#${s.slug}`}
+                className='group grid gap-3 py-7 transition-colors hover:bg-white/[0.03] md:grid-cols-[300px_1fr] md:gap-10'
+              >
+                <div className='h3 flex items-baseline gap-2'>
+                  {s.name}
+                  <ArrowRight
+                    className='h-3.5 w-3.5 shrink-0 text-white/0 transition-colors group-hover:text-white/50'
+                    aria-hidden='true'
+                  />
+                </div>
+                <p className='text-sm leading-relaxed text-white/60'>{s.problem}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

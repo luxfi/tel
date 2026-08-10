@@ -7,7 +7,7 @@ import { PILLARS } from '@/content/catalog'
 export const metadata: Metadata = {
   title: 'Our network',
   description:
-    'The Lux network: an owned terrestrial backbone, orbital capacity that terminates into it at the ground station, and compute co-located with the media.',
+    'The Lux network: a terrestrial backbone, orbital capacity that terminates into it at the ground station, and compute co-located with the media.',
 }
 
 const ORBIT_PILLAR = PILLARS.find((p) => p.slug === 'orbit')!
