@@ -103,5 +103,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ steps.tags.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # NO type=gha cache. That backend is GitHub's Actions cache service, and
+          # this runs on the forge, where the token it wants does not exist —
+          # buildx fails with "token is malformed" AFTER a successful build. The
+          # runner's own buildkit layer cache still applies between runs.
