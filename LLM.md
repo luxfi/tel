@@ -120,6 +120,27 @@ because both of its failures are silent — a canvas that threw is simply blank,
 a canvas drawn from a fixed phase is indistinguishable from a propagated one in any
 single frame. The test asserts it drew, and that what it drew moves.
 
+## The menu projects from the catalogue
+
+`components/Nav.tsx` builds Products from `PILLARS` and Solutions from
+`SOLUTIONS`, so a primitive added to the catalogue appears in the header on the
+same commit. A menu holding its own list is a menu that stops matching what it
+links to, and the mismatch is always found by somebody trying to buy something.
+`SOLUTIONS` moved out of the solutions page into `content/` for exactly that
+reason.
+
+**The phone menu is portalled to `document.body`, and it has to be.** The header
+sets `backdrop-blur`; `backdrop-filter` makes an element a CONTAINING BLOCK for
+fixed-position descendants, so `fixed inset-0` resolved against the header's own
+44px box rather than the viewport. The panel rendered, its background painted, all
+44 links existed — inside a 44px window, with the page showing through below the
+first line. It read as a background that would not paint. The e2e test measures
+the panel's HEIGHT against the viewport, because existing is what it was already
+doing.
+
+Before this there was no phone navigation at all: below `sm` every link was
+`hidden` and nothing replaced them.
+
 ## Design vocabulary
 
 From `luxfi/brand` `DESIGN.md`: monochrome, `#000000` surface, white type,
