@@ -14,6 +14,17 @@ RUN pnpm build
 # PINNED to a semver, not :latest: the base is most of the bytes that reach the
 # cluster, so a floating tag there is a floating deploy wearing a pinned one.
 FROM ghcr.io/hanzoai/spa:1.4.11
+
+# THE LINK IS THE LABEL. Without org.opencontainers.image.source the package lands
+# UNLINKED on GHCR, and an unlinked package grants pull access to the token that
+# pushed it and to nobody else — so the cluster's puller got denied and both pods
+# sat in ImagePullBackOff while the image existed and was correct. Its siblings
+# work because they are linked and inherit the org's access.
+LABEL org.opencontainers.image.source="https://github.com/luxfi/tel"
+LABEL org.opencontainers.image.title="lux.tel"
+LABEL org.opencontainers.image.description="Voice, messaging, and satellite connectivity."
+LABEL org.opencontainers.image.licenses="UNLICENSED"
+
 COPY --from=build /src/out /public
 ENV PORT=3000
 ENV ROOT=/public
