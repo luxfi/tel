@@ -99,8 +99,17 @@ test('the site claims no ownership of infrastructure', async ({ page }) => {
   const claims = [
     /\bwe own\b/i,
     /\bowns? the (fibre|fiber|network|backbone|interconnect|spectrum|stack|telephony)/i,
-    /\bour own (fibre|fiber|backbone|interconnect|network|constellation)/i,
+    /\bour own (fibre|fiber|backbone|interconnect|network|constellation|carrier)/i,
     /owned end to end/i,
+    // The PARTICIPLE, which is how four of these survived the patterns above:
+    // "the physical layer, owned", "an owned terrestrial backbone", "its own
+    // backbone", "our own carrier network". Same claim, no "we", no match.
+    /\bowned\b/i,
+    /\bits own (fibre|fiber|backbone|interconnect|network|spectrum)/i,
+    // And the claim's mirror image: saying competitors RENT what we do not is
+    // the same assertion, made about somebody else.
+    /\b(providers|carriers|competitors) rent\b/i,
+    /\bthe interconnect is ours\b/i,
     /\bwe operate our own\b/i,
   ]
   for (const path of ['/', '/network', '/products', '/solutions', '/pricing', '/company']) {

@@ -1,5 +1,6 @@
 import React, { type PropsWithChildren } from 'react'
 
+import { Nav, MobileNav } from '@/components/Nav'
 import { LEGAL_ENTITY, contactHref } from '@/site'
 
 /* The marketing chrome. Moved here whole from the root layout when the console
@@ -14,7 +15,7 @@ const Wordmark: React.FC<{ className?: string }> = ({ className = '' }) => (
 
 const Header: React.FC = () => (
   <header className='sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur'>
-    <nav className='mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8'>
+    <nav className='mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-8'>
       <a
         href='/'
         className='-ml-2 inline-flex min-h-[44px] items-center rounded-sm px-2 text-lg'
@@ -22,29 +23,16 @@ const Header: React.FC = () => (
       >
         <Wordmark />
       </a>
+      {/* The menu projects from the catalogue — see components/Nav. */}
+      <Nav />
       <div className='flex items-center gap-1 sm:gap-2'>
-        {/* The nav is a list, so adding a page is one entry rather than one entry
-            and a class string. */}
-        {[
-          ['/network', 'Network'],
-          ['/products', 'Products'],
-          ['/solutions', 'Solutions'],
-          ['/company', 'Company'],
-        ].map(([href, label]) => (
-          <a
-            key={href}
-            href={href}
-            className='hidden min-h-[44px] items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white sm:inline-flex'
-          >
-            {label}
-          </a>
-        ))}
         <a
           href={contactHref('Lux Tel')}
           className='inline-flex min-h-[44px] items-center rounded-md bg-white px-4 text-sm font-medium text-black transition-colors hover:bg-white/90'
         >
           Talk to us
         </a>
+        <MobileNav />
       </div>
     </nav>
   </header>
