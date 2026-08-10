@@ -51,3 +51,83 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+  The component vocabulary from luxfi/brand DESIGN.md, named once so pages compose
+  it instead of restating class strings. The values are the brand's — #000000
+  surface, white type, secondary at white/60, cards rounded-xl on neutral-800 over
+  neutral-900/50, the opacity ladder in 5-point steps — and this is where they
+  live, so a change to the brand is a change to this file rather than a sweep
+  through every page.
+*/
+@layer components {
+  .wrap {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* A band is a section with a hairline above it. Sections do not set their own
+     vertical margins; the rhythm belongs to the layout. */
+  .band {
+    @apply border-t border-white/10 py-16 lg:py-20;
+  }
+
+  .eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-wider text-white/40;
+  }
+
+  .display {
+    @apply font-heading text-[26px] font-bold leading-[1.15] sm:text-4xl lg:text-5xl;
+    text-wrap: balance;
+  }
+
+  .h2 {
+    @apply font-heading text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl;
+    text-wrap: balance;
+  }
+
+  .h3 {
+    @apply font-semibold;
+  }
+
+  .lede {
+    @apply max-w-3xl text-base leading-relaxed text-white/60 sm:text-lg;
+  }
+
+  .prose p {
+    @apply max-w-[68ch] leading-relaxed text-white/60;
+  }
+
+  .card {
+    @apply block rounded-xl border border-neutral-800 bg-neutral-900/50 p-6;
+  }
+  a.card {
+    @apply transition-colors hover:border-neutral-700;
+  }
+
+  /* Tap targets stay at 44px — the e2e suite measures them at 390/768/1280. */
+  .btn {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md px-6 text-sm font-medium transition-colors;
+  }
+  .btn-solid {
+    @apply bg-white text-black hover:bg-white/90;
+  }
+  .btn-ghost {
+    @apply border border-white/20 hover:border-white/40;
+  }
+
+  /* Status is information, so it is the one place a hue appears. */
+  .dot {
+    @apply inline-block h-1.5 w-1.5 flex-none rounded-full;
+  }
+  .dot-live {
+    @apply bg-emerald-400;
+  }
+  .dot-beta,
+  .dot-soon {
+    @apply bg-amber-300;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
