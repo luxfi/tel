@@ -3,6 +3,14 @@ name: CI/CD
 # Two cars, and the order is the whole point: the gate proves the tree, then the
 # image is BUILT AND PUSHED — nothing here deploys.
 #
+# It lives at .github/workflows and not .hanzo/workflows, and that is measured
+# rather than preferred. The forge resolves a `uses:` through the same
+# WORKFLOW_DIRS allowlist it collects workflows from, and hanzoai/.github publishes
+# docker-build.yml ONLY at .github/workflows — so a forge-side copy cannot resolve
+# the one build lane the fleet has. Every luxfi image that exists today
+# (ghcr.io/luxfi/blog, 14 tags) is built exactly this way; the repos that tried the
+# other shape have zero.
+#
 # Deploying is a tag pinned in lux/universe, which Hanzo CD reconciles. A workflow
 # that pushed bytes at a running site would be a second way to deploy, and the one
 # that is not declared state is the one that silently disagrees with it.
