@@ -35,11 +35,15 @@ export default function Page() {
           <Orbit height={680} />
         </div>
         <div className='wrap relative z-10'>
-          <p className='eyebrow'>Lux Industries Inc</p>
-          <h1 className='display mt-4 max-w-[18ch]'>Voice, messaging and connectivity on one network.</h1>
+          {/* The original heading, kept deliberately. It says what Lux sells in the
+              reader's own words — voice, messaging, satellite — where the version
+              that replaced it ("connectivity on one network") named the
+              architecture instead, which is our concern and not theirs. */}
+          <p className='eyebrow'>Telecommunications &amp; satellite</p>
+          <h1 className='display mt-4 max-w-[18ch]'>Voice, messaging, and satellite connectivity.</h1>
           <p className='lede mt-6'>
-            Lux runs telecommunications infrastructure — programmable voice, messaging and phone numbers — with
-            wireless and satellite connectivity where wire and tower do not reach. One API, one bill, one desk.
+            Lux runs telecommunications infrastructure — programmable voice, messaging, and phone numbers — and
+            provides satellite internet where wire and tower don&rsquo;t reach.
           </p>
           <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
             <Link href='/network' className='btn btn-solid'>
@@ -65,10 +69,10 @@ export default function Page() {
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>The stack</p>
-          <h2 className='h2 mt-4 max-w-[22ch]'>Six layers, owned rather than rented.</h2>
+          <h2 className='h2 mt-4 max-w-[22ch]'>Six layers, one integration.</h2>
           <p className='lede mt-5'>
-            The parts a provider rents are the parts it cannot tune. Lux runs its own, from the fibre to the compute
-            sitting beside the media.
+            Everything a real-time application needs — the number a call arrives on, the network it crosses, and the
+            model that answers it — under one account.
           </p>
           <ol className='mt-10 divide-y divide-white/10 border-y border-white/10'>
             {STACK.map((l) => (
@@ -128,7 +132,7 @@ export default function Page() {
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>Why it is different</p>
-          <h2 className='h2 mt-4 max-w-[26ch]'>Not assembled from other people’s networks.</h2>
+          <h2 className='h2 mt-4 max-w-[26ch]'>One account instead of five.</h2>
           <div className='mt-8 grid gap-4 md:grid-cols-2'>
             {DIFFERENTIATORS.map((d) => (
               <div key={d.claim} className='card'>

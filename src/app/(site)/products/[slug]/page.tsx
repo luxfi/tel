@@ -29,7 +29,6 @@ export default async function Primitive({ params }: { params: Promise<{ slug: st
         <div className="mt-5 flex items-center gap-2 text-sm text-white/40">
           <span className={`dot dot-${p.status}`} aria-hidden="true" />
           {STATUS_LABEL[p.status]}
-          {p.api ? <code className="ml-3 font-mono text-[12px] text-white/60">{p.api}</code> : null}
         </div>
         <p className="lede mt-7">{p.detail}</p>
       </section>
