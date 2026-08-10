@@ -53,7 +53,8 @@ appears in the nav, the index, its own page and its pillar's cross-links.
 - `src/app/solutions/`, `pricing/`, `company/`, `legal/` + `legal/[slug]`
 - `src/app/console/` + `callback/` — the builder console, behind Lux ID
 - `src/console/auth.ts` — OIDC + PKCE against lux.id
-- `src/components/Orbit.tsx` — the constellation, computed
+- `src/components/Globe.tsx` — the Earth and the constellation, propagated
+- `scripts/land.mjs` — regenerates `src/content/land.ts` from coastline geometry
 - `src/site.ts` — legal entity, contact address, partners
 - `e2e/tel.spec.ts` — render, mailto, overflow and tap targets at 390 / 768 / 1280
 
@@ -95,13 +96,29 @@ fails on power loss (regulated disclosure, and customers must pass it to their o
 users); customer network information carries statutory protection separate from
 privacy law; legal process needs a higher standard for content than for records.
 
-## The orbit canvas is computed, not illustrated
+## The globe is propagated, not illustrated
 
-`components/Orbit.tsx` draws planes at their inclinations, satellites advancing
-along them, and a link only where one is above a ground site's horizon. Illustration
-reproduces the picture but not the relationship, and the relationship is the
-argument. Deterministic — no random seeding — so a screenshot is reproducible.
-Honours `prefers-reduced-motion` with a single still frame.
+`components/Globe.tsx` is the hero. Illustration reproduces the picture but not
+the relationship, and the relationship is the argument: coverage is where the
+satellites are, and it changes while you watch.
+
+Four things are computed rather than chosen to look right, and each is the reason
+the picture holds up to someone who knows the domain:
+
+| | |
+|---|---|
+| Land | Real coastlines. `scripts/land.mjs` rasterises Natural Earth geometry into `content/land.ts` — a 240×120 bitmask, 3,600 bytes, filled by scanline so lakes fall out of the even-odd rule rather than needing ring winding. |
+| Orientation | Greenwich mean sidereal time. Turning by a phase advances at the right RATE from an arbitrary start, so it is wrong by a fixed angle forever; with GMST the face toward you is the face actually toward you. |
+| Orbits | Period from altitude by Kepler's third law. A Walker STAR — nodes spanning 180°, not 360°, because a polar plane at Ω and at Ω+180° are one ring travelled opposite ways. Hence one counter-rotating seam with no cross-links, and cross-links dropping near the poles where the planes converge faster than an antenna follows. |
+| Links | A terminal tracks ONE satellite plus the next during handover. Drawing every satellite above the mask angle put a dozen chords across the planet at once — not what a terminal does, and it read as noise rather than coverage. |
+
+The mask is data about the Earth and says nothing about drawing; the renderer picks
+its own dot lattice and asks it. Changing dot density regenerates nothing.
+
+Honours `prefers-reduced-motion` with a single still frame. It is covered by e2e
+because both of its failures are silent — a canvas that threw is simply blank, and
+a canvas drawn from a fixed phase is indistinguishable from a propagated one in any
+single frame. The test asserts it drew, and that what it drew moves.
 
 ## Design vocabulary
 
