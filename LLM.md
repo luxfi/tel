@@ -152,7 +152,8 @@ bg-neutral-900/50 p-6`, opacity ladder in 5-point steps. Type is Druk Wide
 ## Deploy — a static site, through our own API
 
     push / tag v*  ->  gate  ->  deploy
-                                 POST api.lux.cloud/v1/projects/tel/deploy
+                                 POST api.hanzo.ai/v1/projects/tel/deploy
+                                 X-Org-Id: lux
 
 The gate proves the tree (`tc`, `build`, Playwright against the BUILT export). The
 deploy ships a tar.gz of `out/` to the static-site API, which stores it as an
@@ -187,6 +188,21 @@ hitting in other forms.
 The bind is idempotent and non-fatal: a verified host comes back live, an
 unverified one comes back `pending` **with the DNS records to publish**, printed
 into the log rather than discovered later by wondering why the site did not change.
+
+### api.hanzo.ai and api.lux.cloud are DIFFERENT deployments
+
+Not two names for one service — two builds of cloud (`v1.801.476` against
+`sha-60fdadd`), with different object storage and different billing state. lux.tel
+is served by the sites plane behind **api.hanzo.ai**; its responses carry
+`x-hanzo-site: tel`.
+
+The deploy job pointed at the other one for weeks. It answered
+`402 insufficient_balance`, which read as a funding problem and was not: had the
+balance been topped up, the deploy would have SUCCEEDED into a plane nobody serves
+lux.tel from. The 402 was hiding a no-op, and this org needed no credit at all.
+
+⛔ Two hosts that both answer 200 on `/v1/projects` are not therefore the same
+plane. Compare `x-api-version`, and check which one the live site's headers name.
 
 ### The project's ORG is not in the request body — and three routes disagree on it
 
