@@ -46,8 +46,11 @@ jobs:
     runs-on: [lux-build-linux-amd64]
     steps:
       - uses: actions/checkout@v4
+      # NO `version:`. package.json declares `packageManager: pnpm@10.12.4`, and
+      # action-setup refuses when both are given — "Multiple versions of pnpm
+      # specified" — so every run died 5s in at this step and `image` never ran.
+      # The manifest is the one place the version is stated.
       - uses: pnpm/action-setup@v4
-        with: { version: 10 }
       - uses: actions/setup-node@v4
         with: { node-version: '22', cache: pnpm }
       - run: pnpm install --frozen-lockfile
