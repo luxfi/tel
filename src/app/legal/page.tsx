@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { EFFECTIVE, POLICIES } from '../../content/legal'
+import { EFFECTIVE, POLICIES, REVIEWED } from '../../content/legal'
 import { COMPANY } from '../../content/company'
 
 export const metadata: Metadata = {
@@ -19,9 +19,16 @@ export default function Legal() {
           lawful process, retention, and specific protections on what the network knows about you. All of it is
           here rather than in a contract you only see after signing.
         </p>
-        <p className="mt-4 font-mono text-[11px] uppercase tracking-wider text-white/40">
+        <p className="mt-4 text-[10px] font-semibold uppercase tracking-wider text-white/40">
           Effective {EFFECTIVE} · {COMPANY.legalName}
         </p>
+        {!REVIEWED ? (
+          <p className="mt-6 max-w-3xl rounded-xl border border-amber-300/30 bg-amber-300/5 p-4 text-sm leading-relaxed text-amber-200/90">
+            <strong className="font-semibold">These policies are drafts.</strong> They are published
+            for review and have not completed legal review, so they do not yet form part of any
+            agreement.
+          </p>
+        ) : null}
       </section>
 
       <section className="band">

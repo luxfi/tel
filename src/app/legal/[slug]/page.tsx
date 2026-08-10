@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { EFFECTIVE, POLICIES, policy } from '../../../content/legal'
+import { EFFECTIVE, POLICIES, REVIEWED, policy } from '../../../content/legal'
 import { COMPANY } from '../../../content/company'
 
 export function generateStaticParams() {
@@ -23,9 +23,19 @@ export default async function Policy({ params }: { params: Promise<{ slug: strin
         <Link href="/legal" className="inline-flex min-h-[44px] items-center eyebrow hover:text-white">Legal</Link>
         <h1 className="display mt-5 max-w-[16ch]">{p.title}</h1>
         <p className="lede mt-6">{p.summary}</p>
-        <p className="mt-5 font-mono text-[11px] uppercase tracking-wider text-white/40">
+        <p className="mt-5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
           Effective {EFFECTIVE} · {COMPANY.legalName}
         </p>
+        {/* The flag is the gate and this is what it gates. A carrier publishing
+            draft terms as though they were in force is the risk; saying so is
+            cheap, and it disappears the moment counsel flips REVIEWED. */}
+        {!REVIEWED ? (
+          <p className="mt-6 rounded-xl border border-amber-300/30 bg-amber-300/5 p-4 text-sm leading-relaxed text-amber-200/90">
+            <strong className="font-semibold">Draft — not yet in force.</strong> This policy is
+            published for review. It states how the network operates and what we intend to commit
+            to, and it has not completed legal review. It does not yet form part of any agreement.
+          </p>
+        ) : null}
       </section>
 
       <section className="band">

@@ -13,9 +13,13 @@ const gotoClean = async (page: Page) => {
 test('renders the page', async ({ page }) => {
   const errors = await gotoClean(page)
   await expect(page).toHaveTitle(/Lux Tel/)
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('satellite connectivity')
-  await expect(page.getByRole('heading', { name: 'Programmable voice and messaging' })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Connectivity past the end of the line' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('one network')
+  // The catalog reaches the page. Not a copy string — the pillars are data, and
+  // this is what fails if the projection breaks rather than the wording changes.
+  for (const pillar of ['Orbit', 'Communications', 'Wireless', 'Intelligence']) {
+    await expect(page.getByRole('heading', { name: pillar, exact: true })).toBeVisible()
+  }
+  // Text only, one entry per signed-off partnership.
   await expect(page.getByText('ManSat')).toBeVisible()
   await expect(page.getByText('Lux Industries Inc.')).toBeVisible()
   expect(errors).toEqual([])
@@ -53,3 +57,28 @@ for (const width of WIDTHS) {
     expect(small).toEqual([])
   })
 }
+
+/*
+  Nothing on this site names a supplier. The rule is in LLM.md and it covers copy,
+  meta tags, alt text and markup — so it is checked against the rendered DOM of
+  every page rather than against the source of one.
+*/
+test('no third-party supplier is named anywhere', async ({ page }) => {
+  for (const path of ['/', '/network', '/products', '/solutions', '/company', '/legal', '/console']) {
+    await page.goto(path)
+    const html = (await page.content()).toLowerCase()
+    for (const name of ['telnyx', 'starlink', 'spacex']) {
+      expect(html, `${name} appears on ${path}`).not.toContain(name)
+    }
+  }
+})
+
+/*
+  Sign-in is Lux ID and only Lux ID: the console offers one control, and it must
+  not have grown a password field.
+*/
+test('the console signs in through lux.id and holds no credential', async ({ page }) => {
+  await page.goto('/console')
+  await expect(page.getByRole('button', { name: /Sign in with Lux ID/i })).toBeVisible()
+  expect(await page.locator('input[type=password]').count()).toBe(0)
+})
