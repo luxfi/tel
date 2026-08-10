@@ -22,8 +22,24 @@ const VERIFIER = 'lux_tel_pkce_verifier'
 const STATE = 'lux_tel_state'
 const TOKEN = 'lux_tel_token'
 
+/**
+ * Where lux.id returns to. Derived from the ORIGIN the browser is on, never a
+ * constant, because this bundle serves two hosts: lux.tel/console for someone who
+ * walked in from the marketing site, and console.lux.tel for someone who came
+ * straight to the console. A hardcoded callback would send half of them to the
+ * other host mid-flow, and IAM validates the redirect_uri EXACTLY — a mismatch is
+ * an error page, not a redirect.
+ *
+ * Both spellings are registered on the `lux-tel` application. An unregistered one
+ * fails at authorize, before anybody types anything.
+ */
 function redirectUri(): string {
-  return `${window.location.origin}/console/callback`
+  return onConsoleHost() ? `${window.location.origin}/callback` : `${window.location.origin}/console/callback`
+}
+
+/** True on console.lux.tel, where the console IS the site rather than a section. */
+export function onConsoleHost(): boolean {
+  return typeof window !== 'undefined' && window.location.hostname.startsWith('console.')
 }
 
 function random(bytes = 32): string {
@@ -124,5 +140,5 @@ export function stored(): string | null {
 
 export function signOut(): void {
   localStorage.removeItem(TOKEN)
-  window.location.href = '/console'
+  window.location.href = onConsoleHost() ? '/' : '/console'
 }

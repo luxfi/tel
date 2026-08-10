@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { EFFECTIVE, POLICIES, REVIEWED, policy } from '../../../content/legal'
-import { COMPANY } from '../../../content/company'
+import { EFFECTIVE, POLICIES, REVIEWED, policy } from '@/content/legal'
+import { COMPANY } from '@/content/company'
 
 export function generateStaticParams() {
   return POLICIES.map((p) => ({ slug: p.slug }))

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ADVISORS, ENGINEERING, LEADERSHIP, type Person } from '../../content/team'
-import { COMPANY, CAPABILITIES } from '../../content/company'
+import { ADVISORS, ENGINEERING, LEADERSHIP, type Person } from '@/content/team'
+import { COMPANY, CAPABILITIES } from '@/content/company'
 
 export const metadata: Metadata = {
   title: 'Company',

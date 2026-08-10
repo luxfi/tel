@@ -1,13 +1,30 @@
-import React from 'react'
+'use client'
+
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
-import { Orbit } from '../components/Orbit'
-import { PILLARS, STATUS_LABEL } from '../content/catalog'
-import { CAPABILITIES, DIFFERENTIATORS, STACK } from '../content/company'
-import { CONTACT_EMAIL, contactHref, partners } from '../site'
+import { Orbit } from '@/components/Orbit'
+import { PILLARS, STATUS_LABEL } from '@/content/catalog'
+import { CAPABILITIES, DIFFERENTIATORS, STACK } from '@/content/company'
+import { CONTACT_EMAIL, contactHref, partners } from '@/site'
+import { onConsoleHost } from '@/console/auth'
 
 export default function Page() {
+  /*
+    One bundle serves two hosts. On console.lux.tel the console IS the site, so the
+    marketing home hands over immediately — `replace`, not `assign`, or Back lands
+    on this page and bounces again.
+
+    Done in the client rather than in the static server because the export has one
+    index.html and the host is only knowable in the browser. A visitor who lands
+    here on the console host sees this frame for a moment; the alternative is a
+    second build of the same site.
+  */
+  useEffect(() => {
+    if (onConsoleHost()) window.location.replace('/console')
+  }, [])
+
   return (
     <>
       {/* The constellation is computed, not drawn — see components/Orbit. It sits
