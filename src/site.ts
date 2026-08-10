@@ -5,10 +5,9 @@ export const contactHref = (subject: string) =>
   `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`
 
 /*
-  Partnerships stated on the site. Text only — we render no third-party marks.
-  Add an entry only with explicit sign-off: a published partnership claim is
-  easy to ship and hard to walk back.
+  No partner is named on this site. Who carries a leg of the network, who files
+  spectrum, whose platform sits behind a wire — that is implementation, and the
+  product is Lux. The `partners` list and the section that rendered it are DELETED
+  rather than emptied: an empty list is an invitation to fill it, and the reason
+  this one is gone is a policy about the surface, not a gap in the data.
 */
-export const partners: { name: string; note: string }[] = [
-  { name: 'ManSat', note: 'Satellite spectrum and filings, Isle of Man.' },
-]

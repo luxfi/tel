@@ -23,7 +23,7 @@ export default function Legal() {
           Effective {EFFECTIVE} · {COMPANY.legalName}
         </p>
         {!REVIEWED ? (
-          <p className="mt-6 max-w-3xl rounded-xl border border-amber-300/30 bg-amber-300/5 p-4 text-sm leading-relaxed text-amber-200/90">
+          <p className="mt-6 max-w-3xl rounded-xl border border-white/20 bg-white/5 p-4 text-sm leading-relaxed text-white/70">
             <strong className="font-semibold">These policies are drafts.</strong> They are published
             for review and have not completed legal review, so they do not yet form part of any
             agreement.

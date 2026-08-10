@@ -7,7 +7,7 @@ import { ArrowRight } from 'lucide-react'
 import { Orbit } from '@/components/Orbit'
 import { PILLARS, STATUS_LABEL } from '@/content/catalog'
 import { CAPABILITIES, DIFFERENTIATORS, STACK } from '@/content/company'
-import { CONTACT_EMAIL, contactHref, partners } from '@/site'
+import { CONTACT_EMAIL, contactHref } from '@/site'
 import { onConsoleHost } from '@/console/auth'
 
 export default function Page() {
@@ -112,7 +112,7 @@ export default function Page() {
                       </div>
                       <p className='mt-2 text-sm leading-relaxed text-white/60'>{p.blurb}</p>
                       {p.status !== 'live' ? (
-                        <p className='mt-3 text-[10px] font-semibold uppercase tracking-wider text-amber-300'>
+                        <p className='mt-3 text-[10px] font-semibold uppercase tracking-wider text-white/60'>
                           {STATUS_LABEL[p.status]}
                         </p>
                       ) : null}
@@ -140,20 +140,6 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Text only, and one entry per signed-off partnership — see site.ts. */}
-      <section className='band'>
-        <div className='wrap'>
-          <p className='eyebrow'>Partnerships</p>
-          <dl className='flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:gap-10'>
-            {partners.map(({ name, note }) => (
-              <div key={name}>
-                <dt className='font-heading text-lg font-bold'>{name}</dt>
-                <dd className='mt-1 text-sm text-white/60'>{note}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
 
       <section className='band'>
         <div className='wrap max-w-3xl text-center'>

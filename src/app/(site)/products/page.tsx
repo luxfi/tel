@@ -15,7 +15,7 @@ export default function Products() {
         <h1 className="display mt-5 max-w-[16ch]">One network, addressed as parts.</h1>
         <p className="lede mt-6">
           Each of these is provisioned through the same API, under one identity model and one bill. A dot means it is
-          in service; an amber dot means it is in field trial and we will say so before you build on it.
+          in service; a ring means it is in field trial and we will say so before you build on it.
         </p>
       </section>
 
