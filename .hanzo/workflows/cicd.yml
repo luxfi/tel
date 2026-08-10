@@ -3,13 +3,16 @@ name: CI/CD
 # Two cars, and the order is the whole point: the gate proves the tree, then the
 # image is BUILT AND PUSHED — nothing here deploys.
 #
-# It lives at .github/workflows and not .hanzo/workflows, and that is measured
-# rather than preferred. The forge resolves a `uses:` through the same
-# WORKFLOW_DIRS allowlist it collects workflows from, and hanzoai/.github publishes
-# docker-build.yml ONLY at .github/workflows — so a forge-side copy cannot resolve
-# the one build lane the fleet has. Every luxfi image that exists today
-# (ghcr.io/luxfi/blog, 14 tags) is built exactly this way; the repos that tried the
-# other shape have zero.
+# It lives at .hanzo/workflows, on the FORGE, because that is where the runners
+# are. github.com has ZERO self-hosted runners for luxfi — measured:
+# /orgs/luxfi/actions/runners is total_count 0 — and an unclaimable job does not
+# fail, it QUEUES until the 24h timeout while the next push stacks behind it.
+# Silence, not an error. Two runs sat queued for six minutes proving it.
+#
+# `runs-on: [lux-build-linux-amd64]` is the label the forge pools advertise, used
+# by 111 workflows across lux. `lux-build-amd64` — one segment short — matches
+# nothing, and four repos carry a comment saying so, which is how this was found
+# rather than guessed.
 #
 # Deploying is a tag pinned in lux/universe, which Hanzo CD reconciles. A workflow
 # that pushed bytes at a running site would be a second way to deploy, and the one
@@ -40,7 +43,7 @@ concurrency:
 
 jobs:
   gate:
-    runs-on: ['self-hosted', 'linux', 'amd64']
+    runs-on: [lux-build-linux-amd64]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -68,7 +71,7 @@ jobs:
   image:
     needs: gate
     if: github.event_name != 'pull_request'
-    runs-on: ['self-hosted', 'linux', 'amd64']
+    runs-on: [lux-build-linux-amd64]
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
