@@ -40,7 +40,7 @@ concurrency:
 
 jobs:
   gate:
-    runs-on: lux-build-amd64
+    runs-on: ['self-hosted', 'linux', 'amd64']
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -56,15 +56,42 @@ jobs:
       # and a console that offers Lux ID and holds no credential.
       - run: pnpm test:e2e
 
-  # The one build lane the fleet has. It builds for the luxfi registry on the luxfi
-  # pools — labels never cross orgs, and a cross-org runs-on queues silently until
-  # it cancels at the 24h timeout.
+  # The build is INLINE, and that is a workaround with a reason and an owner.
+  #
+  # The fleet's shared lane is `hanzoai/.github/.github/workflows/docker-build.yml@main`,
+  # and GitHub refuses it: a dispatch answers HTTP 422 `failed to parse workflow:
+  # error parsing called workflow`, so every run dies in 0s with no log. It is not
+  # this repo — luxfi/blog's last runs failed the same way in June and hanzoai/iam's
+  # in August, which is why six iam releases were tagged and none built. Restore the
+  # `uses:` the moment that file parses again; this is nine lines of duplication
+  # held against a broken dependency, not a second build lane by choice.
   image:
     needs: gate
     if: github.event_name != 'pull_request'
-    uses: hanzoai/.github/.github/workflows/docker-build.yml@main
-    with:
-      image: ghcr.io/luxfi/tel
-      runner-amd64: '["self-hosted","linux","amd64"]'
-      runner-deploy: '["self-hosted","linux","amd64"]'
-    secrets: inherit
+    runs-on: ['self-hosted', 'linux', 'amd64']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # Semver from a v* tag, an immutable sha- tag from a branch push, and NEVER a
+      # floating one — nothing that reaches a cluster may move under its own name.
+      - id: tags
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            echo "tags=ghcr.io/luxfi/tel:${GITHUB_REF_NAME#v},ghcr.io/luxfi/tel:${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tags=ghcr.io/luxfi/tel:sha-$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
