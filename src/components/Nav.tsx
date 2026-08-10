@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { ChevronDown, Menu, X } from 'lucide-react'
 
@@ -179,6 +180,10 @@ export function Nav() {
     to scroll and no room for a second level of tapping. */
 export function MobileNav() {
   const [open, setOpen] = useState(false)
+  // Portals need a DOM, and this bundle is a static export that renders on the
+  // server first.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   // The panel is fixed and full-height, so the page behind it must not scroll
   // underneath — that is the tell of a menu bolted on rather than built in.
@@ -201,8 +206,17 @@ export function MobileNav() {
         <Menu className='h-5 w-5' aria-hidden='true' />
       </button>
 
-      {open ? (
-        <div className='fixed inset-0 z-[60] flex flex-col bg-black'>
+      {/* PORTALLED TO document.body, and it has to be.
+
+          The header sets `backdrop-blur`, and backdrop-filter makes an element a
+          CONTAINING BLOCK for fixed-position descendants. So `fixed inset-0`
+          resolved against the header's own 44px box instead of the viewport: the
+          panel was 44px tall, the menu overflowed invisibly, and the page showed
+          through everything below the first line. It looked like a background that
+          would not paint — the background was fine, the box was 44px. */}
+      {open && mounted
+        ? createPortal(
+            <div className='fixed inset-0 z-[60] flex flex-col bg-black'>
           <div className='flex h-[57px] shrink-0 items-center justify-between border-b border-white/10 px-4'>
             <span className='text-lg'>
               <span className='font-heading font-bold tracking-tight'>LUX</span>
@@ -248,9 +262,11 @@ export function MobileNav() {
                 ))}
               </div>
             ))}
-          </nav>
-        </div>
-      ) : null}
+              </nav>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   )
 }
