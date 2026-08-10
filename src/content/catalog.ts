@@ -22,8 +22,6 @@ export interface Primitive {
   readonly detail: string
   /** What an engineer actually gets. Specifics, not adjectives. */
   readonly facts: readonly string[]
-  /** The endpoint or interface it is reached through. */
-  readonly api?: string
 }
 
 export interface Pillar {
@@ -53,7 +51,6 @@ export const PILLARS: readonly Pillar[] = [
           'Terminals ship configured — a site comes up without a truck roll or a network engineer',
           'Traffic joins the private backbone at the ground station — it does not transit the public internet to reach your cloud',
         ],
-        api: 'POST /v1/orbit/terminals',
       },
       {
         slug: 'direct-to-cell',
@@ -179,7 +176,6 @@ export const PILLARS: readonly Pillar[] = [
           'Industrial form factors including embedded MFF2 for sealed hardware',
           'Per-device policy, kill switch and usage alarms through the API',
         ],
-        api: 'POST /v1/sims',
       },
       {
         slug: 'esim',
@@ -193,7 +189,6 @@ export const PILLARS: readonly Pillar[] = [
           'Profiles swap network without swapping hardware',
           'Bulk issuance by API for a production line',
         ],
-        api: 'POST /v1/esim/profiles',
       },
       {
         slug: 'mobile-voice',
@@ -240,7 +235,6 @@ export const PILLARS: readonly Pillar[] = [
           'Regulatory address requirements surfaced in the API before purchase, not after',
           'Porting managed end to end with status you can poll',
         ],
-        api: 'GET /v1/numbers/available',
       },
       {
         slug: 'voice',
@@ -254,7 +248,6 @@ export const PILLARS: readonly Pillar[] = [
           'Call control over webhooks or a persistent socket',
           'Recording and live transcription as a call flag, not a second product',
         ],
-        api: 'POST /v1/calls',
       },
       {
         slug: 'sip',
@@ -281,7 +274,6 @@ export const PILLARS: readonly Pillar[] = [
           'Delivery receipts from the carrier, not inferred from a queue',
           'Rich messaging on capable handsets with automatic fallback to SMS',
         ],
-        api: 'POST /v1/messages',
       },
       {
         slug: 'webrtc',
@@ -329,7 +321,6 @@ export const PILLARS: readonly Pillar[] = [
           'Automatic fallback when a channel is blocked or undeliverable',
           'Attempt limits and expiry enforced server-side',
         ],
-        api: 'POST /v1/verify',
       },
       {
         slug: 'silent-verification',
@@ -356,7 +347,6 @@ export const PILLARS: readonly Pillar[] = [
           'Disposable and virtual number detection',
           'Risk signals derived from network behaviour, not from a static list',
         ],
-        api: 'GET /v1/lookup/{number}',
       },
       {
         slug: 'branded-calling',
@@ -404,7 +394,6 @@ export const PILLARS: readonly Pillar[] = [
           'Barge-in and turn detection handled in the media path',
           'Escalation to a human on the same call, with context carried across',
         ],
-        api: 'POST /v1/agents',
       },
       {
         slug: 'transcription',
@@ -444,7 +433,6 @@ export const PILLARS: readonly Pillar[] = [
           'GPUs co-located with the voice edge, in-region',
           'Per-region pinning for data residency commitments',
         ],
-        api: 'POST /v1/chat/completions',
       },
       {
         slug: 'embeddings',

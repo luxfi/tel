@@ -10,13 +10,13 @@ export const COMPANY = {
   legalName: 'Lux Industries Inc',
   brand: 'Lux',
   site: 'lux.tel',
-  tagline: 'Communications infrastructure, owned end to end.',
+  tagline: 'Voice, messaging and connectivity as one service.',
   /**
    * The positioning, in one paragraph, for a reader who will decide in ten seconds
    * whether to keep reading.
    */
   lede:
-    'Lux owns the layers most providers rent: the fibre, the interconnect, the spectrum, the orbital capacity and the compute at the edge. A call, a message, a SIM and a satellite terminal are provisioned from one API, billed on one invoice and answered by one support desk — because underneath they are one network.',
+    'Lux delivers voice, messaging, numbering, wireless and satellite connectivity as one service. A call, a message, a SIM and a satellite terminal are provisioned from one API, billed on one invoice and answered by one support desk — so the thing you integrate against is a network, not a procurement exercise.',
   contact: {
     /* One address. The domain's MX is Google Workspace and hi@ is what it
        receives on; a page full of role addresses that bounce is worse than one
@@ -75,16 +75,16 @@ export const STACK: readonly Layer[] = [
   {
     n: '01',
     name: 'Fibre and interconnect',
-    claim: 'You cannot tune what you rent.',
+    claim: 'One integration instead of several.',
     detail:
-      'Lux runs its own backbone and interconnects directly with the major networks and carriers. Routing is a decision we make rather than a path we are given, which is the whole reason the layers above are predictable.',
+      'Traffic reaches the networks it has to reach through carrier-grade interconnect. What Lux adds is a single place to configure it, so the path a call takes is something you can reason about instead of something you discover.',
   },
   {
     n: '02',
     name: 'Orbit',
     claim: 'Coverage where the ground network ends.',
     detail:
-      'Low-earth-orbit capacity terminates into the same backbone at the ground station. An orbital site is a site on the Lux network — not a third-party link we resell and cannot see inside.',
+      'Low-earth-orbit capacity for sites past the end of the line, provisioned and supported alongside everything else you buy from us rather than as a separate contract with a separate desk.',
   },
   {
     n: '03',
@@ -96,14 +96,14 @@ export const STACK: readonly Layer[] = [
   {
     n: '04',
     name: 'Carrier services',
-    claim: 'Voice and messaging without a wholesale middle.',
+    claim: 'Voice and messaging under one contract.',
     detail:
-      'Numbers, voice, SIP and messaging are delivered on our own interconnect. When quality degrades, it is ours to fix — not a ticket we forward and wait on.',
+      'Numbers, voice, SIP and messaging arrive through one relationship rather than several. When something degrades, you raise it once and we carry it, which is the difference a customer actually feels.',
   },
   {
     n: '05',
     name: 'Edge compute',
-    claim: 'The model runs where the call lands.',
+    claim: 'Inference close to the call.',
     detail:
       'GPUs and application compute sit in the same facilities as the media. A voice agent’s round trip is a hop inside a building rather than a journey across a continent.',
   },
@@ -128,19 +128,19 @@ export interface Differentiator {
  */
 export const DIFFERENTIATORS: readonly Differentiator[] = [
   {
-    claim: 'We own the telephony stack',
+    claim: 'One relationship for the whole stack',
     detail:
-      'Numbers and voice ride our own interconnect. A quality problem is a change we make, not an escalation we file with a wholesaler.',
+      'Numbers, voice, messaging, wireless and satellite arrive on one contract, one invoice and one support path, instead of four vendors pointing at each other.',
   },
   {
-    claim: 'Terrestrial and orbital are one network',
+    claim: 'Terrestrial and orbital, one console',
     detail:
-      'Satellite capacity joins the backbone at the ground station. A remote site appears in the same console, under the same routing policy, as a fibre site.',
+      'A remote site is provisioned, monitored and supported in the same place as a wired one, rather than in a second portal with a second login.',
   },
   {
-    claim: 'Compute sits with the media',
+    claim: 'Inference sits near the call',
     detail:
-      'Inference runs in the facilities the calls are anchored in. That is a physical fact about latency, and it is not something an API wrapper can reproduce.',
+      'Models are served close to where calls are handled, so an agent answers inside a human turn rather than after one.',
   },
   {
     claim: 'Compliance runs before execution',
@@ -148,8 +148,8 @@ export const DIFFERENTIATORS: readonly Differentiator[] = [
       'Campaign registration, numbering eligibility and jurisdiction checks are enforced when a request is made — so a non-compliant send fails immediately instead of being rejected downstream at cost.',
   },
   {
-    claim: 'Data stays in the region it was made in',
+    claim: 'Data stays in its region',
     detail:
-      'Media anchoring, storage and inference are pinned per region, and the pinning is verifiable rather than promised.',
+      'Media, storage and inference are pinned per region, and which region is visible to you rather than asserted.',
   },
 ]

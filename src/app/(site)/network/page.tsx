@@ -77,11 +77,10 @@ export default function Network() {
         </div>
         <div className="wrap relative pt-20 pb-24">
           <div className="eyebrow">Our network</div>
-          <h1 className="display mt-5 max-w-[15ch]">Ground and orbit, on one backbone.</h1>
+          <h1 className="display mt-5 max-w-[15ch]">Ground and orbit, one account.</h1>
           <p className="lede mt-6">
-            Most providers sell satellite as a separate link with its own portal, its own contract and its own
-            support queue. On Lux it is a layer of the same network — provisioned by the same API, routed by the
-            same policy, and answered by the same people.
+            Satellite is usually a separate link with its own portal, its own contract and its own support queue. Here it
+            is provisioned from the same API as everything else you buy from us, and answered by the same people.
           </p>
         </div>
       </section>
@@ -152,7 +151,7 @@ export default function Network() {
       <section className="band">
         <div className="wrap">
           <div className="eyebrow">The layers</div>
-          <h2 className="h2 mt-4 max-w-[22ch]">Owned from the fibre to the GPU.</h2>
+          <h2 className="h2 mt-4 max-w-[22ch]">One integration, end to end.</h2>
           <ol className="mt-10 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 md:grid-cols-3">
             {STACK.map((l) => (
               <li key={l.n} className="bg-neutral-900/50 p-7">

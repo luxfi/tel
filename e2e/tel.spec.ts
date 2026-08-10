@@ -13,7 +13,7 @@ const gotoClean = async (page: Page) => {
 test('renders the page', async ({ page }) => {
   const errors = await gotoClean(page)
   await expect(page).toHaveTitle(/Lux Tel/)
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('one network')
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('satellite connectivity')
   // The catalog reaches the page. Not a copy string — the pillars are data, and
   // this is what fails if the projection breaks rather than the wording changes.
   for (const pillar of ['Orbit', 'Communications', 'Wireless', 'Intelligence']) {
@@ -82,4 +82,46 @@ test('the console signs in through lux.id and holds no credential', async ({ pag
   await page.goto('/console')
   await expect(page.getByRole('button', { name: /Sign in with Lux ID/i })).toBeVisible()
   expect(await page.locator('input[type=password]').count()).toBe(0)
+})
+
+/*
+  WE DO NOT CLAIM TO OWN INFRASTRUCTURE. Lux delivers voice, messaging, numbering,
+  wireless and satellite as one service; it does not own the fibre, the
+  interconnect, the spectrum or the constellation, and a site that says otherwise
+  is making a claim a customer can check and we cannot support.
+
+  This is a gate rather than a note because the claims got written twice — the
+  first draft was built on "we own the layers most providers rent", and it reads
+  so naturally that it survives a careful edit. Checked against the rendered DOM,
+  which is where a claim that slipped back into a heading would live.
+*/
+test('the site claims no ownership of infrastructure', async ({ page }) => {
+  const claims = [
+    /\bwe own\b/i,
+    /\bowns? the (fibre|fiber|network|backbone|interconnect|spectrum|stack|telephony)/i,
+    /\bour own (fibre|fiber|backbone|interconnect|network|constellation)/i,
+    /owned end to end/i,
+    /\bwe operate our own\b/i,
+  ]
+  for (const path of ['/', '/network', '/products', '/solutions', '/pricing', '/company']) {
+    await page.goto(path)
+    const text = (await page.locator('body').innerText()).replace(/\s+/g, ' ')
+    for (const claim of claims) {
+      expect(text, `${claim} appears on ${path}`).not.toMatch(claim)
+    }
+  }
+})
+
+/*
+  Endpoints are documentation, not product copy. They were printed on every
+  primitive's page and again in the console, so one rename meant editing a
+  marketing site — and a reader comparing two spellings of the same route has
+  found a bug rather than an API.
+*/
+test('no endpoint is printed as product copy', async ({ page }) => {
+  for (const path of ['/products/voice', '/products/numbers', '/products/orbital-broadband', '/console']) {
+    await page.goto(path)
+    const text = await page.locator('body').innerText()
+    expect(text, `an endpoint is printed on ${path}`).not.toMatch(/(GET|POST|PUT|DELETE)\s+\/v1\//)
+  }
 })
