@@ -176,3 +176,38 @@ test('the globe draws the Earth and keeps propagating', async ({ page }) => {
   const second = await sample()
   expect(second.hash, 'the globe is a still image').not.toBe(first.hash)
 })
+
+/*
+  The phone menu must COVER the page, and the way it failed is invisible to every
+  other check: the header sets `backdrop-blur`, backdrop-filter makes an element a
+  containing block for fixed-position descendants, and so `fixed inset-0` resolved
+  against the header's own 44px box rather than the viewport. The panel rendered,
+  its background painted, all 44 links existed — inside a 44px window. It read as a
+  background that would not paint.
+
+  So this asserts the panel's HEIGHT against the viewport, not its existence.
+*/
+test('the phone menu covers the viewport and reaches every section', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Open menu' }).click()
+
+  const panel = page.locator('div.fixed.inset-0').first()
+  await expect(panel).toBeVisible()
+  const { panelH, viewportH } = await panel.evaluate((el) => ({
+    panelH: el.getBoundingClientRect().height,
+    viewportH: window.innerHeight,
+  }))
+  expect(panelH, 'the menu panel is not full height').toBeGreaterThanOrEqual(viewportH - 1)
+
+  // Every top-level section is reachable, which is the whole point of having it.
+  for (const label of ['Products', 'Solutions', 'Network', 'Company']) {
+    await expect(panel.getByRole('link', { name: label, exact: true })).toBeVisible()
+  }
+  // The page behind must not scroll under it.
+  expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).toBe('hidden')
+
+  await page.getByRole('button', { name: 'Close menu' }).click()
+  await expect(panel).toHaveCount(0)
+  expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe('hidden')
+})
