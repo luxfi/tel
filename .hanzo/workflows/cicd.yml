@@ -97,3 +97,26 @@ jobs:
           # both leave the live site exactly as it was, and a step that only checked
           # for a 2xx would report a deploy that never happened.
           [ "$code" = "200" ] || { echo "::error::deploy answered $code"; exit 1; }
+
+      # Deploying puts the bytes on the sites edge at tel.hanzo.app; BINDING is what
+      # makes lux.tel serve them. Without it the deploy is green and the domain
+      # still shows whatever it showed before, which is the failure mode this whole
+      # exercise kept hitting in other forms.
+      #
+      # Idempotent: an already-verified host comes back live, an unverified one
+      # comes back pending WITH the DNS records to publish. Non-fatal, because a
+      # domain that is not yet pointed at us must not fail a deploy that succeeded —
+      # but it PRINTS the answer, so the records are in the log rather than
+      # discovered later by wondering why the site did not change.
+      - name: Bind lux.tel to this site
+        env:
+          TOKEN: ${{ secrets.LUX_DEPLOY_TOKEN }}
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          curl -sS -X POST 'https://api.lux.cloud/v1/projects/tel/domains' \
+            -H "Authorization: Bearer $TOKEN" \
+            -H 'Content-Type: application/json' \
+            -d '{"domains":["lux.tel","www.lux.tel","console.lux.tel"]}' | tee bound.json
+          echo
+          echo "If a host reads 'pending', publish the records above and it goes live on the next verify."

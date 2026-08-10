@@ -133,18 +133,41 @@ artifact path (`/v1/projects/:slug/deploy`) sniffs the archive and preserves byt
 the live site exactly as it was; a step that only checks for a 2xx reports a deploy
 that never happened.
 
-### What is wired, and what it waits on
+### Deploying puts bytes on the edge; BINDING is what makes lux.tel serve them
 
-The project exists (`proj_Y8qwGFfkLIbuxWE1o7yh4g`, org `lux`, bucket
-`hanzo-sites`) and the whole lane is proven by hand: token, create, upload — the
-artifact reached the metering gate, which is past every step that could be wrong
-about the file. It answers **402 `insufficient_balance`**, so the `lux` org needs
-credit before the first deploy lands. That is a billing decision, not a defect: the
-prepaid gate is doing exactly what it exists to do.
+The deploy lands the release at `tel.hanzo.app` — `<slug>.<CLOUD_SITES_APEX>`, the
+one-label edge the sites plane serves from object storage. `lux.tel` only shows it
+once the domain is BOUND to the project, so the workflow binds all three hosts
+after every deploy. Without that step a deploy is green and the domain keeps
+showing whatever it showed before, which is the exact failure this repo kept
+hitting in other forms.
 
-`LUX_DEPLOY_TOKEN` is the one secret the workflow reads, and it is not set. Mint it
-as an `sk-` key for the `lux` org (`POST /v1/keys {"type":"secret"}`) and store it
-as a forge Actions secret on luxfi/tel or the luxfi org.
+The bind is idempotent and non-fatal: a verified host comes back live, an
+unverified one comes back `pending` **with the DNS records to publish**, printed
+into the log rather than discovered later by wondering why the site did not change.
+
+`lux.tel` currently resolves to Cloudflare (172.67.188.143 / 104.21.19.189) and
+serves the OLD single-page site. The cutover is a CNAME to `tel.hanzo.app`, which
+is itself behind Cloudflare — so it is a record change in the same zone, not a
+migration.
+
+### What it waits on
+
+The whole lane is proven by hand: token, project create, artifact upload. The
+project exists (`proj_Y8qwGFfkLIbuxWE1o7yh4g`, org `lux`, bucket `hanzo-sites`)
+and the upload reaches the metering gate, which is past every step that could be
+wrong about the file. It answers **402 `insufficient_balance`** — the `lux` org
+has `availableCents 0`.
+
+Funding it through the API is itself blocked: `POST /v1/admin/customers/lux/credit`
+with a SuperAdmin token answers **200 carrying**
+`{"status":"error","msg":"grant failed: commerce not configured"}`. So two things
+are open, and neither is in this repo.
+
+`LUX_DEPLOY_TOKEN` is the one secret the workflow reads and it is not set. It must
+be an `sk-` key scoped to the **lux** org — a key minted with a lux bearer against
+`api.hanzo.ai` came back scoped elsewhere (it listed `insights`, not `tel`), and
+`api.lux.cloud` does not serve `/v1/keys` at all.
 
 ## Contact## Contact
 
