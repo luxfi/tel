@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { complete } from '../../../console/auth'
+import { complete } from '@/console/auth'
 
 /*
   The return leg. It does one thing — spend the code — and then leaves, because a

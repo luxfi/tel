@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { PILLARS, STATUS_LABEL } from '../../content/catalog'
+import { PILLARS, STATUS_LABEL } from '@/content/catalog'
 
 export const metadata: Metadata = {
   title: 'Products',

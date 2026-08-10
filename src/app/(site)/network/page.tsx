@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Orbit } from '../../components/Orbit'
-import { COMPANY, STACK } from '../../content/company'
-import { PILLARS } from '../../content/catalog'
+import { Orbit } from '@/components/Orbit'
+import { COMPANY, STACK } from '@/content/company'
+import { PILLARS } from '@/content/catalog'
 
 export const metadata: Metadata = {
   title: 'Our network',

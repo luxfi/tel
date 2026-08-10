@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { COMPANY } from '../../content/company'
+import { COMPANY } from '@/content/company'
 
 export const metadata: Metadata = {
   title: 'Pricing',

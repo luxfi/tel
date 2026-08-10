@@ -20,8 +20,16 @@ export default defineConfig({
   webServer: process.env.BASE_URL
     ? undefined
     : {
-        command: 'python3 -m http.server 3000 --directory out',
+        // `python3 -m http.server` cannot serve this export: `next export` writes
+        // console.html AND a console/ directory beside it, and python answers
+        // /console with a 301 to /console/ and then a DIRECTORY LISTING. Eight of
+        // ten pages were unreachable and the console rendered as a file index.
+        // e2e/serve.mjs resolves the way the real static server does.
+        command: 'node e2e/serve.mjs',
         url: 'http://localhost:3000',
-        reuseExistingServer: true,
+        // FALSE, deliberately: `true` reuses whatever already holds :3000, which
+        // twice has been a stale server from an earlier run answering with the
+        // listing above — a failure nobody reads as "wrong server".
+        reuseExistingServer: false,
       },
 })

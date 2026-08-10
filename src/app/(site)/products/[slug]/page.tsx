@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { PRIMITIVES, STATUS_LABEL, primitive } from '../../../content/catalog'
-import { COMPANY } from '../../../content/company'
+import { PRIMITIVES, STATUS_LABEL, primitive } from '@/content/catalog'
+import { COMPANY } from '@/content/company'
 
 export function generateStaticParams() {
   return PRIMITIVES.map((p) => ({ slug: p.slug }))
