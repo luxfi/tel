@@ -125,3 +125,45 @@ test('no endpoint is printed as product copy', async ({ page }) => {
     expect(text, `an endpoint is printed on ${path}`).not.toMatch(/(GET|POST|PUT|DELETE)\s+\/v1\//)
   }
 })
+
+/*
+  The globe is the hero's whole argument, and both ways it can fail are silent: a
+  canvas that threw during setup is simply blank, and a canvas drawn from a fixed
+  phase looks identical to one propagated from the clock in any single screenshot.
+  So this asserts it drew SOMETHING, and that what it drew MOVES.
+*/
+test('the globe draws the Earth and keeps propagating', async ({ page }) => {
+  await page.goto('/')
+  const canvas = page.locator('canvas').first()
+  await expect(canvas).toBeVisible()
+
+  const sample = () =>
+    canvas.evaluate((el: HTMLCanvasElement) => {
+      const ctx = el.getContext('2d')
+      if (!ctx) return { lit: 0, hash: 0 }
+      const d = ctx.getImageData(0, 0, el.width, el.height).data
+      let lit = 0
+      let hash = 0
+      // Every 41st pixel: enough to see the picture, cheap enough to run twice,
+      // and a stride coprime with the width so it does not sample one column.
+      for (let i = 0; i < d.length; i += 4 * 41) {
+        if (d[i + 3] > 24) {
+          lit++
+          hash = (hash * 31 + i * d[i + 3]) % 2147483647
+        }
+      }
+      return { lit, hash }
+    })
+
+  // A blank canvas samples 0; the globe samples ~330 at the default viewport. The
+  // bar sits between those rather than near the measurement, because the count
+  // scales with viewport and this test is asking "did it draw", not "how much".
+  const first = await sample()
+  expect(first.lit, 'the globe rendered nothing').toBeGreaterThan(100)
+
+  // One second is ~6 km of orbital travel and about 0.004° of Earth rotation —
+  // small, but every satellite and every link endpoint moves, so the frame differs.
+  await page.waitForTimeout(1000)
+  const second = await sample()
+  expect(second.hash, 'the globe is a still image').not.toBe(first.hash)
+})

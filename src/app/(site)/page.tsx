@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
-import { Orbit } from '@/components/Orbit'
+import { Globe } from '@/components/Globe'
 import { PILLARS, STATUS_LABEL } from '@/content/catalog'
 import { CAPABILITIES, DIFFERENTIATORS, STACK } from '@/content/company'
 import { CONTACT_EMAIL, contactHref } from '@/site'
@@ -27,34 +27,40 @@ export default function Page() {
 
   return (
     <>
-      {/* The constellation is computed, not drawn — see components/Orbit. It sits
-          behind the hero rather than beside it because it is the subject of the
-          sentence, not an illustration of it. */}
-      <section className='relative overflow-hidden py-20 lg:py-28'>
-        <div className='pointer-events-none absolute inset-0 opacity-70' aria-hidden='true'>
-          <Orbit height={680} />
-        </div>
-        <div className='wrap relative z-10'>
-          {/* The original heading, kept deliberately. It says what Lux sells in the
-              reader's own words — voice, messaging, satellite — where the version
-              that replaced it ("connectivity on one network") named the
-              architecture instead, which is our concern and not theirs. */}
-          <p className='eyebrow'>Telecommunications &amp; satellite</p>
-          <h1 className='display mt-4 max-w-[18ch]'>Voice, messaging, and satellite connectivity.</h1>
-          <p className='lede mt-6'>
-            Lux runs telecommunications infrastructure — programmable voice, messaging, and phone numbers — and
-            provides satellite internet where wire and tower don&rsquo;t reach.
-          </p>
-          <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
-            <Link href='/network' className='btn btn-solid'>
-              See the network
-              <ArrowRight className='h-4 w-4' aria-hidden='true' />
-            </Link>
-            <Link href='/products' className='btn btn-ghost'>
-              What we do
-            </Link>
+      {/* The constellation is propagated from the clock, not animated — see
+          components/Globe. It gets a column of its own rather than a wash behind
+          the copy: at 70% opacity under text the mesh was unreadable, and a picture
+          you cannot read is decoration no matter how honestly it was computed. */}
+      <section className='overflow-hidden py-20 lg:py-24'>
+        <div className='wrap grid items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-10'>
+          <div>
+            {/* The original heading, kept deliberately. It says what Lux sells in the
+                reader's own words — voice, messaging, satellite — where the version
+                that replaced it ("connectivity on one network") named the
+                architecture instead, which is our concern and not theirs. */}
+            <p className='eyebrow'>Telecommunications &amp; satellite</p>
+            <h1 className='display mt-4 max-w-[18ch]'>Voice, messaging, and satellite connectivity.</h1>
+            <p className='lede mt-6'>
+              Lux runs telecommunications infrastructure — programmable voice, messaging, and phone numbers — and
+              provides satellite internet where wire and tower don&rsquo;t reach.
+            </p>
+            <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
+              <Link href='/network' className='btn btn-solid'>
+                See the network
+                <ArrowRight className='h-4 w-4' aria-hidden='true' />
+              </Link>
+              <Link href='/products' className='btn btn-ghost'>
+                What we do
+              </Link>
+            </div>
           </div>
 
+          <div className='-mx-6 sm:mx-0'>
+            <Globe height={560} />
+          </div>
+        </div>
+
+        <div className='wrap'>
           <dl className='mt-16 grid gap-x-8 gap-y-8 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4'>
             {CAPABILITIES.map((c) => (
               <div key={c.headline}>

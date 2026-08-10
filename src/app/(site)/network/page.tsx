@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Orbit } from '@/components/Orbit'
+import { Globe } from '@/components/Globe'
 import { COMPANY, STACK } from '@/content/company'
 import { PILLARS } from '@/content/catalog'
 
@@ -73,7 +73,7 @@ export default function Network() {
     <>
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="pointer-events-none absolute inset-0 opacity-80">
-          <Orbit height={640} />
+          <Globe height={640} />
         </div>
         <div className="wrap relative pt-20 pb-24">
           <div className="eyebrow">Our network</div>
