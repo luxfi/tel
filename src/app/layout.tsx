@@ -25,25 +25,29 @@ const Header: React.FC = () => (
   <header className='sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur'>
     <nav className='mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8'>
       <a
-        href='#top'
+        href='/'
         className='-ml-2 inline-flex min-h-[44px] items-center rounded-sm px-2 text-lg'
         aria-label='Lux Tel, home'
       >
         <Wordmark />
       </a>
       <div className='flex items-center gap-1 sm:gap-2'>
-        <a
-          href='#platform'
-          className='hidden min-h-[44px] items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white sm:inline-flex'
-        >
-          Platform
-        </a>
-        <a
-          href='#satellite'
-          className='hidden min-h-[44px] items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white sm:inline-flex'
-        >
-          Satellite
-        </a>
+        {/* The nav is a list, so adding a page is one entry rather than one entry
+            and a class string. */}
+        {[
+          ['/network', 'Network'],
+          ['/products', 'Products'],
+          ['/solutions', 'Solutions'],
+          ['/company', 'Company'],
+        ].map(([href, label]) => (
+          <a
+            key={href}
+            href={href}
+            className='hidden min-h-[44px] items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white sm:inline-flex'
+          >
+            {label}
+          </a>
+        ))}
         <a
           href={contactHref('Lux Tel')}
           className='inline-flex min-h-[44px] items-center rounded-md bg-white px-4 text-sm font-medium text-black transition-colors hover:bg-white/90'
@@ -72,10 +76,16 @@ const Footer: React.FC = () => (
           Contact
         </a>
         <a
-          href='/assets/standard-docs/LUX-Privacy-Policy.pdf'
+          href='/legal/privacy'
           className='inline-flex min-h-[44px] items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
         >
           Privacy
+        </a>
+        <a
+          href='/legal'
+          className='inline-flex min-h-[44px] items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
+        >
+          Legal
         </a>
         <a
           href='https://lux.network'

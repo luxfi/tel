@@ -1,111 +1,132 @@
 import React from 'react'
-import { Antenna, ArrowRight, Hash, MessageSquare, Phone, SatelliteDish } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
+import { Orbit } from '../components/Orbit'
+import { PILLARS, STATUS_LABEL } from '../content/catalog'
+import { CAPABILITIES, DIFFERENTIATORS, STACK } from '../content/company'
 import { CONTACT_EMAIL, contactHref, partners } from '../site'
-
-const Eyebrow: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <p className='mb-4 text-[10px] font-semibold uppercase tracking-wider text-white/40'>{children}</p>
-)
-
-const Card: React.FC<{
-  icon: React.ElementType
-  title: string
-  children: React.ReactNode
-}> = ({ icon: Icon, title, children }) => (
-  <div className='rounded-xl border border-neutral-800 bg-neutral-900/50 p-6'>
-    <Icon className='mb-3 h-6 w-6 text-white/80' aria-hidden='true' />
-    <h3 className='mb-2 font-semibold'>{title}</h3>
-    <p className='text-sm leading-relaxed text-white/60'>{children}</p>
-  </div>
-)
 
 export default function Page() {
   return (
     <>
-      <section className='relative py-20 lg:py-32'>
-        <div className='pointer-events-none absolute inset-0 bg-gradient-to-b from-white/10 to-transparent' aria-hidden='true' />
-        <div className='relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-          <div className='mx-auto max-w-3xl lg:text-center'>
-            <Eyebrow>Telecommunications &amp; satellite</Eyebrow>
-            <h1 className='font-heading text-[26px] font-bold leading-[1.15] text-balance sm:text-4xl lg:text-5xl'>
-              Voice, messaging, and satellite connectivity.
-            </h1>
-            <p className='mt-6 text-lg leading-relaxed text-white/60 sm:text-xl'>
-              Lux runs telecommunications infrastructure — programmable voice, messaging, and phone
-              numbers — and provides satellite internet where wire and tower don&rsquo;t reach.
-            </p>
-            <div className='mt-8 flex flex-col gap-3 sm:flex-row lg:justify-center'>
-              <a
-                href={contactHref('Lux Tel')}
-                className='inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-white px-6 text-sm font-medium text-black transition-colors hover:bg-white/90'
-              >
-                Talk to us
-                <ArrowRight className='h-4 w-4' aria-hidden='true' />
-              </a>
-              <a
-                href='#platform'
-                className='inline-flex min-h-[44px] items-center justify-center rounded-md border border-white/20 px-6 text-sm font-medium transition-colors hover:border-white/40'
-              >
-                What we do
-              </a>
-            </div>
+      {/* The constellation is computed, not drawn — see components/Orbit. It sits
+          behind the hero rather than beside it because it is the subject of the
+          sentence, not an illustration of it. */}
+      <section className='relative overflow-hidden py-20 lg:py-28'>
+        <div className='pointer-events-none absolute inset-0 opacity-70' aria-hidden='true'>
+          <Orbit height={680} />
+        </div>
+        <div className='wrap relative z-10'>
+          <p className='eyebrow'>Lux Industries Inc</p>
+          <h1 className='display mt-4 max-w-[18ch]'>Voice, messaging and connectivity on one network.</h1>
+          <p className='lede mt-6'>
+            Lux runs telecommunications infrastructure — programmable voice, messaging and phone numbers — with
+            wireless and satellite connectivity where wire and tower do not reach. One API, one bill, one desk.
+          </p>
+          <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
+            <Link href='/network' className='btn btn-solid'>
+              See the network
+              <ArrowRight className='h-4 w-4' aria-hidden='true' />
+            </Link>
+            <Link href='/products' className='btn btn-ghost'>
+              What we do
+            </Link>
+          </div>
+
+          <dl className='mt-16 grid gap-x-8 gap-y-8 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4'>
+            {CAPABILITIES.map((c) => (
+              <div key={c.headline}>
+                <dt className='h3'>{c.headline}</dt>
+                <dd className='mt-2 text-sm leading-relaxed text-white/60'>{c.note}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      <section className='band'>
+        <div className='wrap'>
+          <p className='eyebrow'>The stack</p>
+          <h2 className='h2 mt-4 max-w-[22ch]'>Six layers, owned rather than rented.</h2>
+          <p className='lede mt-5'>
+            The parts a provider rents are the parts it cannot tune. Lux runs its own, from the fibre to the compute
+            sitting beside the media.
+          </p>
+          <ol className='mt-10 divide-y divide-white/10 border-y border-white/10'>
+            {STACK.map((l) => (
+              <li key={l.n} className='grid gap-3 py-7 md:grid-cols-[56px_240px_1fr] md:gap-8'>
+                <div className='eyebrow pt-1'>{l.n}</div>
+                <div>
+                  <div className='h3'>{l.name}</div>
+                  <div className='mt-1 text-sm text-white/40'>{l.claim}</div>
+                </div>
+                <p className='text-sm leading-relaxed text-white/60'>{l.detail}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className='band'>
+        <div className='wrap'>
+          <p className='eyebrow'>Primitives</p>
+          <h2 className='h2 mt-4 max-w-[24ch]'>Everything provisions from one API.</h2>
+          <p className='lede mt-5'>
+            A number, a SIM, a terminal, a trunk and an agent are the same kind of object: declared, versioned and
+            billed together.
+          </p>
+          <div className='mt-10 space-y-12'>
+            {PILLARS.map((pillar) => (
+              <div key={pillar.slug} id={pillar.slug} className='scroll-mt-20'>
+                <div className='flex flex-wrap items-baseline justify-between gap-3 border-b border-white/10 pb-3'>
+                  <h3 className='font-heading text-lg font-bold'>{pillar.name}</h3>
+                  <Link href={`/products#${pillar.slug}`} className='inline-flex min-h-[44px] items-center text-sm text-white/40 transition-colors hover:text-white'>
+                    All {pillar.primitives.length}
+                  </Link>
+                </div>
+                <p className='mt-4 max-w-3xl text-sm leading-relaxed text-white/60'>{pillar.summary}</p>
+                <div className='mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+                  {pillar.primitives.map((p) => (
+                    <Link key={p.slug} href={`/products/${p.slug}`} className='card'>
+                      <div className='flex items-center gap-2'>
+                        <span className={`dot dot-${p.status}`} aria-hidden='true' />
+                        <span className='h3'>{p.name}</span>
+                      </div>
+                      <p className='mt-2 text-sm leading-relaxed text-white/60'>{p.blurb}</p>
+                      {p.status !== 'live' ? (
+                        <p className='mt-3 text-[10px] font-semibold uppercase tracking-wider text-amber-300'>
+                          {STATUS_LABEL[p.status]}
+                        </p>
+                      ) : null}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section id='platform' className='border-t border-white/10 py-16 lg:py-20'>
-        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-          <div className='max-w-3xl'>
-            <Eyebrow>Telecom platform</Eyebrow>
-            <h2 className='font-heading text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl'>
-              Programmable voice and messaging
-            </h2>
-            <p className='mt-5 text-base leading-relaxed text-white/60 sm:text-lg'>
-              Calling and messaging your software drives directly. Carrier-grade infrastructure
-              underneath, an API on top.
-            </p>
-          </div>
-          <div className='mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-            <Card icon={Phone} title='Voice'>
-              Place and receive calls from your own code, and route them where they need to go.
-            </Card>
-            <Card icon={MessageSquare} title='Messaging'>
-              Send and receive text messages from your application.
-            </Card>
-            <Card icon={Hash} title='Phone numbers'>
-              Provision numbers and attach them to your voice and messaging flows.
-            </Card>
+      <section className='band'>
+        <div className='wrap'>
+          <p className='eyebrow'>Why it is different</p>
+          <h2 className='h2 mt-4 max-w-[26ch]'>Not assembled from other people’s networks.</h2>
+          <div className='mt-8 grid gap-4 md:grid-cols-2'>
+            {DIFFERENTIATORS.map((d) => (
+              <div key={d.claim} className='card'>
+                <div className='h3'>{d.claim}</div>
+                <p className='mt-2 text-sm leading-relaxed text-white/60'>{d.detail}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section id='satellite' className='border-t border-white/10 py-16 lg:py-20'>
-        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-          <div className='max-w-3xl'>
-            <Eyebrow>Satellite internet</Eyebrow>
-            <h2 className='font-heading text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl'>
-              Connectivity past the end of the line
-            </h2>
-            <p className='mt-5 text-base leading-relaxed text-white/60 sm:text-lg'>
-              Some sites will never be worth trenching to — remote operations, temporary sites, a
-              fixed line that needs a second path. Those get their link from orbit.
-            </p>
-          </div>
-          <div className='mt-10 grid gap-4 sm:grid-cols-2'>
-            <Card icon={SatelliteDish} title='Terminals and service'>
-              Lux supplies satellite internet equipment and the connectivity service that runs on it.
-            </Card>
-            <Card icon={Antenna} title='Starlink'>
-              Starlink hardware and service, distributed by Lux. Lux is an authorized Starlink
-              reseller.
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className='border-t border-white/10 py-16'>
-        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-          <Eyebrow>Partnerships</Eyebrow>
+      {/* Text only, and one entry per signed-off partnership — see site.ts. */}
+      <section className='band'>
+        <div className='wrap'>
+          <p className='eyebrow'>Partnerships</p>
           <dl className='flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:gap-10'>
             {partners.map(({ name, note }) => (
               <div key={name}>
@@ -117,17 +138,14 @@ export default function Page() {
         </div>
       </section>
 
-      <section className='border-t border-white/10 py-16'>
-        <div className='mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8'>
-          <h2 className='font-heading text-2xl font-bold leading-tight sm:text-3xl'>Talk to us</h2>
+      <section className='band'>
+        <div className='wrap max-w-3xl text-center'>
+          <h2 className='h2'>Talk to us</h2>
           <p className='mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/60'>
-            Tell us what you&rsquo;re connecting — an application that needs to make calls, a site
-            that needs a link — and we&rsquo;ll come back with specifics.
+            Tell us what you are connecting — an application that needs to make calls, a fleet that needs to stay
+            online, a site that needs a link — and we will come back with specifics.
           </p>
-          <a
-            href={contactHref('Lux Tel')}
-            className='mt-8 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-white px-6 text-sm font-medium text-black transition-colors hover:bg-white/90'
-          >
+          <a href={contactHref('Lux Tel')} className='btn btn-solid mt-8'>
             {CONTACT_EMAIL}
             <ArrowRight className='h-4 w-4' aria-hidden='true' />
           </a>
