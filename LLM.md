@@ -2,8 +2,12 @@
 
 **Org:** luxfi · **Ecosystem:** lux · **Origin:** https://github.com/luxfi/tel.git
 
-Lux Tel marketing site — lux.tel. Next.js 15 static export on a Cloudflare
-Worker. Sibling shape: `luxfi/industries`, `luxfi/partners`.
+Lux Tel — lux.tel. A Next.js 15 static export served by our own sites plane, plus
+a console at `console.lux.tel` that signs in through lux.id. Sibling shape:
+`luxfi/industries`, `luxfi/partners`.
+
+It used to run on a Cloudflare Worker. It does not any more, and nothing here
+should reach for wrangler.
 
 ## Content rules — read before editing copy
 
@@ -146,30 +150,50 @@ The bind is idempotent and non-fatal: a verified host comes back live, an
 unverified one comes back `pending` **with the DNS records to publish**, printed
 into the log rather than discovered later by wondering why the site did not change.
 
-`lux.tel` currently resolves to Cloudflare (172.67.188.143 / 104.21.19.189) and
-serves the OLD single-page site. The cutover is a CNAME to `tel.hanzo.app`, which
-is itself behind Cloudflare — so it is a record change in the same zone, not a
-migration.
+### The project's ORG is not in the request body — and three routes disagree on it
 
-### What it waits on
+`POST /v1/projects` takes the org from the CALLER's token. `GET /v1/projects` and
+`POST /v1/projects/:slug/deploy` take it from the **`X-Org-Id`** header. A create
+without that header lands the project in whatever org the token belongs to, and the
+deploy then answers `404 project not found` for a project that demonstrably exists.
 
-The whole lane is proven by hand: token, project create, artifact upload. The
-project exists (`proj_Y8qwGFfkLIbuxWE1o7yh4g`, org `lux`, bucket `hanzo-sites`)
-and the upload reaches the metering gate, which is past every step that could be
-wrong about the file. It answers **402 `insufficient_balance`** — the `lux` org
-has `availableCents 0`.
+This surfaced as three answers to the same question in one minute: create said
+`409 project slug already exists in this org`, list said `[]`, deploy said `404`.
+All three were telling the truth about DIFFERENT orgs. Send `X-Org-Id: lux` on
+every call — create included — and they agree.
 
-Funding it through the API is itself blocked: `POST /v1/admin/customers/lux/credit`
-with a SuperAdmin token answers **200 carrying**
-`{"status":"error","msg":"grant failed: commerce not configured"}`. So two things
-are open, and neither is in this repo.
+The live project is `proj_COjngPJawoyS-OpDqxQMEw`, org `lux`, bucket `hanzo-sites`,
+prefix `lux/tel`.
 
-`LUX_DEPLOY_TOKEN` is the one secret the workflow reads and it is not set. It must
-be an `sk-` key scoped to the **lux** org — a key minted with a lux bearer against
-`api.hanzo.ai` came back scoped elsewhere (it listed `insights`, not `tel`), and
-`api.lux.cloud` does not serve `/v1/keys` at all.
+### Binding a domain does NOT route it — that takes an Ingress
 
-## Contact## Contact
+The bind records the host in the projects app's own store. It does not create a
+k8s Ingress, so the origin terminates nothing for that name and TLS fails at SNI
+with `tlsv1 unrecognized name` — which reads like a certificate problem and is
+really a missing route. The three hosts are declared in
+`hanzo/universe → charts/app/values/hanzo/hanzo-domains.yaml`, each backing
+`cloud:8000`, exactly like `console.lux.cloud` beside them. cert-manager issues
+per-host certs over DNS-01 once the Ingress exists.
+
+### The zone was on `flexible` SSL, and the apex was owned by the Worker
+
+Two things had to change in Cloudflare, in this order:
+
+1. **SSL mode `flexible` → `full`.** Flexible makes Cloudflare talk plain HTTP to
+   the origin; the ingress answers with a redirect to HTTPS and the two loop.
+   Every working zone in the estate is `full`. Changing it first means there is no
+   window in which the origin is reached over HTTP.
+2. **Detach the Worker Custom Domain.** `lux.tel` and `www.lux.tel` were
+   `AAAA 100::` proxied — the discard address a Worker custom domain parks on.
+   Those records are **read-only** while the Worker holds them (`code 1043`); the
+   Worker domain has to be deleted at
+   `/accounts/:id/workers/domains/:id` before the A records can be written.
+
+All three hosts are now `A 129.212.164.5` proxied — the hanzo-k8s ingress LB.
+A newly created proxied record 522s for its first ~30 seconds; that is edge
+propagation, not an origin fault, and it clears on its own.
+
+## Contact
 
 `hi@lux.tel` — the domain's MX is Google Workspace. The site links to it as a
 `mailto:`; there is no form and no backend.
