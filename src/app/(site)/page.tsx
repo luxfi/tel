@@ -73,6 +73,39 @@ export default function Page() {
         </div>
       </section>
 
+      {/* The pain, in their words, before any claim of ours. A page that opens with
+          what we sell asks the reader to care first; this one names the thing they
+          already live with. */}
+      <section className='band'>
+        <div className='wrap'>
+          <p className='eyebrow'>Why people call us</p>
+          <h2 className='h2 mt-4 max-w-[26ch]'>
+            Connectivity arrives as five contracts and nobody who answers for all of it.
+          </h2>
+          <div className='mt-8 grid gap-8 md:grid-cols-3'>
+            {[
+              [
+                'The numbers are one company',
+                'The SIMs are another, the satellite terminal a third, and the model that answers the call has never seen your network.',
+              ],
+              [
+                'Nobody owns the fault',
+                'Audio breaks up and every vendor points at the next one. You run the investigation, on your time, while the customer waits.',
+              ],
+              [
+                'Five invoices, five renewals',
+                'Different terms, different meters, different desks. Nobody can tell you what a call actually costs end to end.',
+              ],
+            ].map(([t, d]) => (
+              <div key={t}>
+                <div className='h3'>{t}</div>
+                <p className='mt-2 text-sm leading-relaxed text-white/60'>{d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* The argument once, at full size — every other section here is a heading
           over a grid. */}
       <section className='band'>
@@ -193,6 +226,37 @@ export default function Page() {
         </div>
       </section>
 
+
+      {/* The close. Everything above is the argument; this is the part that removes
+          the reason to put it off, by saying plainly what happens after the email. */}
+      <section className='band'>
+        <div className='wrap'>
+          <p className='eyebrow'>What happens next</p>
+          <h2 className='h2 mt-4 max-w-[24ch]'>Three steps, and you are on the network.</h2>
+          <ol className='mt-10 divide-y divide-white/10 border-y border-white/10'>
+            {[
+              [
+                'Tell us what you are connecting',
+                'What it does, where it runs, and roughly how much of it. You get back what it takes and what it costs — an engineer\u2019s answer, not a brochure.',
+              ],
+              [
+                'Try it on a real number',
+                'A number, a SIM or a terminal on your own account, against the same API you would use in production. Nothing here is a sandbox that behaves differently later.',
+              ],
+              [
+                'Go live, and keep the same everything',
+                'Same key, same invoice, same desk. Adding a country, a terminal or a voice agent later is a call to the API, not a new contract.',
+              ],
+            ].map(([t, d], i) => (
+              <li key={t} className='grid gap-3 py-7 md:grid-cols-[56px_280px_1fr] md:gap-8'>
+                <div className='eyebrow tabular pt-1'>{String(i + 1).padStart(2, '0')}</div>
+                <div className='h3'>{t}</div>
+                <p className='text-sm leading-relaxed text-white/60'>{d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
       <section className='band'>
         <div className='wrap max-w-3xl text-center'>
