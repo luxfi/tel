@@ -412,10 +412,14 @@ for (const v of VIEWS) {
     await page.route(v.api, (r) => r.fulfill({ json: { data: [] } }))
     await page.addInitScript(() => localStorage.setItem('lux_tel_token', 'test'))
     await page.goto(v.path)
-    const body = await page.locator('main').innerText()
-    expect(body).not.toMatch(/no data|nothing here/i)
     // An empty state that names the next action, which is the only kind anyone acts on.
-    expect(body).toMatch(/yet\./)
+    //
+    // WAITED FOR, not snapshotted. The request this mocks resolves after load, so
+    // reading innerText once races the render — and under three views in parallel
+    // whichever one lost the race failed, a different one each run. A retrying
+    // assertion asks the same question without depending on who got there first.
+    await expect(page.locator('main')).toContainText(/yet\./)
+    expect(await page.locator('main').innerText()).not.toMatch(/no data|nothing here/i)
   })
 
   test(`${v.title}: an expired session offers a way back in`, async ({ page }) => {
