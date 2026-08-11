@@ -8,15 +8,8 @@ import { ChevronDown, Menu, X } from 'lucide-react'
 import { PILLARS } from '@/content/catalog'
 import { SOLUTIONS } from '@/content/solutions'
 
-/*
-  The header menu, PROJECTED from the same content the pages are built from. A menu
-  holding its own list of products is a menu that stops matching the catalogue, and
-  the mismatch is always found by someone trying to buy something.
-
-  It also carries the mobile navigation, which did not exist: below `sm` every link
-  was `hidden` and nothing replaced them, so a phone had a header with a wordmark,
-  a "Talk to us" button, and no way to reach any other page.
-*/
+/* The header menu, projected from content/ so it cannot drift from the catalogue.
+   Also the phone navigation, which did not exist before. */
 
 interface Item {
   readonly href: string
@@ -74,8 +67,7 @@ function Dropdown({ menu }: { menu: Menu }) {
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
-    // Pointer, not click: a click listener fires after the link's own handler and
-    // leaves the panel open across a same-page navigation.
+    // Pointer, not click: click fires after the link and leaves the panel open.
     const onDown = (e: PointerEvent) => {
       if (box.current && !box.current.contains(e.target as Node)) setOpen(false)
     }
@@ -121,16 +113,13 @@ function Dropdown({ menu }: { menu: Menu }) {
       {open ? (
         <div
           className={
-            // OPAQUE. At bg-black/95 the display heading behind it stayed legible
-            // through the panel — 5% of 60px white type is still white type.
+            // Opaque: at /95 the display heading stayed legible through it.
             'absolute left-1/2 top-full z-50 -translate-x-1/2 rounded-xl border border-white/15 bg-black p-6 shadow-2xl ' +
             (wide ? 'w-[860px]' : 'w-[300px]')
           }
         >
-          {/* Columns, not a grid: seven pillars in a four-wide grid make two rows,
-              and the second row starts below the TALLEST column of the first, so
-              the panel carried an empty band the height of six links. Multi-column
-              flows them and breaks only between pillars. */}
+          {/* Columns, not grid: seven pillars in four columns leave a dead row the
+              height of the tallest. */}
           <div className={wide ? 'columns-4 gap-x-6 [&>*]:break-inside-avoid' : ''}>
             {menu.columns.map((col) => (
               <div key={col.heading} className={wide ? 'mb-6' : ''}>
@@ -176,17 +165,14 @@ export function Nav() {
   )
 }
 
-/** The phone menu. Same content, one panel, everything expanded — a phone has room
-    to scroll and no room for a second level of tapping. */
+/** The phone menu: one panel, everything expanded. */
 export function MobileNav() {
   const [open, setOpen] = useState(false)
-  // Portals need a DOM, and this bundle is a static export that renders on the
-  // server first.
+  // Portals need a DOM; this renders on the server first.
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
-  // The panel is fixed and full-height, so the page behind it must not scroll
-  // underneath — that is the tell of a menu bolted on rather than built in.
+  // The page behind must not scroll underneath.
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
     return () => {
@@ -206,14 +192,8 @@ export function MobileNav() {
         <Menu className='h-5 w-5' aria-hidden='true' />
       </button>
 
-      {/* PORTALLED TO document.body, and it has to be.
-
-          The header sets `backdrop-blur`, and backdrop-filter makes an element a
-          CONTAINING BLOCK for fixed-position descendants. So `fixed inset-0`
-          resolved against the header's own 44px box instead of the viewport: the
-          panel was 44px tall, the menu overflowed invisibly, and the page showed
-          through everything below the first line. It looked like a background that
-          would not paint — the background was fine, the box was 44px. */}
+      {/* Portalled, and it has to be: the header's backdrop-blur makes it a
+          containing block, so `fixed inset-0` resolved to its 44px box. */}
       {open && mounted
         ? createPortal(
             <div className='fixed inset-0 z-[60] flex flex-col bg-black'>
