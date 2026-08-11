@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, CircleAlert } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowLeft, ArrowRight, Check, CircleAlert, X } from 'lucide-react'
 
 import { CONTACT_EMAIL } from '@/site'
 
@@ -140,26 +141,45 @@ export default function Start() {
     }
   }
 
+  // Three bars, always, however many questions there are. A segment count that
+  // tracks the question count turns a redesign into a different-looking page, and
+  // nobody counts them anyway — they read how full it is.
+  const total = STEPS.length + 1
+  const done = sent ? 1 : Math.min(1, at / total)
+
   return (
-    <section className='band'>
-      <div className='wrap max-w-3xl'>
-        <p className='eyebrow'>Get started</p>
-        <h1 className='display mt-4 max-w-[18ch]'>Tell us what needs to happen.</h1>
-        <p className='lede mt-6'>
-          Five questions, none of them required. You will get back what it takes and what it costs, from someone who
-          can answer it.
-        </p>
+    <div className='flex min-h-screen flex-col'>
+      <div className='fixed inset-x-0 top-0 z-50 flex gap-1' aria-hidden='true'>
+        {[0, 1, 2].map((i) => (
+          <div key={i} className='h-[3px] flex-1 overflow-hidden bg-white/10'>
+            <div
+              className='h-full bg-white transition-[width] duration-500 ease-out'
+              style={{ width: `${Math.max(0, Math.min(1, done * 3 - i)) * 100}%` }}
+            />
+          </div>
+        ))}
+      </div>
 
-        {/* Progress as a rule that fills, not a percentage. Nobody wants a number
-            here; they want to know it is short. */}
-        <div className='mt-10 flex gap-1.5' aria-hidden='true'>
-          {STEPS.concat([{ key: 'you', question: 'You' }]).map((s, i) => (
-            <div key={s.key} className={'h-0.5 flex-1 rounded ' + (i <= at ? 'bg-white/60' : 'bg-white/10')} />
-          ))}
-        </div>
+      {/* The wordmark and a way out. Everything else on this screen is an exit from
+          the one thing it is for. */}
+      <header className='flex h-16 shrink-0 items-center justify-between px-4 sm:px-6 lg:px-8'>
+        <Link href='/' className='inline-flex min-h-[44px] items-center text-lg' aria-label='Lux Tel, home'>
+          <span className='font-heading font-bold tracking-tight'>LUX</span>
+          <span className='text-white/40'>&nbsp;tel</span>
+        </Link>
+        <Link
+          href='/'
+          aria-label='Leave'
+          className='inline-flex h-11 w-11 items-center justify-center rounded-md text-white/50 transition-colors hover:bg-white/5 hover:text-white'
+        >
+          <X className='h-5 w-5' aria-hidden='true' />
+        </Link>
+      </header>
 
+      <main className='flex flex-1 items-center px-4 pb-16 sm:px-6 lg:px-8'>
+        <div className='mx-auto w-full max-w-2xl'>
         {!last ? (
-          <div className='mt-10'>
+          <div>
             <h2 className='h2 max-w-[20ch]'>{step.question}</h2>
             {step.hint ? <p className='mt-3 text-sm text-white/50'>{step.hint}</p> : null}
 
@@ -214,7 +234,7 @@ export default function Start() {
             </div>
           </div>
         ) : sent ? (
-          <div className='mt-12'>
+          <div>
             <Check className='h-8 w-8 text-white' aria-hidden='true' />
             <h2 className='h2 mt-6 max-w-[20ch]'>That is with us.</h2>
             <p className='lede mt-5'>
@@ -223,7 +243,7 @@ export default function Start() {
             </p>
           </div>
         ) : (
-          <form onSubmit={send} className='mt-10'>
+          <form onSubmit={send}>
             <h2 className='h2 max-w-[20ch]'>Where do we send the answer?</h2>
             <div className='mt-6 grid gap-3 sm:grid-cols-2'>
               <input
@@ -287,7 +307,8 @@ export default function Start() {
             ) : null}
           </form>
         )}
-      </div>
-    </section>
+        </div>
+      </main>
+    </div>
   )
 }
