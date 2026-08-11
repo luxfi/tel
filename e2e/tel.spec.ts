@@ -326,7 +326,12 @@ test('every internal link resolves', async ({ page, request }) => {
       const url = h.split('#')[0]
       if (!url || seen.has(url)) continue
       seen.add(url)
-      const res = await request.get(url)
+      // ONCE more before believing it. Run straight after a cache purge, the edge
+      // is refetching every path from origin and a cold miss can time out — which
+      // is not a dead link, and a suite that fails after every deploy stops being
+      // read. A link that is genuinely gone fails both times.
+      let res = await request.get(url)
+      if (!res.ok()) res = await request.get(url)
       if (!res.ok()) bad.push(`${url} -> ${res.status()} (linked from ${path})`)
     }
   }
