@@ -98,15 +98,31 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
           </Link>
           <Suites />
 
-          {/* Reporting, Debugging and the assistant are NOT linked here.
+          {/* The account's own records, and both halves now answer.
 
-              They were, and all three answered 404: the pages were never written,
-              and the API behind them (/v1/tel in hanzo/cloud) is in source but
-              unreleased, so it 404s in production too. A nav item is the one thing
-              nobody re-checks after writing it.
+              These were linked before either existed — the pages were never written
+              and /v1/tel was unreleased, so all three 404'd for as long as the
+              sidebar did. The condition for putting them back was that the route AND
+              the endpoint answer; /v1/tel shipped in cloud sha-df1f56d4 and the
+              pages are here, so they are back.
 
-              Put them back when the route and the endpoint both answer. `every
-              internal link resolves` fails the build if a link goes back first. */}
+              Anything added below has to clear the same bar: `every internal link
+              resolves` fails the build on a link to a page that does not exist. */}
+          <div className='my-3 border-t border-white/10' />
+          {[
+            ['/console/numbers', 'Numbers'],
+            ['/console/calls', 'Calls'],
+            ['/console/messages', 'Messages'],
+          ].map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className='flex min-h-[44px] items-center rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
+            >
+              {label}
+            </Link>
+          ))}
+
           <div className='my-3 border-t border-white/10' />
           <a
             href='mailto:hi@lux.tel?subject=Lux%20Tel'

@@ -334,3 +334,77 @@ test('every internal link resolves', async ({ page, request }) => {
   expect(seen.size, 'crawled nothing — the selector is wrong').toBeGreaterThan(30)
   expect(bad, `dead internal links:\n${bad.join('\n')}`).toEqual([])
 })
+
+/*
+  The console's record views, in every state a real account passes through.
+
+  A signed-out visitor is the only state a browser reaches without a Lux ID, so the
+  rest are driven by seeding the token the console reads and INTERCEPTING the API —
+  which is the honest way to test a client: it asserts what this code does with an
+  answer, and never pretends to have logged anybody in.
+
+  What the interception is held to is the real contract: the paths, the `{data:[]}`
+  envelope and the field names come from /v1/tel, and `the console asks the tel API
+  the way it answers` below pins the request itself so a route rename fails here
+  rather than in production.
+*/
+const VIEWS = [
+  { path: '/console/numbers', title: 'Numbers', api: '**/v1/tel/numbers' },
+  { path: '/console/calls', title: 'Calls', api: '**/v1/tel/calls' },
+  { path: '/console/messages', title: 'Messages', api: '**/v1/tel/messages' },
+]
+
+for (const v of VIEWS) {
+  test(`${v.title}: a signed-out visitor is asked to sign in, not shown an error`, async ({ page }) => {
+    await page.goto(v.path)
+    await expect(page.getByRole('heading', { name: v.title })).toBeVisible()
+    await expect(page.getByRole('button', { name: /Sign in with Lux ID/i })).toBeVisible()
+    // No table, and no half-rendered shell claiming the account is empty.
+    expect(await page.locator('table').count()).toBe(0)
+  })
+
+  test(`${v.title}: an empty account says what to do, not "no data"`, async ({ page }) => {
+    await page.route(v.api, (r) => r.fulfill({ json: { data: [] } }))
+    await page.addInitScript(() => localStorage.setItem('lux_tel_token', 'test'))
+    await page.goto(v.path)
+    const body = await page.locator('main').innerText()
+    expect(body).not.toMatch(/no data|nothing here/i)
+    // An empty state that names the next action, which is the only kind anyone acts on.
+    expect(body).toMatch(/yet\./)
+  })
+
+  test(`${v.title}: an expired session offers a way back in`, async ({ page }) => {
+    await page.route(v.api, (r) => r.fulfill({ status: 401, json: {} }))
+    await page.addInitScript(() => localStorage.setItem('lux_tel_token', 'stale'))
+    await page.goto(v.path)
+    // Not "401", and not a spinner that never resolves.
+    await expect(page.getByText(/session ended/i)).toBeVisible()
+    await expect(page.getByRole('button', { name: /Sign in again/i })).toBeVisible()
+  })
+}
+
+/*
+  The REQUEST, pinned. X-Org-Id is not optional on these routes — they read the org
+  from the header while others read it from the token, so omitting it turns a
+  correct request into a 403. That is invisible from the rendered page, which is
+  why it is asserted on the wire.
+*/
+test('the console asks the tel API the way it answers', async ({ page }) => {
+  let seen: { url: string; auth: string | undefined; org: string | undefined } | null = null
+  await page.route('**/v1/tel/numbers', (r) => {
+    const h = r.request().headers()
+    seen = { url: r.request().url(), auth: h['authorization'], org: h['x-org-id'] }
+    return r.fulfill({ json: { data: [{ id: 'n1', e164: '+441632960000', country: 'GB', type: 'local', capable: ['voice', 'sms'], monthly: 250, currency: 'GBP' }] } })
+  })
+  await page.addInitScript(() => localStorage.setItem('lux_tel_token', 'test-token'))
+  await page.goto('/console/numbers')
+
+  await expect(page.getByText('+441632960000')).toBeVisible()
+  expect(seen, 'the page never called the API').not.toBeNull()
+  expect(seen!.url).toContain('api.hanzo.ai/v1/tel/numbers')
+  expect(seen!.auth, 'the token was not sent').toBe('Bearer test-token')
+  expect(seen!.org, 'X-Org-Id is required by this route and was not sent').toBe('lux')
+
+  // Minor units are money, not a count: 250 GBP-minor is £2.50 and never 250.
+  await expect(page.getByText('£2.50')).toBeVisible()
+})
