@@ -45,7 +45,7 @@ export const CAPABILITIES: readonly Capability[] = [
     note: 'Local, national, toll-free and short-code ranges in the countries we are licensed in, provisioned by API with the regulatory requirements surfaced before purchase.',
   },
   {
-    headline: 'One wireless profile, many networks',
+    headline: 'The strongest network, wherever it lands',
     note: 'A single SIM or eSIM profile attaches to the strongest available network, with data pooled across the fleet rather than stranded per device.',
   },
   {
@@ -75,7 +75,7 @@ export const STACK: readonly Layer[] = [
   {
     n: '01',
     name: 'Fibre and interconnect',
-    claim: 'One integration instead of several.',
+    claim: 'You set the path.',
     detail:
       'Traffic reaches the networks it has to reach through carrier-grade interconnect. What Lux adds is a single place to configure it, so the path a call takes is something you can reason about instead of something you discover.',
   },
@@ -89,16 +89,16 @@ export const STACK: readonly Layer[] = [
   {
     n: '03',
     name: 'Spectrum and access',
-    claim: 'One identity across every access network.',
+    claim: 'The device keeps its name.',
     detail:
       'SIM, eSIM, private wireless and fixed access resolve to one subscriber identity, so a device that moves between a factory floor, a public network and an orbital link does not change who it is.',
   },
   {
     n: '04',
     name: 'Carrier services',
-    claim: 'Voice and messaging under one contract.',
+    claim: 'You raise it. We carry it.',
     detail:
-      'Numbers, voice, SIP and messaging arrive through one relationship rather than several. When something degrades, you raise it once and we carry it, which is the difference a customer actually feels.',
+      'Numbers, voice, SIP and messaging come from us, not from four desks. When quality drops you raise it here, and we chase it — which is the part a customer actually feels.',
   },
   {
     n: '05',
@@ -110,9 +110,9 @@ export const STACK: readonly Layer[] = [
   {
     n: '06',
     name: 'Control plane',
-    claim: 'One API for all of it.',
+    claim: 'Configuration is data.',
     detail:
-      'Numbers, SIMs, terminals, trunks, agents and functions are provisioned through one API with one identity model, one audit trail and one bill. Configuration is data, not a ticket queue.',
+      'Numbers, SIMs, terminals, trunks, agents and functions are declared, versioned and billed the same way. Configuration is data, not a ticket queue.',
   },
 ]
 
@@ -128,12 +128,12 @@ export interface Differentiator {
  */
 export const DIFFERENTIATORS: readonly Differentiator[] = [
   {
-    claim: 'One relationship for the whole stack',
+    claim: 'We answer for the whole path',
     detail:
-      'Numbers, voice, messaging, wireless and satellite arrive on one contract, one invoice and one support path, instead of four vendors pointing at each other.',
+      'Numbers, voice, messaging, wireless and satellite arrive on the same contract, the same invoice, the same desk, instead of vendors pointing at each other',
   },
   {
-    claim: 'Terrestrial and orbital, one console',
+    claim: 'Ground and orbit, same console',
     detail:
       'A remote site is provisioned, monitored and supported in the same place as a wired one, rather than in a second portal with a second login.',
   },
