@@ -2,7 +2,26 @@
 
 import React, { useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import {
+  ArrowRight,
+  Antenna,
+  Bot,
+  Braces,
+  CalendarClock,
+  CircleCheck,
+  Database,
+  Earth,
+  MessageSquare,
+  Phone,
+  PhoneIncoming,
+  Radio,
+  Search,
+  Send,
+  Ticket,
+  UserRound,
+  Workflow,
+  Zap,
+} from 'lucide-react'
 
 import { Globe } from '@/components/Globe'
 import { PILLARS, STATUS_LABEL } from '@/content/catalog'
@@ -64,12 +83,16 @@ export default function Page() {
       <section className='band'>
         <div className='wrap'>
           <dl className='grid gap-x-8 gap-y-8 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4'>
-            {CAPABILITIES.map((c) => (
-              <div key={c.headline}>
-                <dt className='h3'>{c.headline}</dt>
-                <dd className='mt-2 text-sm leading-relaxed text-white/60'>{c.note}</dd>
-              </div>
-            ))}
+            {CAPABILITIES.map((c, i) => {
+              const Icon = [Earth, Radio, Phone, Bot][i] ?? Antenna
+              return (
+                <div key={c.headline}>
+                  <Icon className='h-5 w-5 text-white/50' aria-hidden='true' />
+                  <dt className='h3 mt-4'>{c.headline}</dt>
+                  <dd className='mt-2 text-sm leading-relaxed text-white/60'>{c.note}</dd>
+                </div>
+              )
+            })}
           </dl>
         </div>
       </section>
@@ -124,7 +147,7 @@ export default function Page() {
         <div className='wrap grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16'>
           <div>
             <p className='eyebrow'>For operators</p>
-            <h2 className='h2 mt-4 max-w-[18ch]'>A constellation cannot ring a phone.</h2>
+            <h2 className='h2 mt-4 max-w-[18ch]'>Capacity is not a product.</h2>
           </div>
           <div>
             <p className='text-base leading-relaxed text-white/70 sm:text-lg'>
@@ -279,21 +302,26 @@ export default function Page() {
               <ArrowRight className='h-4 w-4' aria-hidden='true' />
             </a>
           </div>
+          {/* An icon per action, not a repeated dot. Ten identical markers is a
+              bullet list wearing a grid; the icons say which action each line is
+              before the words do. */}
           <ul className='grid gap-x-8 gap-y-2 sm:grid-cols-2'>
-            {[
-              'Answer the phone',
-              'Send a message',
-              'Look up an account',
-              'Create a ticket',
-              'Schedule an appointment',
-              'Update your CRM',
-              'Trigger a workflow',
-              'Call an API',
-              'Escalate to a person',
-              'Or finish the whole process',
-            ].map((a) => (
-              <li key={a} className='flex items-baseline gap-3 border-b border-white/10 py-3 text-sm text-white/70'>
-                <span className='dot dot-live shrink-0' aria-hidden='true' />
+            {(
+              [
+                [PhoneIncoming, 'Answer the phone'],
+                [Send, 'Send a message'],
+                [Search, 'Look up an account'],
+                [Ticket, 'Create a ticket'],
+                [CalendarClock, 'Schedule an appointment'],
+                [Database, 'Update your CRM'],
+                [Workflow, 'Trigger a workflow'],
+                [Braces, 'Call an API'],
+                [UserRound, 'Escalate to a person'],
+                [CircleCheck, 'Or finish the whole process'],
+              ] as const
+            ).map(([Icon, a]) => (
+              <li key={a} className='flex items-center gap-3 border-b border-white/10 py-3 text-sm text-white/70'>
+                <Icon className='h-4 w-4 shrink-0 text-white/40' aria-hidden='true' />
                 {a}
               </li>
             ))}
@@ -344,13 +372,16 @@ export default function Page() {
               and acts on it.
             </p>
             <div className='mt-10 grid gap-4 md:grid-cols-3'>
-              {[
-                ['Connect the world.', 'Internet, cellular and satellite, wherever the work is.'],
-                ['Communicate with it.', 'Numbers, calls and messages, from your own code.'],
-                ['Act on it.', 'Agents that take the next step inside your systems.'],
-              ].map(([t, d]) => (
+              {(
+                [
+                  [Earth, 'Connect the world.', 'Internet, cellular and satellite, wherever the work is.'],
+                  [MessageSquare, 'Communicate with it.', 'Numbers, calls and messages, from your own code.'],
+                  [Zap, 'Act on it.', 'Agents that take the next step inside your systems.'],
+                ] as const
+              ).map(([Icon, t, d]) => (
                 <div key={t} className='card'>
-                  <div className='h3'>{t}</div>
+                  <Icon className='h-5 w-5 text-white/50' aria-hidden='true' />
+                  <div className='h3 mt-4'>{t}</div>
                   <p className='mt-2 text-sm leading-relaxed text-white/60'>{d}</p>
                 </div>
               ))}
