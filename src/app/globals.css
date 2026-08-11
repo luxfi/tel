@@ -164,6 +164,21 @@
     pointer-events: none;
   }
 
+  /* The mega-menu grid takes its column count from the CONTENT, not from a number
+     in a class name. Pinned counts have now broken twice — seven pillars became
+     eight groups, then nine — and each time the heads fell onto two rows, which
+     reads as a design rather than as a bug. */
+  .megagrid {
+    display: grid;
+    align-items: start;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  @media (min-width: 1280px) {
+    .megagrid {
+      grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    }
+  }
+
   .tabular {
     font-variant-numeric: tabular-nums;
   }

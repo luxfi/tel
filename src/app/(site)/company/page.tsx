@@ -5,7 +5,7 @@ import { COMPANY, CAPABILITIES } from '@/content/company'
 
 export const metadata: Metadata = {
   title: 'Company',
-  description: 'Lux Industries Inc — who runs the network, and how to reach us.',
+  description: 'Lux Industries Inc — the team behind the platform, and how to reach us.',
 }
 
 function Roster({ title, people }: { title: string; people: readonly Person[] }) {
@@ -29,7 +29,7 @@ export default function Company() {
     <>
       <section className="wrap pt-16 pb-10">
         <div className="eyebrow">{COMPANY.legalName}</div>
-        <h1 className="display mt-5 max-w-[16ch]">We run the network ourselves.</h1>
+        <h1 className="display mt-5 max-w-[18ch]">We are the layer that makes it one service.</h1>
         <p className="lede mt-6">{COMPANY.lede}</p>
       </section>
 

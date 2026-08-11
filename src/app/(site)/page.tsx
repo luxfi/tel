@@ -235,6 +235,33 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Post-quantum, on its own. It is the one claim here a competitor cannot
+          match by buying the same wholesale, and it is invisible unless said. */}
+      <section className='band'>
+        <div className='wrap grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16'>
+          <div>
+            <p className='eyebrow'>Post-quantum</p>
+            <h2 className='h2 mt-4 max-w-[20ch]'>Encrypted against a machine that does not exist yet.</h2>
+          </div>
+          <div>
+            <p className='text-base leading-relaxed text-white/70 sm:text-lg'>
+              Traffic captured today can be kept and decrypted later, once something exists that can do it. For card
+              traffic, payment instructions, health records and legal process, that is not a future problem — the data
+              still matters in a decade.
+            </p>
+            <p className='mt-5 text-base leading-relaxed text-white/70 sm:text-lg'>
+              Lux links carry hybrid key exchange: a classical algorithm and a lattice one together, so a session is no
+              weaker than it is today and still stands when the other machine arrives. Federal guidance sets a 2030
+              target for readiness. Ours is already on.
+            </p>
+            <Link href='/products/post-quantum' className='btn btn-ghost mt-8'>
+              How it works
+              <ArrowRight className='h-4 w-4' aria-hidden='true' />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* The agentic argument, on its own. It is the newest line and the one a
           reader is least likely to already have a mental model for, so it gets
           space rather than a card in a grid. */}

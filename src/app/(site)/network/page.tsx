@@ -80,7 +80,7 @@ export default function Network() {
         </div>
         <div className="wrap relative pt-20 pb-24">
           <div className="eyebrow">Our network</div>
-          <h1 className="display mt-5 max-w-[15ch]">Ground and orbit, one account.</h1>
+          <h1 className="display mt-5 max-w-[15ch]">Every way online, arranged as one.</h1>
           <p className="lede mt-6">
             Satellite is usually a separate link with its own portal, its own contract and its own support queue. Here it
             is provisioned from the same API as everything else you buy from us, and answered by the same people.

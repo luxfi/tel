@@ -330,6 +330,19 @@ export const PILLARS: readonly Pillar[] = [
       'Agents connected to your business: they talk, text, call your APIs, use tools, and finish the task.',
     primitives: [
       {
+        slug: 'chat',
+        name: 'Lux Chat',
+        blurb: 'The agent, without writing anything',
+        status: 'live',
+        detail:
+          'The same agents, reachable as a portal rather than as an API. Point one at your systems, give your team a login, and the work an agent can do is available to people who are never going to call an endpoint.',
+        facts: [
+          'Same agents and tools as the API surface',
+          'Signed in with Lux ID, like every Lux property',
+          'Hand off from chat to a call on the same context',
+        ],
+      },
+      {
         slug: 'voice-agents',
         name: 'Voice Agents',
         blurb: 'Conversational agents on real calls',
@@ -415,6 +428,32 @@ export const PILLARS: readonly Pillar[] = [
       'Connect locations, infrastructure and systems, arranged around what has to stay online.',
     primitives: [
       {
+        slug: 'mesh',
+        name: 'Private Mesh',
+        blurb: 'A private network with no single operator',
+        status: 'beta',
+        detail:
+          'A private network normally has a control plane, and whoever runs it can reroute you, log you, or be compelled to. This one is coordinated by a decentralised network instead, and the keys that gate it are held in threshold — no single party, Lux included, holds enough to decrypt a session or move a route. The signing schemes underneath are Lux\u2019s own: Corona, Pulsar and Magnetar.',
+        facts: [
+          'Threshold-held keys — no single holder, including us',
+          'Route and policy changes are signed and auditable',
+          'Post-quantum key exchange on every hop',
+        ],
+      },
+      {
+        slug: 'post-quantum',
+        name: 'Post-Quantum Links',
+        blurb: 'Encrypted against a decrypt that has not happened yet',
+        status: 'live',
+        detail:
+          'Traffic captured today can be stored and decrypted later, once the machine to do it exists. That is not a future problem for anyone whose data still matters in a decade — card traffic, payment instructions, health records, legal process. Lux links carry hybrid key exchange: a classical algorithm and a lattice one together, so the session is no weaker than it is now and survives the arrival of the other machine.',
+        facts: [
+          'Hybrid key exchange — classical and lattice, not lattice alone',
+          'Applies to site links, private networking and cross connects',
+          'Federal guidance sets a 2030 target for post-quantum readiness',
+        ],
+      },
+      {
         slug: 'global-ip',
         name: 'Global IP',
         blurb: 'Transit on the Lux backbone',
@@ -452,6 +491,100 @@ export const PILLARS: readonly Pillar[] = [
           'Provisioned in minutes; the physical patch already exists',
           'Bandwidth adjustable in place without re-provisioning',
           'Metered by the hour, so a migration window does not become a year contract',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'hardware',
+    name: 'Hardware',
+    summary:
+      'The physical layer, for when software alone is not enough. Specified for the site, shipped configured, and already on your account when it arrives.',
+    primitives: [
+      {
+        slug: 'terminals',
+        name: 'Satellite Terminals',
+        blurb: 'The dish, sized for the site',
+        status: 'live',
+        detail:
+          'Terminals for fixed sites, vessels and vehicles, specified against the coverage and the throughput the location actually needs rather than against a catalogue page. They arrive provisioned to your account, so the link comes up when the installer points it rather than after a support call.',
+        facts: [
+          'Fixed, maritime and in-motion mounts',
+          'Shipped configured and already attached to your account',
+          'Spares and replacement handled as part of the service',
+        ],
+      },
+      {
+        slug: 'routers',
+        name: 'Routers',
+        blurb: 'Several ways online, one box',
+        status: 'live',
+        detail:
+          'Edge routers that hold more than one path at once — fibre, wireless and orbital — and move traffic between them on policy rather than on a person noticing. This is what turns a second connection from a spare into failover.',
+        facts: [
+          'Multiple simultaneous paths with policy routing',
+          'Fails over without dropping established sessions',
+          'Managed from the same console as the links behind it',
+        ],
+      },
+      {
+        slug: 'gateways',
+        name: 'Gateways',
+        blurb: 'Industrial kit onto the network',
+        status: 'live',
+        detail:
+          'Gateways for equipment that predates the internet and is not going to be replaced: serial, industrial protocols and sensor buses on one side, a managed connection on the other.',
+        facts: [
+          'Serial and industrial protocol support',
+          'Cellular, wireless or orbital backhaul',
+          'Provisioned with the SIM or terminal it ships beside',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'devices',
+    name: 'Devices',
+    summary:
+      'The consumer end of the same network — a SIM anyone can buy, a handset built around it, and an operating system that treats an agent as part of the phone rather than as an app on it.',
+    primitives: [
+      {
+        slug: 'sim',
+        name: 'Lux SIM',
+        blurb: 'One SIM, wherever you land',
+        status: 'beta',
+        detail:
+          'The consumer end of the same wireless service the fleets run on: a profile that attaches to the strongest network in range wherever you land, without a roaming bill that arrives a month later.',
+        facts: [
+          'eSIM or physical, activated from the app',
+          'Attaches to the strongest network in range, not to one carrier',
+          'The same profile abroad as at home',
+        ],
+      },
+      {
+        slug: 'phone',
+        name: 'Lux Phone',
+        blurb: 'A handset that assumes the agent',
+        status: 'soon',
+        detail:
+          'A handset built around the network rather than adapted to it: the SIM, the private mesh and the agent are part of the device, not applications installed onto it. In development.',
+        facts: [
+          'Lux SIM and private mesh built in',
+          'The agent answers on the device, not only in the cloud',
+          'In development — talk to us if you want one early',
+        ],
+      },
+      {
+        slug: 'os',
+        name: 'Lux OS',
+        blurb: 'The agent is part of the system',
+        status: 'soon',
+        detail:
+          'An operating system where an agent is a first-class part of the system with access to the calls, the messages and the network underneath — rather than an app asking permission for each of them. In development.',
+        facts: [
+          'Agents hold system capabilities, not app permissions',
+          'Runs on Lux Phone and on standard hardware',
+          'In development',
         ],
       },
     ],

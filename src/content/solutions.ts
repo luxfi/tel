@@ -53,6 +53,15 @@ export const SOLUTIONS = [
     uses: ['numbers', 'voice', 'sip', 'branded-calling'],
   },
   {
+    slug: 'financial',
+    name: 'ATMs, branches and financial networks',
+    problem:
+      'A cash machine on a forecourt, a branch on a high street and a trading desk all need a link that is up, attested and defensible to an auditor. The usual answer is a leased line nobody can move and a second one that shares the same duct.',
+    answer:
+      'Wireless and orbital paths that do not share a trench, failover that keeps the session rather than resetting it, and post-quantum key exchange on the link so captured traffic does not become readable later.',
+    uses: ['post-quantum', 'failover', 'iot-sim', 'cloud-vpn'],
+  },
+  {
     slug: 'always-on',
     name: 'Operations that cannot go offline',
     problem:
