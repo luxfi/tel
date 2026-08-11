@@ -10,7 +10,10 @@ export const metadata: Metadata = {
     'The Lux network: a terrestrial backbone, orbital capacity that terminates into it at the ground station, and compute co-located with the media.',
 }
 
-const ORBIT_PILLAR = PILLARS.find((p) => p.slug === 'orbit')!
+// The connectivity group, not a hard-coded 'orbit' pillar: the catalogue regrouped
+// around what a customer buys, and a lookup that assumes the old shape crashes the
+// build rather than degrading — which is the good failure, but only once.
+const ORBIT_PILLAR = PILLARS.find((p) => p.slug === 'connectivity')!
 
 /**
  * The integration argument, stated once. It is the reason orbital capacity on Lux

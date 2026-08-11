@@ -135,7 +135,7 @@ function Dropdown({ menu }: { menu: Menu }) {
               whose heads each align rather than one ragged one. The gutter is 16
               and not 24 because the links carry 8 of their own on each side, so
               24 would spend 40px on air and make the longest labels wrap. */}
-          <div className={wide ? 'grid grid-cols-4 items-start gap-x-4 gap-y-8 xl:grid-cols-7' : ''}>
+          <div className={wide ? 'grid grid-cols-4 items-start gap-x-4 gap-y-8 xl:grid-cols-8' : ''}>
             {menu.columns.map((col) => (
               <div key={col.heading}>
                 <div className='eyebrow'>{col.heading}</div>
