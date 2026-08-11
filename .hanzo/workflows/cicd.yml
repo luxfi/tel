@@ -87,8 +87,17 @@ jobs:
       # other answered 402, which hid the fact that a success would have written
       # somewhere nobody serves from.
       #
-      # X-Org-Id is required: deploy reads the org from the header, create from the
-      # token, and without it a project that exists answers 404.
+      # The org rides the TOKEN, and only the token: the gateway drops identity
+      # headers off the wire and re-derives them from the validated principal, and
+      # `principal.Org` refuses an org that arrives without a user behind it. So
+      # sending X-Org-Id changed nothing in either direction — it only made a
+      # broken deploy read as a header problem, which cost two misdiagnoses.
+      #
+      # What actually broke it: identity moved into cloud without its capability
+      # allowlists, so `sk-` keys stopped resolving to a principal, and the handler
+      # reported the missing header instead of the missing user. Fixed in
+      # hanzo/universe f7f1e2cfb. A 403 here means read the BODY before believing
+      # the header it names.
       - name: Ship it
         env:
           TOKEN: ${{ secrets.LUX_DEPLOY_TOKEN }}
@@ -97,7 +106,6 @@ jobs:
           code=$(curl -sS -o out.json -w '%{http_code}' --max-time 180 \
             -X POST 'https://api.hanzo.ai/v1/projects/tel/deploy' \
             -H "Authorization: Bearer $TOKEN" \
-            -H 'X-Org-Id: lux' \
             -H 'Content-Type: application/gzip' \
             --data-binary @site.tar.gz)
           cat out.json
@@ -124,7 +132,6 @@ jobs:
           set -uo pipefail
           curl -sS -X POST 'https://api.hanzo.ai/v1/projects/tel/domains' \
             -H "Authorization: Bearer $TOKEN" \
-            -H 'X-Org-Id: lux' \
             -H 'Content-Type: application/json' \
             -d '{"domains":["lux.tel","www.lux.tel","console.lux.tel"]}' | tee bound.json
           echo
