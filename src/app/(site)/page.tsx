@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 
 import { Globe } from '@/components/Globe'
+import { Mark } from '@/components/Mark'
 import { PILLARS, STATUS_LABEL } from '@/content/catalog'
 import { CAPABILITIES, DIFFERENTIATORS, STACK } from '@/content/company'
 import { SOLUTIONS } from '@/content/solutions'
@@ -55,6 +56,15 @@ export default function Page() {
         <div className='absolute inset-y-0 right-[-15%] w-[120%] opacity-90 lg:right-0 lg:w-[58%] lg:opacity-100'>
           <Globe />
         </div>
+        {/* A scrim over the globe's left edge. The copy column and the canvas
+            overlap by design — the globe is full bleed — and body text on a field
+            of moving dots is unreadable at exactly the place someone is reading.
+            Gradient, not a box: a hard edge would read as a panel. */}
+        <div
+          className='pointer-events-none absolute inset-0 hidden lg:block'
+          aria-hidden='true'
+          style={{ background: 'linear-gradient(90deg, #000 0%, #000 34%, rgba(0,0,0,0.85) 46%, rgba(0,0,0,0) 62%)' }}
+        />
         <div className='wrap relative grid items-center gap-12 lg:grid-cols-[minmax(0,560px)_1fr]'>
           <div>
             {/* Kept deliberately: it says what Lux sells in the reader's words,
@@ -240,7 +250,7 @@ export default function Page() {
                   {pillar.primitives.map((p) => (
                     <Link key={p.slug} href={`/products/${p.slug}`} className='card'>
                       <div className='flex items-center gap-2'>
-                        <span className={`dot dot-${p.status}`} aria-hidden='true' />
+                        <Mark slug={p.slug} />
                         <span className='h3'>{p.name}</span>
                       </div>
                       <p className='mt-2 text-sm leading-relaxed text-white/60'>{p.blurb}</p>
