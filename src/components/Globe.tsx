@@ -7,29 +7,27 @@ import { isLand } from '@/content/land'
 /**
  * The constellation over the Earth, propagated from the wall clock.
  *
- * Real coastlines (content/land), real sidereal orientation, Keplerian period from
- * the altitude, and a Walker star — nodes spanning 180°, so one seam counter-rotates
- * and carries no cross-links.
+ * Real coastlines (content/land), real sidereal orientation, Keplerian periods from
+ * the altitudes, and two shells — an inclined bulk that leaves the poles thin, and
+ * a polar shell that fills them. Coverage is counted, not tinted, so where it is
+ * deep and where it is thin is a result rather than a decision.
  */
 
 const RAD = Math.PI / 180
 const EARTH_KM = 6371
 const MU = 398600.4418 // km^3/s^2
 
-// Near-polar: pole-to-pole coverage from the fewest satellites.
-const ALT_KM = 780
-const INCLINATION = 86.4
-const PLANES = 6
-const PER_PLANE = 11
-
-const A_KM = EARTH_KM + ALT_KM
-const ORBIT_R = A_KM / EARTH_KM
-const PERIOD_S = 2 * Math.PI * Math.sqrt((A_KM * A_KM * A_KM) / MU)
-
-/** Elevation a terminal needs before a satellite counts as usable. */
-const MASK_DEG = 8.2
-/** Above this latitude the planes converge fast enough that cross-links drop. */
-const CROSSLINK_LAT = 68
+/**
+ * Two shells, because one cannot do both jobs. An inclined shell carries the
+ * capacity and leaves the poles thin; a polar shell is sparse but reaches them.
+ * Every real system that sells both maritime and mid-latitude broadband flies this
+ * pair, and the picture shows why: the count falls away past the inclination, and
+ * the polar planes are what remain there.
+ */
+const SHELLS = [
+  { planes: 72, per: 22, inc: 53, altKm: 550, mask: 25 },
+  { planes: 6, per: 11, inc: 86.4, altKm: 780, mask: 8.2 },
+] as const
 
 interface Site {
   readonly lat: number
@@ -60,35 +58,6 @@ function fromGeo(lat: number, lon: number): Vec {
 }
 
 /**
- * One satellite in inertial space. `u` is the argument of latitude — the angle
- * travelled from the ascending node — and `raan` is where that node sits.
- */
-function orbital(u: number, raan: number, inc: number): Vec {
-  const cu = Math.cos(u)
-  const su = Math.sin(u)
-  const ci = Math.cos(inc)
-  const si = Math.sin(inc)
-  const cr = Math.cos(raan)
-  const sr = Math.sin(raan)
-  return {
-    x: (cu * cr - su * ci * sr) * ORBIT_R,
-    y: su * si * ORBIT_R,
-    z: (cu * sr + su * ci * cr) * ORBIT_R,
-  }
-}
-
-/** Spin about the polar axis, then tilt the view. Screen y grows downward. */
-function view(p: Vec, spin: number, tilt: number): Vec {
-  const cs = Math.cos(spin)
-  const sn = Math.sin(spin)
-  const x = p.x * cs - p.z * sn
-  const z = p.x * sn + p.z * cs
-  const ct = Math.cos(tilt)
-  const st = Math.sin(tilt)
-  return { x, y: p.y * ct - z * st, z: p.y * st + z * ct }
-}
-
-/**
  * Greenwich mean sidereal time, radians. IAU 1982.
  *
  * A phase turns at the right rate from an arbitrary start, so it shows the wrong
@@ -102,7 +71,18 @@ function gmst(nowMs: number): number {
   return (((deg % 360) + 360) % 360) * RAD
 }
 
-/** Elevation in degrees of `sat` seen from the ground point `g` (both Earth-fixed). */
+/**
+ * Angular radius of the ground area a satellite can serve, from its altitude and
+ * the elevation a terminal needs. Raise the mask and the footprints shrink, exactly
+ * as coverage does.
+ */
+function footprint(altKm: number, maskDeg: number): number {
+  const ratio = EARTH_KM / (EARTH_KM + altKm)
+  const e = maskDeg * RAD
+  return Math.acos(ratio * Math.cos(e)) - e
+}
+
+/** Elevation in degrees of `sat` seen from ground point `g`, both Earth-fixed. */
 function elevation(g: Vec, sat: Vec): number {
   const dx = sat.x - g.x
   const dy = sat.y - g.y
@@ -113,7 +93,47 @@ function elevation(g: Vec, sat: Vec): number {
   return Math.asin(Math.max(-1, Math.min(1, up))) / RAD
 }
 
-export function Globe({ height = 560 }: { height?: number }) {
+/** One satellite, with everything constant about it resolved once. */
+interface Sat {
+  readonly n: number // mean motion, rad/s
+  readonly u0: number // argument of latitude at t=0
+  readonly r: number // orbit radius, Earth radii
+  readonly capR: number // footprint radius, radians
+  // The plane's rotation, folded to three numbers so the hot loop is two sin/cos.
+  readonly cr: number
+  readonly sr: number
+  readonly ci: number
+  readonly si: number
+}
+
+function build(): Sat[] {
+  const out: Sat[] = []
+  for (const s of SHELLS) {
+    const a = EARTH_KM + s.altKm
+    const n = Math.sqrt(MU / (a * a * a))
+    const r = a / EARTH_KM
+    const capR = footprint(s.altKm, s.mask)
+    const inc = s.inc * RAD
+    const ci = Math.cos(inc)
+    const si = Math.sin(inc)
+    // A polar shell's nodes span 180°: at Ω and Ω+180° it is one ring travelled
+    // opposite ways. An inclined shell's span the full 360°.
+    const span = s.inc > 80 ? Math.PI : Math.PI * 2
+    for (let p = 0; p < s.planes; p++) {
+      const raan = (p / s.planes) * span
+      const cr = Math.cos(raan)
+      const sr = Math.sin(raan)
+      for (let k = 0; k < s.per; k++) {
+        // Half-slot offset between adjacent planes so they interleave.
+        const u0 = (k / s.per) * Math.PI * 2 + (p % 2) * (Math.PI / s.per)
+        out.push({ n, u0, r, capR, cr, sr, ci, si })
+      }
+    }
+  }
+  return out
+}
+
+export function Globe({ height }: { height?: number }) {
   const ref = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
@@ -127,6 +147,8 @@ export function Globe({ height = 560 }: { height?: number }) {
     let width = 0
     let h = 0
 
+    const sats = build()
+
     // Longitude step widens by 1/cos(lat): a fixed step in degrees packs the poles
     // solid and reads as a bullseye.
     const dots: Vec[] = []
@@ -137,6 +159,44 @@ export function Globe({ height = 560 }: { height?: number }) {
       }
     }
     const sites = SITES.map((s) => ({ ...s, v: fromGeo(s.lat, s.lon) }))
+
+    // Coverage count, one cell per 2.5 degrees, EARTH-FIXED.
+    const CELL = 2.5
+    const CW = Math.round(360 / CELL)
+    const CH = Math.round(180 / CELL)
+    const cover = new Uint8Array(CW * CH)
+
+    /** Add one satellite's footprint, centred on its sub-satellite point. */
+    function stamp(lat: number, lon: number, capDeg: number) {
+      const r0 = Math.max(0, Math.floor((lat + 90 - capDeg) / CELL))
+      const r1 = Math.min(CH - 1, Math.ceil((lat + 90 + capDeg) / CELL))
+      for (let row = r0; row <= r1; row++) {
+        const cellLat = -90 + (row + 0.5) * CELL
+        // Longitude half-width of the cap at this latitude. Wider toward the poles,
+        // and the whole row once the cap reaches over one.
+        const cosd = Math.cos(capDeg * RAD) - Math.sin(lat * RAD) * Math.sin(cellLat * RAD)
+        const den = Math.cos(lat * RAD) * Math.cos(cellLat * RAD)
+        if (den <= 1e-9) continue
+        const q = cosd / den
+        if (q > 1) continue
+        const half = q < -1 ? 180 : Math.acos(q) / RAD
+        const c0 = Math.floor((lon + 180 - half) / CELL)
+        const c1 = Math.ceil((lon + 180 + half) / CELL)
+        for (let col = c0; col <= c1; col++) {
+          const i = row * CW + ((col % CW) + CW) % CW
+          if (cover[i] < 255) cover[i]++
+        }
+      }
+    }
+
+    /** How many satellites can see this Earth-fixed point, right now. */
+    function look(v: Vec): number {
+      const lat = Math.asin(v.y) / RAD
+      const lon = Math.atan2(v.z, v.x) / RAD
+      const row = Math.min(CH - 1, Math.max(0, Math.floor((lat + 90) / CELL)))
+      const col = ((Math.floor((lon + 180) / CELL) % CW) + CW) % CW
+      return cover[row * CW + col]
+    }
 
     function resize() {
       if (!canvas) return
@@ -152,140 +212,124 @@ export function Globe({ height = 560 }: { height?: number }) {
       const c = ctx!
       const cx = width / 2
       const cy = h / 2
-      const r = Math.min(width, h * 1.7) * 0.42
+      const r = Math.min(width, h) * 0.42
       const tilt = -22 * RAD
       const t = nowMs / 1000
 
       // The orbits are inertial; rotating the ground by GMST is the same relative
       // motion in one transform.
       const spin = gmst(nowMs)
-      const px = (p: Vec) => cx + p.x * r
-      const py = (p: Vec) => cy - p.y * r
+      const ct = Math.cos(tilt)
+      const st = Math.sin(tilt)
 
       c.clearRect(0, 0, width, h)
 
-      // Limb and a faint wash: enough to read solid.
       c.beginPath()
       c.arc(cx, cy, r, 0, Math.PI * 2)
-      c.fillStyle = 'rgba(255,255,255,0.035)'
+      c.fillStyle = 'rgba(255,255,255,0.04)'
       c.fill()
-      c.strokeStyle = 'rgba(255,255,255,0.14)'
+
+      const cs = Math.cos(spin)
+      const sn = Math.sin(spin)
+      const spinDeg = spin / RAD
+
+      // COVERAGE, as DEPTH rather than as a wash. Every point under the inclined
+      // shell has eight or nine satellites in view at once, so a plain "is it
+      // covered" tint is uniformly on and says nothing. Counting them says the
+      // thing that matters: the count falls away past the shell's inclination, and
+      // what remains there is the polar shell. That gradient is the argument for
+      // flying two.
+      //
+      // Stamped into a coarse grid rather than tested per dot: per-dot would be
+      // 4,000 x 1,650 comparisons a frame, and this is ~34,000.
+      cover.fill(0)
+      for (const s of sats) {
+        const u = s.n * t + s.u0
+        const cu = Math.cos(u)
+        const su = Math.sin(u)
+        const x = (cu * s.cr - su * s.ci * s.sr) * s.r
+        const y = su * s.si * s.r
+        const z = (cu * s.sr + su * s.ci * s.cr) * s.r
+        // Inertial longitude minus GMST is the Earth-fixed one — the grid is read
+        // by ground points, so the stamp has to land in their frame.
+        stamp(Math.asin(y / s.r) / RAD, Math.atan2(z, x) / RAD - spinDeg, s.capR / RAD)
+      }
+
+      // Land, lit by how many satellites can see it. Far-side dots are dropped, not
+      // dimmed — the planet is opaque.
+      for (const d of dots) {
+        const zr = d.x * sn + d.z * cs
+        const vz = d.y * st + zr * ct
+        if (vz < 0) continue
+        const n = look(d)
+        // Coverage modulates only the top quarter of the range. Land legibility is
+        // the floor: most land sits under the inclined shell, so a wide modulation
+        // would spend most of its range on a signal that barely varies there.
+        const a = (0.42 + 0.5 * vz) * (0.78 + 0.22 * Math.min(1, n / 6))
+        c.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`
+        c.fillRect(cx + (d.x * cs - d.z * sn) * r - 1, cy - (d.y * ct - zr * st) * r - 1, 2, 2)
+      }
+
+      c.strokeStyle = 'rgba(255,255,255,0.16)'
       c.lineWidth = 1
+      c.beginPath()
+      c.arc(cx, cy, r, 0, Math.PI * 2)
       c.stroke()
 
-      // Far-side dots are dropped, not dimmed — the planet is opaque.
-      for (const d of dots) {
-        const q = view(d, spin, tilt)
-        if (q.z < 0) continue
-        // Fade toward the limb, where the surface is edge-on.
-        const a = 0.34 + 0.56 * q.z
-        c.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`
-        c.fillRect(px(q) - 0.9, py(q) - 0.9, 1.8, 1.8)
-      }
-
-      // Ground sites, and their horizon.
-      const ground = sites.map((s) => ({ ...s, q: view(s.v, spin, tilt) }))
-      for (const g of ground) {
-        if (g.q.z < 0) continue
-        c.beginPath()
-        c.arc(px(g.q), py(g.q), 2.4, 0, Math.PI * 2)
-        c.fillStyle = 'rgba(255,255,255,0.9)'
-        c.fill()
-      }
-
-      // Mean motion is exact for the altitude.
-      const n = (Math.PI * 2) / PERIOD_S
-      const inc = INCLINATION * RAD
-      const sats: { p: Vec; q: Vec; plane: number; slot: number; lat: number }[] = []
-      for (let plane = 0; plane < PLANES; plane++) {
-        const raan = (plane / PLANES) * Math.PI // 180°, not 360° — Walker star
-        for (let slot = 0; slot < PER_PLANE; slot++) {
-          // Half-slot offset so planes interleave instead of flying in rows.
-          const u = n * t + (slot / PER_PLANE) * Math.PI * 2 + (plane % 2) * (Math.PI / PER_PLANE)
-          const p = orbital(u, raan, inc)
-          const q = view(p, 0, tilt)
-          sats.push({ p, q, plane, slot, lat: Math.asin(p.y / ORBIT_R) / RAD })
-        }
-      }
-
-      // Mesh, drawn under the satellites.
-      c.lineWidth = 1
+      // The satellites themselves, one pixel each. At this density the shell reads
+      // as a texture, and anything larger becomes a solid ring at the limb.
+      c.fillStyle = 'rgba(255,255,255,0.4)'
+      const near: { x: number; y: number; p: Vec }[] = []
       for (const s of sats) {
-        const fore = sats[s.plane * PER_PLANE + ((s.slot + 1) % PER_PLANE)]
-        link(s, fore, 0.17)
-
-        // One direction only. The last plane's neighbour is the counter-rotating
-        // seam — those two pass at twice orbital speed and are never linked.
-        if (s.plane === PLANES - 1) continue
-        if (Math.abs(s.lat) > CROSSLINK_LAT) continue
-        let best: (typeof sats)[number] | null = null
-        let bestD = Infinity
-        for (let k = 0; k < PER_PLANE; k++) {
-          const o = sats[(s.plane + 1) * PER_PLANE + k]
-          if (Math.abs(o.lat) > CROSSLINK_LAT) continue
-          const d = Math.hypot(o.p.x - s.p.x, o.p.y - s.p.y, o.p.z - s.p.z)
-          if (d < bestD) {
-            bestD = d
-            best = o
-          }
-        }
-        if (best) link(s, best, 0.1)
+        const u = s.n * t + s.u0
+        const cu = Math.cos(u)
+        const su = Math.sin(u)
+        const x = (cu * s.cr - su * s.ci * s.sr) * s.r
+        const y = su * s.si * s.r
+        const z = (cu * s.sr + su * s.ci * s.cr) * s.r
+        const zr = x * sn + z * cs
+        const vz = y * st + zr * ct
+        if (vz < 0) continue
+        const sx = cx + (x * cs - z * sn) * r
+        const sy = cy - (y * ct - zr * st) * r
+        c.fillRect(sx, sy, 1, 1)
+        near.push({ x: sx, y: sy, p: { x, y, z } })
       }
 
-      function link(a: { p: Vec; q: Vec }, b: { p: Vec; q: Vec }, alpha: number) {
-        if (a.q.z < 0 && b.q.z < 0) return
-        // A chord whose midpoint is inside the disc and behind it is occluded.
-        const mx = (a.p.x + b.p.x) / 2
-        const my = (a.p.y + b.p.y) / 2
-        const mz = (a.p.z + b.p.z) / 2
-        const m = view({ x: mx, y: my, z: mz }, 0, tilt)
-        if (m.z < 0 && Math.hypot(m.x, m.y) < 1) return
-        c.beginPath()
-        c.moveTo(px(a.q), py(a.q))
-        c.lineTo(px(b.q), py(b.q))
-        c.strokeStyle = `rgba(255,255,255,${alpha})`
-        c.stroke()
-      }
+      // The ground sites, and the ONE satellite each is working through. A terminal
+      // tracks one; drawing every satellite in view would put a thousand chords
+      // across the planet and say nothing.
+      for (const g of sites) {
+        const zr = g.v.x * sn + g.v.z * cs
+        const gz = g.v.y * st + zr * ct
+        if (gz < 0) continue
+        const gx = cx + (g.v.x * cs - g.v.z * sn) * r
+        const gy = cy - (g.v.y * ct - zr * st) * r
 
-      // A terminal tracks ONE satellite plus the next during handover. Drawing every
-      // one above the mask angle put a dozen chords across the planet.
-      for (const g of ground) {
-        if (g.q.z < -0.1) continue
-        let best: (typeof sats)[number] | null = null
-        let next: (typeof sats)[number] | null = null
-        let bestEl = MASK_DEG
-        let nextEl = MASK_DEG
-        for (const s of sats) {
+        let best: (typeof near)[number] | null = null
+        let bestEl = 0
+        for (const s of near) {
           const el = elevation(g.v, s.p)
           if (el > bestEl) {
-            next = best
-            nextEl = bestEl
-            best = s
             bestEl = el
-          } else if (el > nextEl) {
-            next = s
-            nextEl = el
+            best = s
           }
         }
-        // Brightest overhead, as the link budget is.
-        if (best) feeder(g.q, best.q, 0.14 + 0.5 * (bestEl / 90))
-        if (next) feeder(g.q, next.q, 0.06 + 0.16 * (nextEl / 90))
-      }
+        if (best) {
+          c.beginPath()
+          c.moveTo(gx, gy)
+          c.lineTo(best.x, best.y)
+          c.strokeStyle = `rgba(255,255,255,${(0.15 + 0.45 * (bestEl / 90)).toFixed(3)})`
+          c.stroke()
+          c.beginPath()
+          c.arc(best.x, best.y, 2, 0, Math.PI * 2)
+          c.fillStyle = 'rgba(255,255,255,0.95)'
+          c.fill()
+        }
 
-      function feeder(a: Vec, b: Vec, alpha: number) {
         c.beginPath()
-        c.moveTo(px(a), py(a))
-        c.lineTo(px(b), py(b))
-        c.strokeStyle = `rgba(255,255,255,${alpha.toFixed(3)})`
-        c.stroke()
-      }
-
-      for (const s of sats) {
-        const near = s.q.z >= 0
-        // Far-side satellites stay, faint: the shell is the subject.
-        c.beginPath()
-        c.arc(px(s.q), py(s.q), near ? 1.9 : 1.3, 0, Math.PI * 2)
-        c.fillStyle = near ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.2)'
+        c.arc(gx, gy, 2.6, 0, Math.PI * 2)
+        c.fillStyle = 'rgba(255,255,255,0.95)'
         c.fill()
       }
     }
@@ -306,12 +350,13 @@ export function Globe({ height = 560 }: { height?: number }) {
     }
   }, [])
 
+  const total = SHELLS.reduce((n, s) => n + s.planes * s.per, 0)
   return (
     <canvas
       ref={ref}
-      style={{ width: '100%', height }}
+      style={height ? { width: '100%', height } : { width: '100%', height: '100%' }}
       role="img"
-      aria-label={`${PLANES * PER_PLANE} satellites in ${PLANES} near-polar planes, with inter-satellite links and the ground sites currently in view`}
+      aria-label={`${total} satellites in two shells, their coverage footprints, and the ground sites currently in view`}
     />
   )
 }
