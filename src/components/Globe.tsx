@@ -400,9 +400,18 @@ export function Globe({ height }: { height?: number }) {
         // Under the pointer, the site says what it is and what it is working
         // through. The elevation is the number that decides whether the link
         // exists at all, so it is the one worth showing.
-        const near_ = Math.hypot(hoverX - gx, hoverY - gy) < 26
+        // A slow ring off each station: it marks them as the one thing here worth
+        // pointing at, and gives the picture a pulse that does not depend on
+        // whether a satellite happens to be crossing.
+        const ph = ((nowMs / 2600 + g.lon / 720) % 1 + 1) % 1
         c.beginPath()
-        c.arc(gx, gy, near_ ? 4 : 2.6, 0, Math.PI * 2)
+        c.arc(gx, gy, 3 + ph * 13, 0, Math.PI * 2)
+        c.strokeStyle = `rgba(255,255,255,${(0.3 * (1 - ph)).toFixed(3)})`
+        c.stroke()
+
+        const near_ = Math.hypot(hoverX - gx, hoverY - gy) < 36
+        c.beginPath()
+        c.arc(gx, gy, near_ ? 4 : 3, 0, Math.PI * 2)
         c.fillStyle = 'rgba(255,255,255,0.95)'
         c.fill()
         if (near_) {
