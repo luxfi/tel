@@ -128,6 +128,36 @@ window. The test measures HEIGHT, because existing is what it was already doing.
 
 Before this there was no phone navigation at all.
 
+## The questionnaire writes into Base, with no key in the page
+
+`/start` posts to `/v1/base/collections/submissions/records` on its OWN origin.
+
+Two things already built make that work, and neither needed a schema:
+
+- **Every project is provisioned a `submissions` collection** (`apps/base/space.go`)
+  — `form`, `data`, `created`, where `data` is free-form JSON. A new form is a new
+  value of `form`, not a new table. `EnsureSpace` runs at project create and is
+  idempotent.
+- **A published site host serves `/v1/base` scoped to the org its HOSTNAME resolves
+  to** (HIP-0014, `CLOUD_BASE_PUBLIC_HOST`). The org comes from the resolved site,
+  never from the caller.
+
+So the page carries no credential at all. Create is public; list, view, update and
+delete stay superuser-only. Verified live: anonymous `POST` → 200, anonymous `GET`
+→ `403 Only superusers can perform this action`.
+
+⛔ This is NOT the publishable-key-plus-policies pattern, and it is stronger than
+it. There is no credential in the page to leak, rotate or replay from another
+origin, and writing into another tenant is not denied by a rule — it is
+unaddressable, because the only Base a page can reach is the one its own hostname
+resolves to.
+
+Mail is the fallback, not the mechanism: a failed post keeps the answers on screen
+and offers the same body as a `mailto:`.
+
+**Reading submissions back needs a superuser session** — a machine token gets 403,
+by the same design that makes the write safe.
+
 ## Design vocabulary
 
 From `luxfi/brand` `DESIGN.md`: monochrome, `#000000` surface, white type,
