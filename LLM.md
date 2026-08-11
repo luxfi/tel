@@ -42,16 +42,15 @@ appears in the nav, the index, its own page and its pillar's cross-links.
 
 | File | Holds |
 |---|---|
-| `catalog.ts` | 31 primitives in 7 pillars — orbit, network, wireless, communications, identity, intelligence, edge |
+| `catalog.ts` | 40 products in 10 groups — connectivity, cellular, numbers, voice, messaging, agentic AI, network, hardware, devices, edge |
 | `company.ts` | positioning, the six stack layers, capabilities, differentiators |
 | `team.ts` | leadership, engineering, advisors — the same roster luxfi/industries publishes |
 | `legal.ts` | six policies as structured sections |
 
-- `src/app/page.tsx` — home: hero, stack, catalog, differentiators, partners, contact
-- `src/app/network/` — the owned-network and orbit argument; the page to show a partner
-- `src/app/products/` + `[slug]` — index and one page per primitive
-- `src/app/solutions/`, `pricing/`, `company/`, `legal/` + `legal/[slug]`
-- `src/app/console/` + `callback/` — the builder console, behind Lux ID
+- `src/app/(site)/` — the marketing chrome: home, network, products + `[slug]`,
+  solutions, pricing, company, legal + `[slug]`
+- `src/app/(console)/` — the console, behind Lux ID: home, numbers, calls, messages
+- `src/app/(flow)/start` — the questionnaire, in a group with NO chrome
 - `src/console/auth.ts` — OIDC + PKCE against lux.id
 - `src/components/Globe.tsx` — the Earth and the constellation, propagated
 - `scripts/land.mjs` — regenerates `src/content/land.ts` from coastline geometry
@@ -158,6 +157,24 @@ and offers the same body as a `mailto:`.
 **Reading submissions back needs a superuser session** — a machine token gets 403,
 by the same design that makes the write safe.
 
+## The console reads the account from /v1/tel
+
+`console/api.ts` calls `api.hanzo.ai/v1/tel/*` cross-origin with the Lux ID token
+the console already holds — the API answers the preflight for `console.lux.tel`
+by name. **`X-Org-Id` is required**: these routes read the org from the header
+while others read it from the token, so omitting it turns a correct request into
+a 403, which is invisible from the rendered page. The e2e asserts it on the wire.
+
+`console/Records.tsx` is ONE component behind Numbers, Calls and Messages. They
+differ only in columns, and three near-identical pages is how two of them stop
+handling the empty case. Every state is written and none is a spinner that never
+resolves: signed out asks for Lux ID, an empty account says what to do next, an
+expired token says the session ended and offers the way back.
+
+⛔ These were linked before either half existed and 404'd for as long as the
+sidebar did. `every internal link resolves` crawls what the site links to and
+fails the build on a link to a page that is not there.
+
 ## Design vocabulary
 
 From `luxfi/brand` `DESIGN.md`: monochrome, `#000000` surface, white type,
@@ -248,5 +265,6 @@ edge propagation, not the origin.
 
 ## Contact
 
-`hi@lux.tel` — the domain's MX is Google Workspace. The site links to it as a
-`mailto:`; there is no form and no backend.
+`hi@lux.tel` — the domain's MX is Google Workspace. `/start` is the questionnaire
+and writes to Base (above); `mailto:` is its fallback and the direct route
+everywhere else.
