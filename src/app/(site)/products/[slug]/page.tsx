@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Card } from '@/components/Card'
 import { PRIMITIVES, STATUS_LABEL, primitive } from '@/content/catalog'
 import { COMPANY } from '@/content/company'
 
@@ -54,13 +55,7 @@ export default async function Primitive({ params }: { params: Promise<{ slug: st
             <div className="eyebrow">Also in {p.pillar.name}</div>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {siblings.map((s) => (
-                <Link key={s.slug} href={`/products/${s.slug}`} className="card">
-                  <div className="flex items-center gap-2">
-                    <span className={`dot dot-${s.status}`} aria-hidden="true" />
-                    <span className="h3">{s.name}</span>
-                  </div>
-                  <p className="mt-2 text-sm text-white/60">{s.blurb}</p>
-                </Link>
+                <Card key={s.slug} primitive={s} />
               ))}
             </div>
           </div>

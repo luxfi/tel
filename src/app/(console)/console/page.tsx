@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 
-import { primitive } from '@/content/catalog'
+import { Mark } from '@/components/Mark'
 import { EXPLORE } from '@/console/suites'
 import { signIn, signOut, stored } from '@/console/auth'
 
@@ -95,21 +95,18 @@ export default function Console() {
         <div>
           <h2 className='font-heading text-lg font-bold'>Explore products</h2>
           <div className='mt-4 grid gap-4 sm:grid-cols-3'>
-            {EXPLORE.map((e) => {
-              const p = primitive(e.slug)
-              return (
-                <div key={e.slug} className='card flex flex-col'>
-                  <div className='flex items-center gap-2'>
-                    <span className={`dot dot-${p?.status ?? 'live'}`} aria-hidden='true' />
-                    <span className='h3'>{e.title}</span>
-                  </div>
-                  <p className='mt-2 flex-1 text-sm leading-relaxed text-white/60'>{e.blurb}</p>
-                  <Link href={`/products/${e.slug}`} className='btn btn-ghost mt-5 self-start'>
-                    {e.action}
-                  </Link>
+            {EXPLORE.map((e) => (
+              <div key={e.slug} className='card flex flex-col'>
+                <div className='flex items-center gap-2'>
+                  <Mark slug={e.slug} />
+                  <span className='h3'>{e.title}</span>
                 </div>
-              )
-            })}
+                <p className='mt-2 flex-1 text-sm leading-relaxed text-white/60'>{e.blurb}</p>
+                <Link href={`/products/${e.slug}`} className='btn btn-ghost mt-5 self-start'>
+                  {e.action}
+                </Link>
+              </div>
+            ))}
           </div>
 
           <h2 className='mt-10 font-heading text-lg font-bold'>Help and resources</h2>

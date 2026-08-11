@@ -23,9 +23,9 @@ import {
   Zap,
 } from 'lucide-react'
 
+import { Card } from '@/components/Card'
 import { Globe } from '@/components/Globe'
-import { Mark } from '@/components/Mark'
-import { PILLARS, STATUS_LABEL } from '@/content/catalog'
+import { PILLARS } from '@/content/catalog'
 import { CAPABILITIES, DIFFERENTIATORS, STACK } from '@/content/company'
 import { SOLUTIONS } from '@/content/solutions'
 import { CONTACT_EMAIL, contactHref } from '@/site'
@@ -248,18 +248,7 @@ export default function Page() {
                 <p className='mt-4 max-w-3xl text-sm leading-relaxed text-white/60'>{pillar.summary}</p>
                 <div className='mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
                   {pillar.primitives.map((p) => (
-                    <Link key={p.slug} href={`/products/${p.slug}`} className='card'>
-                      <div className='flex items-center gap-2'>
-                        <Mark slug={p.slug} />
-                        <span className='h3'>{p.name}</span>
-                      </div>
-                      <p className='mt-2 text-sm leading-relaxed text-white/60'>{p.blurb}</p>
-                      {p.status !== 'live' ? (
-                        <p className='mt-3 text-[10px] font-semibold uppercase tracking-wider text-white/60'>
-                          {STATUS_LABEL[p.status]}
-                        </p>
-                      ) : null}
-                    </Link>
+                    <Card key={p.slug} primitive={p} />
                   ))}
                 </div>
               </div>

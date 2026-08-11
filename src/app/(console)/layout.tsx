@@ -4,6 +4,7 @@ import React, { type PropsWithChildren, useState } from 'react'
 import Link from 'next/link'
 import { Bell, ChevronRight, CircleHelp, MessageSquare, Search, User } from 'lucide-react'
 
+import { Mark } from '@/components/Mark'
 import { SUITES } from '@/console/suites'
 
 /*
@@ -56,7 +57,7 @@ function Suites() {
                       href={`/products/${p.slug}`}
                       className='flex min-h-[36px] items-center gap-2 rounded-md px-2 text-sm text-white/50 transition-colors hover:text-white'
                     >
-                      <span className={`dot dot-${p.status}`} aria-hidden='true' />
+                      <Mark slug={p.slug} />
                       {p.name}
                     </Link>
                   </li>
