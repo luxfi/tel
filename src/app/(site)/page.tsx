@@ -79,11 +79,10 @@ export default function Page() {
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>The shift</p>
-          <h2 className='h2 mt-4 max-w-[24ch]'>For a century, being reachable meant being near a wire.</h2>
+          <h2 className='h2 mt-4 max-w-[16ch]'>The wire ran out.</h2>
           <p className='lede mt-6'>
-            Then a tower, then fibre. Everything else was a blank space on a coverage map, and the people working there
-            — on a ship, at a mine, after a storm took the tower down — were simply unreachable. That was a fact about
-            the world, and it stopped being true.
+            Then the tower. Then the fibre. Past that was blank map, and the people out there — on a ship, at a mine,
+            after a storm took the mast down — were simply out of reach.
           </p>
         </div>
       </section>
@@ -92,9 +91,9 @@ export default function Page() {
           over a grid. */}
       <section className='band'>
         <div className='wrap'>
-          <p className='display max-w-[22ch]'>
-            Anywhere on Earth is a phone number now.{' '}
-            <span className='text-white/40'>And what answers it can think.</span>
+          <p className='display max-w-[18ch]'>
+            The sky did not.{' '}
+            <span className='text-white/40'>Now every place on earth can ring, and think.</span>
           </p>
         </div>
       </section>
@@ -105,19 +104,17 @@ export default function Page() {
       <section className='band'>
         <div className='wrap grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16'>
           <div>
-            <p className='eyebrow'>For network and satellite operators</p>
-            <h2 className='h2 mt-4 max-w-[20ch]'>A constellation is not a telephone company.</h2>
+            <p className='eyebrow'>For operators</p>
+            <h2 className='h2 mt-4 max-w-[18ch]'>A constellation cannot ring a phone.</h2>
           </div>
           <div>
             <p className='text-base leading-relaxed text-white/70 sm:text-lg'>
-              You can put capacity over every ocean and every desert. Turning it into something a person can buy is a
-              different company entirely: a number that rings in each country, interconnect with the carriers your
-              subscribers already use, an emergency call that reaches the right dispatcher, lawful process handled per
-              jurisdiction, and a bill a regulator will accept.
+              You have beams over every ocean and desert. Selling that as service is a different trade: numbers a
+              regulator will grant, interconnect with the carriers your users already dial, an emergency call that
+              reaches the right dispatcher, lawful process in each country, and a bill that clears.
             </p>
             <p className='mt-5 text-base leading-relaxed text-white/70 sm:text-lg'>
-              That is licences and integrations measured in years, and it is what we already operate. Bring the
-              capacity. We will make it a phone company.
+              That is years of licences, and it is already running here. Bring the beam. We bring the dial tone.
             </p>
             <a href={contactHref('Operator partnership')} className='btn btn-solid mt-8'>
               Talk to our carrier team
@@ -129,12 +126,11 @@ export default function Page() {
 
       <section className='band'>
         <div className='wrap'>
-          <p className='eyebrow'>How it fits together</p>
-          <h2 className='h2 mt-4 max-w-[24ch]'>The whole path a call takes, from one company.</h2>
+          <p className='eyebrow'>The stack</p>
+          <h2 className='h2 mt-4 max-w-[20ch]'>We carry the call the whole way.</h2>
           <p className='lede mt-5'>
-            The number it arrives on, the interconnect it crosses, the wireless or orbital link at the far end, and
-            the compute that answers — assembled once, so you integrate against a network instead of a procurement
-            exercise.
+            The number it lands on, the interconnect it crosses, the link at the far end, and the compute that
+            answers. Ours, end to end, so you build against a network instead of a purchase order.
           </p>
           <ol className='mt-10 divide-y divide-white/10 border-y border-white/10'>
             {STACK.map((l) => (
@@ -154,11 +150,11 @@ export default function Page() {
           to from here. */}
       <section className='band'>
         <div className='wrap'>
-          <p className='eyebrow'>Where it&rsquo;s used</p>
-          <h2 className='h2 mt-4 max-w-[26ch]'>The work that happens away from the wire.</h2>
+          <p className='eyebrow'>Solutions</p>
+          <h2 className='h2 mt-4 max-w-[18ch]'>Wherever the work is.</h2>
           <p className='lede mt-5'>
-            Ships, rigs, convoys, disaster zones, factory floors and trading desks. Find the one that looks like
-            yours and we will tell you exactly how it is put together.
+            Ships, rigs, convoys, flood zones, factory floors, trading desks. Find yours and we will show you how it
+            is built.
           </p>
           <div className='mt-10 divide-y divide-white/10 border-y border-white/10'>
             {SOLUTIONS.map((s) => (
@@ -184,10 +180,9 @@ export default function Page() {
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>Products</p>
-          <h2 className='h2 mt-4 max-w-[24ch]'>All of it, on one key.</h2>
+          <h2 className='h2 mt-4 max-w-[18ch]'>Ask, and it exists.</h2>
           <p className='lede mt-5'>
-            A number, a SIM, a satellite terminal and a voice agent are the same kind of thing here: something you
-            create with one call and cancel with another.
+            A number, a SIM, a terminal, a voice agent. Same key, same call to make it, same call to kill it.
           </p>
           <div className='mt-10 space-y-12'>
             {PILLARS.map((pillar) => (
@@ -223,8 +218,8 @@ export default function Page() {
 
       <section className='band'>
         <div className='wrap'>
-          <p className='eyebrow'>Why teams move</p>
-          <h2 className='h2 mt-4 max-w-[26ch]'>When a call breaks, one company answers for it.</h2>
+          <p className='eyebrow'>Support</p>
+          <h2 className='h2 mt-4 max-w-[18ch]'>It breaks, we answer.</h2>
           <div className='mt-8 grid gap-4 md:grid-cols-2'>
             {DIFFERENTIATORS.map((d) => (
               <div key={d.claim} className='card'>
@@ -241,8 +236,8 @@ export default function Page() {
           the reason to put it off, by saying plainly what happens after the email. */}
       <section className='band'>
         <div className='wrap'>
-          <p className='eyebrow'>What happens next</p>
-          <h2 className='h2 mt-4 max-w-[26ch]'>You will be talking to an engineer, not a form.</h2>
+          <p className='eyebrow'>Getting started</p>
+          <h2 className='h2 mt-4 max-w-[20ch]'>Talk to a builder, not a form.</h2>
           <ol className='mt-10 divide-y divide-white/10 border-y border-white/10'>
             {[
               [

@@ -36,7 +36,7 @@ export const PILLARS: readonly Pillar[] = [
     slug: 'orbit',
     name: 'Orbit',
     summary:
-      'Low-earth-orbit capacity, integrated with the terrestrial network rather than bolted beside it. One account, one bill, one support path, whether a site is on fibre or on a dish.',
+      'Low-earth-orbit capacity, integrated with the terrestrial network rather than bolted beside it. Same account, same bill, same desk, whether a site is on fibre or on a terminal',
     primitives: [
       {
         slug: 'orbital-broadband',
@@ -100,7 +100,7 @@ export const PILLARS: readonly Pillar[] = [
     slug: 'network',
     name: 'Network',
     summary:
-      'The physical layer. Fibre, peering, points of presence and the wireless edge, configured in one place instead of assembled from several and reconciled afterwards.',
+      'The physical layer. Fibre, peering, points of presence and the wireless edge, configured here instead of assembled from several and reconciled afterwards.',
     primitives: [
       {
         slug: 'global-ip',
@@ -161,12 +161,12 @@ export const PILLARS: readonly Pillar[] = [
     slug: 'wireless',
     name: 'Wireless',
     summary:
-      'SIMs, eSIMs and mobile service on one profile that works across countries and across networks — including the orbital one.',
+      'SIMs, eSIMs and mobile service on a profile that works across countries and networks, orbital included.',
     primitives: [
       {
         slug: 'iot-sim',
         name: 'IoT SIM',
-        blurb: 'One profile, every network',
+        blurb: 'Every network, same profile',
         status: 'live',
         detail:
           'A single SIM profile that attaches to whichever network is strongest, in any country, with a data plan that is pooled rather than per-device. Built for fleets that ship once and run for years.',
@@ -221,7 +221,7 @@ export const PILLARS: readonly Pillar[] = [
     slug: 'communications',
     name: 'Communications',
     summary:
-      'Numbers, voice and messaging on carrier-grade interconnect. One relationship rather than several, so a quality problem is something you raise once and we carry.',
+      'Numbers, voice and messaging on carrier-grade interconnect, from us rather than from four desks, so a quality problem is something you raise here and we chase.',
     primitives: [
       {
         slug: 'numbers',
