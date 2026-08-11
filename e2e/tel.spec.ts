@@ -13,10 +13,10 @@ const gotoClean = async (page: Page) => {
 test('renders the page', async ({ page }) => {
   const errors = await gotoClean(page)
   await expect(page).toHaveTitle(/Lux Tel/)
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('satellite connectivity')
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('needs to connect')
   // The catalog reaches the page. Not a copy string — the pillars are data, and
   // this is what fails if the projection breaks rather than the wording changes.
-  for (const pillar of ['Orbit', 'Communications', 'Wireless', 'Intelligence']) {
+  for (const pillar of ['Connectivity', 'Cellular', 'Messaging', 'Agentic AI']) {
     await expect(page.getByRole('heading', { name: pillar, exact: true })).toBeVisible()
   }
   await expect(page.getByText('Lux Industries Inc.')).toBeVisible()

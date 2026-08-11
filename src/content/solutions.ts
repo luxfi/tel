@@ -8,57 +8,57 @@
  */
 export const SOLUTIONS = [
   {
-    slug: 'remote-operations',
-    name: 'Remote operations',
+    slug: 'app',
+    name: 'An app that needs to call and text',
     problem:
-      'Mine sites, farms, energy infrastructure and construction sit past the end of the fibre. Crews still need voice, telemetry and video, and the site still needs to be reachable on a normal number.',
+      'Adding voice and messaging to a product means assembling a communications stack: numbers in each market, a carrier that will terminate your traffic, delivery infrastructure, and compliance in every country you send from.',
     answer:
-      'Orbital broadband for the site, Lux numbers for the crew, and wireless failover so a cut link is an event rather than an outage. All of it on one bill, provisioned before the equipment ships.',
-    uses: ['orbital-broadband', 'failover', 'numbers', 'private-wireless'],
+      'Numbers, voice, messaging and AI on one key, so the feature ships instead of becoming a quarter of platform work.',
+    uses: ['numbers', 'voice', 'sms', 'voice-agents'],
   },
   {
-    slug: 'fleets',
-    name: 'Connected fleets and devices',
+    slug: 'workforce',
+    name: 'A business that needs an AI workforce',
     problem:
-      'A product that ships to forty countries cannot carry forty SIM contracts, and a device sealed at the factory cannot be opened to swap one.',
+      'Calls go unanswered after hours, messages queue overnight, and the work that follows a conversation — the lookup, the update, the ticket — still waits for a person.',
     answer:
-      'One eSIM profile that attaches to the strongest network in any country, pooled data across the fleet, and remote provisioning so the profile changes without touching the hardware.',
+      'Agents that answer calls and messages, act inside your systems, and run continuously. They escalate to a person when the situation calls for it rather than when the script ends.',
+    uses: ['voice-agents', 'transcription', 'speech', 'inference'],
+  },
+  {
+    slug: 'fleet',
+    name: 'A fleet operating across countries',
+    problem:
+      'Vehicles, devices and equipment cross borders, and each border has historically meant a new connectivity contract, a new SIM and a new invoice.',
+    answer:
+      'One eSIM deployment that attaches to the strongest network in range, with data pooled across the fleet rather than stranded per device.',
     uses: ['esim', 'iot-sim', 'failover'],
   },
   {
-    slug: 'contact',
-    name: 'Contact centres and voice AI',
+    slug: 'remote',
+    name: 'A remote site with no fibre',
     problem:
-      'Agents that pause before answering sound broken, and callers hang up. Most of that pause is network distance between the call and the model.',
+      'Mines, farms, energy infrastructure and construction sit past the end of the line, and nobody will quote a build that never pays back.',
     answer:
-      'Voice agents that run on the edge the call is already anchored to, with transcription and speech in the same facility, escalating to a human on the same call.',
-    uses: ['voice-agents', 'voice', 'transcription', 'branded-calling'],
+      'Orbital capacity to the site, joined to the same network as everything else you run. Add cellular backup where the link matters enough never to drop.',
+    uses: ['orbital-broadband', 'failover', 'private-wireless', 'numbers'],
   },
   {
-    slug: 'operators',
-    name: 'Mobile operators',
+    slug: 'phone-system',
+    name: 'A company replacing its phone system',
     problem:
-      'Coverage gaps sit where a fibre build will never pay back, and subscribers judge a network by the places it does not work.',
+      'The phone system is a box in a cupboard, a contract nobody remembers signing, and a change request that takes a fortnight.',
     answer:
-      'Orbital backhaul to the tower with hand-off at your core, plus direct-to-cell messaging for the areas past any tower at all.',
-    uses: ['cell-backhaul', 'direct-to-cell', 'global-ip'],
+      'Numbers, calling, routing, messaging and automation on a programmable platform, where a change is a call to an API instead of a ticket.',
+    uses: ['numbers', 'voice', 'sip', 'branded-calling'],
   },
   {
-    slug: 'regulated',
-    name: 'Regulated industries',
+    slug: 'always-on',
+    name: 'Operations that cannot go offline',
     problem:
-      'Financial services, healthcare and government need to prove where a recording was made, where it was stored, and who reached it.',
+      'Hospitals, ports, trading desks and emergency response cannot treat a failed network as an inconvenience, and a single provider is a single failure.',
     answer:
-      'Media anchored and stored per region with verifiable pinning, identity checked at the carrier layer, and privileged access individually attributable.',
-    uses: ['verify', 'silent-verification', 'storage', 'lookup'],
-  },
-  {
-    slug: 'response',
-    name: 'Emergency response',
-    problem:
-      'The networks a response depends on are the ones the event has just taken down, and a deployment cannot wait on a provisioning queue.',
-    answer:
-      'Terminals that ship configured and come up inside an hour, on numbers and SIMs issued in advance and held ready.',
-    uses: ['orbital-broadband', 'maritime-aviation', 'mobile-voice'],
+      'Several kinds of connectivity under one service, arranged so that one failed network does not become a failed operation.',
+    uses: ['failover', 'orbital-broadband', 'cloud-vpn', 'global-ip'],
   },
 ] as const

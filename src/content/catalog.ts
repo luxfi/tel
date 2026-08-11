@@ -33,10 +33,10 @@ export interface Pillar {
 
 export const PILLARS: readonly Pillar[] = [
   {
-    slug: 'orbit',
-    name: 'Orbit',
+    slug: 'connectivity',
+    name: 'Connectivity',
     summary:
-      'Low-earth-orbit capacity, integrated with the terrestrial network rather than bolted beside it. Same account, same bill, same desk, whether a site is on fibre or on a terminal',
+      'Internet wherever it has to be — fixed, wireless, satellite, and the backup link behind it. We choose the connection that fits the location.',
     primitives: [
       {
         slug: 'orbital-broadband',
@@ -50,20 +50,6 @@ export const PILLARS: readonly Pillar[] = [
           'Round trip to the nearest Lux point of presence suitable for interactive use, including voice',
           'Terminals ship configured — a site comes up without a truck roll or a network engineer',
           'Traffic joins the private backbone at the ground station — it does not transit the public internet to reach your cloud',
-        ],
-      },
-      {
-        slug: 'direct-to-cell',
-        name: 'Direct to Cell',
-        blurb: 'Coverage without a tower',
-        status: 'beta',
-        detail:
-          'Messaging and voice to unmodified handsets outside terrestrial coverage. The phone in a pocket keeps working past the last tower — no dish, no app, no second device. Delivered against Lux numbers, so a device keeps its identity when it leaves the ground network.',
-        facts: [
-          'Standard LTE handsets, unmodified — no client software',
-          'Messaging in service; voice in field trial',
-          'The subscriber keeps one number across terrestrial and orbital coverage',
-          'Session hand-off is the network’s problem, not the application’s',
         ],
       },
       {
@@ -94,52 +80,17 @@ export const PILLARS: readonly Pillar[] = [
           'Terrestrial and orbital transport under one SLA and one invoice',
         ],
       },
-    ],
-  },
-  {
-    slug: 'network',
-    name: 'Network',
-    summary:
-      'The physical layer. Fibre, peering, points of presence and the wireless edge, configured here instead of assembled from several and reconciled afterwards.',
-    primitives: [
       {
-        slug: 'global-ip',
-        name: 'Global IP',
-        blurb: 'Transit on the Lux backbone',
+        slug: 'failover',
+        name: 'Wireless Failover',
+        blurb: 'The link that takes over',
         status: 'live',
         detail:
-          'IP transit that stays on the Lux backbone as far as the destination allows, with direct interconnect to the major networks. Deterministic routing, because the path is ours to choose.',
+          'Automatic cellular — and, where it is deployed, orbital — failover when the primary circuit drops. The site keeps its address and its sessions; the transport underneath changes.',
         facts: [
-          'Direct interconnect at the major exchanges across three continents',
-          'Anycast ingress with per-prefix routing policy under your control',
-          'IPv4 and IPv6 at parity — no tunnelled second-class v6',
-          'BGP communities exposed so you can steer your own traffic',
-        ],
-      },
-      {
-        slug: 'cloud-vpn',
-        name: 'Cloud VPN',
-        blurb: 'Private reach into any cloud',
-        status: 'live',
-        detail:
-          'Encrypted private connectivity between your sites, your devices and your cloud tenancies, terminating inside the Lux network rather than on a rented appliance at the edge of it.',
-        facts: [
-          'Terminates on the backbone, so traffic never crosses the public internet',
-          'Per-tenant key material, rotated on a schedule you set',
-          'Routes and policy declared through the API, not a ticket',
-        ],
-      },
-      {
-        slug: 'cross-connects',
-        name: 'Virtual Cross Connects',
-        blurb: 'Private peering, provisioned by API',
-        status: 'live',
-        detail:
-          'A private circuit to a cloud region, an exchange or another tenant, created by an API call instead of a cross-connect order and a data-centre visit.',
-        facts: [
-          'Provisioned in minutes; the physical patch already exists',
-          'Bandwidth adjustable in place without re-provisioning',
-          'Metered by the hour, so a migration window does not become a year contract',
+          'Detection and cut-over fast enough that sessions survive it',
+          'The public address is retained, so sessions and inbound routes survive',
+          'Failover capacity billed on use, not on standby',
         ],
       },
       {
@@ -158,11 +109,24 @@ export const PILLARS: readonly Pillar[] = [
     ],
   },
   {
-    slug: 'wireless',
-    name: 'Wireless',
+    slug: 'cellular',
+    name: 'Cellular',
     summary:
-      'SIMs, eSIMs and mobile service on a profile that works across countries and networks, orbital included.',
+      'Connect devices almost anywhere. One deployment across the countries you operate in, instead of a carrier relationship in each of them.',
     primitives: [
+      {
+        slug: 'esim',
+        name: 'eSIM',
+        blurb: 'Provision without shipping plastic',
+        status: 'live',
+        detail:
+          'Download a profile to a device already in the field. No logistics, no truck roll, no second SKU for a second country.',
+        facts: [
+          'Remote provisioning to consumer and industrial devices',
+          'Profiles swap network without swapping hardware',
+          'Bulk issuance by API for a production line',
+        ],
+      },
       {
         slug: 'iot-sim',
         name: 'IoT SIM',
@@ -178,19 +142,6 @@ export const PILLARS: readonly Pillar[] = [
         ],
       },
       {
-        slug: 'esim',
-        name: 'eSIM',
-        blurb: 'Provision without shipping plastic',
-        status: 'live',
-        detail:
-          'Download a profile to a device already in the field. No logistics, no truck roll, no second SKU for a second country.',
-        facts: [
-          'Remote provisioning to consumer and industrial devices',
-          'Profiles swap network without swapping hardware',
-          'Bulk issuance by API for a production line',
-        ],
-      },
-      {
         slug: 'mobile-voice',
         name: 'Mobile Voice',
         blurb: 'Cellular voice on your own numbers',
@@ -203,25 +154,26 @@ export const PILLARS: readonly Pillar[] = [
         ],
       },
       {
-        slug: 'failover',
-        name: 'Wireless Failover',
-        blurb: 'The link that takes over',
-        status: 'live',
+        slug: 'direct-to-cell',
+        name: 'Direct to Cell',
+        blurb: 'Coverage without a tower',
+        status: 'beta',
         detail:
-          'Automatic cellular — and, where it is deployed, orbital — failover when the primary circuit drops. The site keeps its address and its sessions; the transport underneath changes.',
+          'Messaging and voice to unmodified handsets outside terrestrial coverage. The phone in a pocket keeps working past the last tower — no dish, no app, no second device. Delivered against Lux numbers, so a device keeps its identity when it leaves the ground network.',
         facts: [
-          'Detection and cut-over fast enough that sessions survive it',
-          'The public address is retained, so sessions and inbound routes survive',
-          'Failover capacity billed on use, not on standby',
+          'Standard LTE handsets, unmodified — no client software',
+          'Messaging in service; voice in field trial',
+          'The subscriber keeps one number across terrestrial and orbital coverage',
+          'Session hand-off is the network’s problem, not the application’s',
         ],
       },
     ],
   },
   {
-    slug: 'communications',
-    name: 'Communications',
+    slug: 'numbers',
+    name: 'Phone numbers',
     summary:
-      'Numbers, voice and messaging on carrier-grade interconnect, from us rather than from four desks, so a quality problem is something you raise here and we chase.',
+      'Numbers for people, applications and AI agents. Local, national, toll-free and international, provisioned by API.',
     primitives: [
       {
         slug: 'numbers',
@@ -236,6 +188,40 @@ export const PILLARS: readonly Pillar[] = [
           'Porting managed end to end with status you can poll',
         ],
       },
+      {
+        slug: 'branded-calling',
+        name: 'Branded Calling',
+        blurb: 'Your name on the handset',
+        status: 'live',
+        detail:
+          'Your organisation name, logo and call reason displayed on the receiving handset, with the identity attested at the carrier layer so it cannot be spoofed downstream.',
+        facts: [
+          'Attested caller identity carried through interconnect',
+          'Name, logo and call reason on supported handsets',
+          'Answer rates measurable per campaign, in the same reporting as the calls',
+        ],
+      },
+      {
+        slug: 'lookup',
+        name: 'Number Lookup',
+        blurb: 'What the network knows',
+        status: 'live',
+        detail:
+          'Carrier, line type, portability history and risk signals for any number, read from network data rather than a purchased list.',
+        facts: [
+          'Live carrier and line type, including recent porting',
+          'Disposable and virtual number detection',
+          'Risk signals derived from network behaviour, not from a static list',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'voice',
+    name: 'Voice',
+    summary:
+      'Make and receive calls from code, or behind the systems you already run.',
+    primitives: [
       {
         slug: 'voice',
         name: 'Voice API',
@@ -263,19 +249,6 @@ export const PILLARS: readonly Pillar[] = [
         ],
       },
       {
-        slug: 'sms',
-        name: 'Messaging API',
-        blurb: 'SMS, MMS and rich messaging',
-        status: 'live',
-        detail:
-          'Two-way messaging on your own numbers and short codes, with campaign registration and carrier policy enforced before a message is spent rather than after it is rejected.',
-        facts: [
-          'Registration checked at send time — a non-compliant campaign fails fast and cheap',
-          'Delivery receipts from the carrier, not inferred from a queue',
-          'Rich messaging on capable handsets with automatic fallback to SMS',
-        ],
-      },
-      {
         slug: 'webrtc',
         name: 'WebRTC',
         blurb: 'Browser and app calling',
@@ -286,6 +259,27 @@ export const PILLARS: readonly Pillar[] = [
           'SDKs for browser, iOS and Android',
           'Media relayed on the Lux network for consistent quality',
           'The same call control as a PSTN call — one API, both worlds',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'messaging',
+    name: 'Messaging',
+    summary:
+      'Send, receive and automate conversations — alerts, replies, verification and two-way threads.',
+    primitives: [
+      {
+        slug: 'sms',
+        name: 'Messaging API',
+        blurb: 'SMS, MMS and rich messaging',
+        status: 'live',
+        detail:
+          'Two-way messaging on your own numbers and short codes, with campaign registration and carrier policy enforced before a message is spent rather than after it is rejected.',
+        facts: [
+          'Registration checked at send time — a non-compliant campaign fails fast and cheap',
+          'Delivery receipts from the carrier, not inferred from a queue',
+          'Rich messaging on capable handsets with automatic fallback to SMS',
         ],
       },
       {
@@ -301,14 +295,6 @@ export const PILLARS: readonly Pillar[] = [
           'Events streamed to the same webhook plane as voice and messaging',
         ],
       },
-    ],
-  },
-  {
-    slug: 'trust',
-    name: 'Identity & Trust',
-    summary:
-      'The network knows things about a call and a number that an application cannot. These expose that knowledge — verification, provenance and fraud signals, sourced at the carrier layer.',
-    primitives: [
       {
         slug: 'verify',
         name: 'Verify API',
@@ -335,52 +321,13 @@ export const PILLARS: readonly Pillar[] = [
           'Falls back to a code automatically when the device is on Wi-Fi only',
         ],
       },
-      {
-        slug: 'lookup',
-        name: 'Number Lookup',
-        blurb: 'What the network knows',
-        status: 'live',
-        detail:
-          'Carrier, line type, portability history and risk signals for any number, read from network data rather than a purchased list.',
-        facts: [
-          'Live carrier and line type, including recent porting',
-          'Disposable and virtual number detection',
-          'Risk signals derived from network behaviour, not from a static list',
-        ],
-      },
-      {
-        slug: 'branded-calling',
-        name: 'Branded Calling',
-        blurb: 'Your name on the handset',
-        status: 'live',
-        detail:
-          'Your organisation name, logo and call reason displayed on the receiving handset, with the identity attested at the carrier layer so it cannot be spoofed downstream.',
-        facts: [
-          'Attested caller identity carried through interconnect',
-          'Name, logo and call reason on supported handsets',
-          'Answer rates measurable per campaign, in the same reporting as the calls',
-        ],
-      },
-      {
-        slug: 'deepfake-detection',
-        name: 'Deepfake Detection',
-        blurb: 'Synthetic voice, flagged live',
-        status: 'beta',
-        detail:
-          'Scores live call audio for synthesis in the media path, before it reaches your agents. A voice that was generated is a fact about the call, and the network is where that fact is available first.',
-        facts: [
-          'Scored in the media path, not from a recording after the fact',
-          'Result available to call control while the call is still up',
-          'No audio leaves the region the call was anchored in',
-        ],
-      },
     ],
   },
   {
-    slug: 'intelligence',
-    name: 'Intelligence',
+    slug: 'agents',
+    name: 'Agentic AI',
     summary:
-      'Inference co-located with the network edge. When the model runs in the same facility the call is anchored in, the round trip is a hop rather than a journey.',
+      'Agents connected to your business: they talk, text, call your APIs, use tools, and finish the task.',
     primitives: [
       {
         slug: 'voice-agents',
@@ -446,13 +393,74 @@ export const PILLARS: readonly Pillar[] = [
           'Co-located with inference to keep retrieval inside the turn budget',
         ],
       },
+      {
+        slug: 'deepfake-detection',
+        name: 'Deepfake Detection',
+        blurb: 'Synthetic voice, flagged live',
+        status: 'beta',
+        detail:
+          'Scores live call audio for synthesis in the media path, before it reaches your agents. A voice that was generated is a fact about the call, and the network is where that fact is available first.',
+        facts: [
+          'Scored in the media path, not from a recording after the fact',
+          'Result available to call control while the call is still up',
+          'No audio leaves the region the call was anchored in',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'network',
+    name: 'Network',
+    summary:
+      'Connect locations, infrastructure and systems, arranged around what has to stay online.',
+    primitives: [
+      {
+        slug: 'global-ip',
+        name: 'Global IP',
+        blurb: 'Transit on the Lux backbone',
+        status: 'live',
+        detail:
+          'IP transit that stays on the Lux backbone as far as the destination allows, with direct interconnect to the major networks. Deterministic routing, because the path is ours to choose.',
+        facts: [
+          'Direct interconnect at the major exchanges across three continents',
+          'Anycast ingress with per-prefix routing policy under your control',
+          'IPv4 and IPv6 at parity — no tunnelled second-class v6',
+          'BGP communities exposed so you can steer your own traffic',
+        ],
+      },
+      {
+        slug: 'cloud-vpn',
+        name: 'Cloud VPN',
+        blurb: 'Private reach into any cloud',
+        status: 'live',
+        detail:
+          'Encrypted private connectivity between your sites, your devices and your cloud tenancies, terminating inside the Lux network rather than on a rented appliance at the edge of it.',
+        facts: [
+          'Terminates on the backbone, so traffic never crosses the public internet',
+          'Per-tenant key material, rotated on a schedule you set',
+          'Routes and policy declared through the API, not a ticket',
+        ],
+      },
+      {
+        slug: 'cross-connects',
+        name: 'Virtual Cross Connects',
+        blurb: 'Private peering, provisioned by API',
+        status: 'live',
+        detail:
+          'A private circuit to a cloud region, an exchange or another tenant, created by an API call instead of a cross-connect order and a data-centre visit.',
+        facts: [
+          'Provisioned in minutes; the physical patch already exists',
+          'Bandwidth adjustable in place without re-provisioning',
+          'Metered by the hour, so a migration window does not become a year contract',
+        ],
+      },
     ],
   },
   {
     slug: 'edge',
     name: 'Edge',
     summary:
-      'The small amount of compute and state a communications workload actually needs, run at the same points of presence as the traffic.',
+      'Compute beside the media, so the work that follows a conversation happens where the conversation is.',
     primitives: [
       {
         slug: 'functions',

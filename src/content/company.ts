@@ -10,13 +10,13 @@ export const COMPANY = {
   legalName: 'Lux Industries Inc',
   brand: 'Lux',
   site: 'lux.tel',
-  tagline: 'Voice, messaging and connectivity as one service.',
+  tagline: 'Communications, connectivity and agentic AI, as one service.',
   /**
    * The positioning, in one paragraph, for a reader who will decide in ten seconds
    * whether to keep reading.
    */
   lede:
-    'Lux delivers voice, messaging, numbering, wireless and satellite connectivity as one service. A call, a message, a SIM and a satellite terminal are provisioned from one API, billed on one invoice and answered by one support desk — so the thing you integrate against is a network, not a procurement exercise.',
+    'Lux brings communications, connectivity and intelligent automation into one platform — one account, one bill, one team behind it. From a phone number to a remote site to an AI agent that can answer, act and operate on your behalf.',
   contact: {
     /* One address. The domain's MX is Google Workspace and hi@ is what it
        receives on; a page full of role addresses that bounce is worse than one
@@ -41,22 +41,23 @@ export interface Capability {
 
 export const CAPABILITIES: readonly Capability[] = [
   {
-    headline: 'Numbers where you need them',
-    note: 'Local, national, toll-free and short-code ranges in the countries we are licensed in, provisioned by API with the regulatory requirements surfaced before purchase.',
+    headline: 'Internet anywhere it has to be',
+    note: 'Fixed, wireless and satellite for offices, remote sites and mobile operations. We choose the connection that fits the location, and pair it with a second one where the link cannot fail.',
   },
   {
-    headline: 'The strongest network, wherever it lands',
-    note: 'A single SIM or eSIM profile attaches to the strongest available network, with data pooled across the fleet rather than stranded per device.',
+    headline: 'Devices that stay online as they move',
+    note: 'SIM and eSIM for fleets, equipment and products deployed across regions — a single deployment instead of a carrier relationship in every market you enter.',
   },
   {
-    headline: 'Coverage past the last tower',
-    note: 'Orbital capacity for sites terrestrial carriers will not quote, joining the Lux backbone at the ground station rather than the public internet.',
+    headline: 'Phone numbers for people and agents',
+    note: 'Local, national, toll-free and international numbers with calling, routing and messaging behind them. Give one to a team, or give it to an agent.',
   },
   {
-    headline: 'Inference beside the media',
-    note: 'Models run in the facilities calls are anchored in, which is why a voice agent can answer inside a human turn.',
+    headline: 'AI that does the next step',
+    note: 'Agents that answer, look up the account, update the system, trigger the workflow and escalate when they should — over voice, messaging, web and API.',
   },
 ]
+
 
 export interface Layer {
   readonly n: string
@@ -74,47 +75,48 @@ export interface Layer {
 export const STACK: readonly Layer[] = [
   {
     n: '01',
-    name: 'Fibre and interconnect',
-    claim: 'You set the path.',
+    name: 'Internet',
+    claim: 'Connectivity for places, not just buildings.',
     detail:
-      'Traffic reaches the networks it has to reach through carrier-grade interconnect. What Lux adds is a single place to configure it, so the path a call takes is something you can reason about instead of something you discover.',
+      'Offices, remote sites, infrastructure and mobile operations, including the places conventional networks do not reach. Fixed, wireless, satellite and redundant — we choose the connection that fits the location rather than selling you the one we happen to carry.',
   },
   {
     n: '02',
-    name: 'Orbit',
-    claim: 'Coverage where the ground network ends.',
+    name: 'Cellular',
+    claim: 'For the things that move.',
     detail:
-      'Low-earth-orbit capacity for sites past the end of the line, provisioned and supported alongside everything else you buy from us rather than as a separate contract with a separate desk.',
+      'SIM and eSIM for fleets, equipment, sensors, backup links and products shipped across borders. One deployment covers the countries you operate in, instead of a separate carrier relationship in each of them.',
   },
   {
     n: '03',
-    name: 'Spectrum and access',
-    claim: 'The device keeps its name.',
+    name: 'Voice',
+    claim: 'Phone infrastructure without building a phone company.',
     detail:
-      'SIM, eSIM, private wireless and fixed access resolve to one subscriber identity, so a device that moves between a factory floor, a public network and an orbital link does not change who it is.',
+      'Numbers, calling, routing, SIP and programmable voice — the machinery behind a modern communications product. Point it at your people, or hand the number to an agent.',
   },
   {
     n: '04',
-    name: 'Carrier services',
-    claim: 'You raise it. We carry it.',
+    name: 'Messaging',
+    claim: 'Conversations your software can hold.',
     detail:
-      'Numbers, voice, SIP and messaging come from us, not from four desks. When quality drops you raise it here, and we chase it — which is the part a customer actually feels.',
+      'Send alerts, receive replies, verify a user, run a two-way thread. SMS, MMS and the delivery infrastructure underneath, on the same platform as everything else you buy here.',
   },
   {
     n: '05',
-    name: 'Edge compute',
-    claim: 'Inference close to the call.',
+    name: 'AI agents',
+    claim: 'AI that can act, not only answer.',
     detail:
-      'GPUs and application compute sit in the same facilities as the media. A voice agent’s round trip is a hop inside a building rather than a journey across a continent.',
+      'Agents that talk, text, call your APIs, use tools and finish a task: qualify the lead, book the appointment, update the record, raise the ticket, escalate to a person when it matters. Reachable over voice, messaging, web and API.',
   },
   {
     n: '06',
-    name: 'Control plane',
-    claim: 'Configuration is data.',
+    name: 'Network',
+    claim: 'The layer holding it together.',
     detail:
-      'Numbers, SIMs, terminals, trunks, agents and functions are declared, versioned and billed the same way. Configuration is data, not a ticket queue.',
+      'Private networking, VPN, routing, failover and multi-network deployments — designed around what has to stay online rather than around a single provider\u2019s footprint.',
   },
 ]
+
 
 export interface Differentiator {
   readonly claim: string
@@ -128,28 +130,24 @@ export interface Differentiator {
  */
 export const DIFFERENTIATORS: readonly Differentiator[] = [
   {
-    claim: 'We answer for the whole path',
-    detail:
-      'Numbers, voice, messaging, wireless and satellite arrive on the same contract, the same invoice, the same desk, instead of vendors pointing at each other',
+    claim: 'One account',
+    detail: 'Every part of it inside a single commercial relationship, instead of five renewals on five calendars.',
   },
   {
-    claim: 'Ground and orbit, same console',
-    detail:
-      'A remote site is provisioned, monitored and supported in the same place as a wired one, rather than in a second portal with a second login.',
+    claim: 'One platform',
+    detail: 'Connectivity, communications and AI built to work together rather than integrated by you after the fact.',
   },
   {
-    claim: 'Inference sits near the call',
-    detail:
-      'Models are served close to where calls are handled, so an agent answers inside a human turn rather than after one.',
+    claim: 'One bill',
+    detail: 'Infrastructure without a pile of separate invoices nobody can reconcile against a single call.',
   },
   {
-    claim: 'Compliance runs before execution',
-    detail:
-      'Campaign registration, numbering eligibility and jurisdiction checks are enforced when a request is made — so a non-compliant send fails immediately instead of being rejected downstream at cost.',
+    claim: 'One API',
+    detail: 'Build across services without rebuilding the integration each time you add one.',
   },
   {
-    claim: 'Data stays in its region',
-    detail:
-      'Media, storage and inference are pinned per region, and which region is visible to you rather than asserted.',
+    claim: 'One team to call',
+    detail: 'When something breaks you start with us, and we work out the rest. That is the part you are actually buying.',
   },
 ]
+
