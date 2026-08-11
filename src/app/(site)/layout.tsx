@@ -14,7 +14,9 @@ const Wordmark: React.FC<{ className?: string }> = ({ className = '' }) => (
 )
 
 const Header: React.FC = () => (
-  <header className='sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur'>
+  // No rule under it. A hairline reads as a seam between two flat slabs; the header
+  // is a pane the page slides beneath, so the blur and the fall-off do the work.
+  <header className='sticky top-0 z-50 bg-black/55 backdrop-blur-xl backdrop-saturate-150'>
     <nav className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
       {/* This row is the menus' containing block, and it is the only reason a
           mega-menu can span the container: its box IS the container's content

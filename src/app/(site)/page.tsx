@@ -43,8 +43,8 @@ export default function Page() {
             <p className='eyebrow'>Telecommunications &amp; satellite</p>
             <h1 className='display mt-4 max-w-[18ch]'>Voice, messaging, and satellite connectivity.</h1>
             <p className='lede mt-6'>
-              Lux runs telecommunications infrastructure — programmable voice, messaging, and phone numbers — and
-              provides satellite internet where wire and tower don&rsquo;t reach.
+              Buy a phone number. Send a text. Put a SIM in a device that ships anywhere. Point a terminal at a site
+              with no fibre. Let an agent answer the call. Same key, same bill, same desk.
             </p>
             <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
               <Link href='/network' className='btn btn-solid'>
@@ -91,9 +91,12 @@ export default function Page() {
           over a grid. */}
       <section className='band'>
         <div className='wrap'>
-          <p className='display max-w-[18ch]'>
+          <p className='display max-w-[26ch]'>
             The sky did not.{' '}
-            <span className='text-white/40'>Now every place on earth can ring, and think.</span>
+            <span className='text-white/40'>
+              Numbers that ring anywhere. SIMs that work everywhere. Satellite where there is no tower. Agents that
+              pick up.
+            </span>
           </p>
         </div>
       </section>

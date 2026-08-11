@@ -202,9 +202,9 @@ test('the phone menu covers the viewport and reaches every section', async ({ pa
   it shipped: a panel 333px short of the container reads as a design, and a head
   34px below its neighbours reads as a head.
 
-  The rule the numbers encode: a panel is placed against an EDGE that exists — the
-  container's for a mega-menu, its trigger's for a list — and groups are grid
-  columns, so heads share a top by construction instead of by offset.
+  The rule the numbers encode: every panel is placed against the container's edges,
+  and groups are grid columns, so heads share a top by construction rather than by
+  offset.
 */
 for (const width of [1280, 1920]) {
   test(`the header menus align to the container at ${width}px`, async ({ page }) => {
@@ -231,19 +231,17 @@ for (const width of [1280, 1920]) {
         }
       })
 
-      if (m.heads.length > 2) {
-        // A mega-menu takes the container: its edges land on the wordmark and the
-        // button, which is what makes the width read as chosen.
+              // EVERY menu takes the container, mega or list: its edges land on the
+        // wordmark and the button. A 300px panel beside a full-width one read
+        // as two components, which is the rule this replaced.
         expect(m.panel.left, `${label} left edge`).toBeCloseTo(m.content.left, 1)
         expect(m.panel.right, `${label} right edge`).toBeCloseTo(m.content.right, 1)
+
+      if (m.heads.length > 2) {
         // ONE row above xl, so every head shares a top. Balanced CSS columns broke
         // this silently: the break lands on the text metrics, so a five-item pillar
         // pushed the head under it out of line with the rest of its row.
         expect(new Set(m.heads).size, `${label} heads are not on one line`).toBe(1)
-      } else {
-        // A list hangs off the trigger you pointed at, and never past the container.
-        expect(m.panel.left, `${label} left edge`).toBeCloseTo(m.trigger.left, 1)
-        expect(m.panel.right).toBeLessThanOrEqual(m.content.right)
       }
 
       // Contiguous with the trigger. A gap is a strip belonging to neither, and
