@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 
-const WIDTHS = [390, 768, 1280]
+const WIDTHS = [390, 768, 1280, 1920]
 
 const gotoClean = async (page: Page) => {
   const errors: string[] = []
@@ -194,4 +194,94 @@ test('the phone menu covers the viewport and reaches every section', async ({ pa
   await page.getByRole('button', { name: 'Close menu' }).click()
   await expect(panel).toHaveCount(0)
   expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe('hidden')
+})
+
+/*
+  The header menus, measured rather than looked at. Every one of these failures
+  renders — the menu opens, every link works, and it is only WRONG, which is why
+  it shipped: a panel 333px short of the container reads as a design, and a head
+  34px below its neighbours reads as a head.
+
+  The rule the numbers encode: a panel is placed against an EDGE that exists — the
+  container's for a mega-menu, its trigger's for a list — and groups are grid
+  columns, so heads share a top by construction instead of by offset.
+*/
+for (const width of [1280, 1920]) {
+  test(`the header menus align to the container at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+
+    for (const label of ['Products', 'Solutions', 'Company']) {
+      const trigger = page.getByRole('button', { name: label, exact: false }).first()
+      await trigger.hover()
+      const panel = page.locator('header nav div.absolute').first()
+      await expect(panel).toBeVisible()
+
+      const m = await panel.evaluate((el) => {
+        const nav = document.querySelector('header nav')!
+        const cs = getComputedStyle(nav)
+        const n = nav.getBoundingClientRect()
+        const p = el.getBoundingClientRect()
+        const t = el.parentElement!.querySelector('button')!.getBoundingClientRect()
+        return {
+          panel: { left: p.left, right: p.right, top: p.top },
+          trigger: { left: t.left, bottom: t.bottom },
+          content: { left: n.left + parseFloat(cs.paddingLeft), right: n.right - parseFloat(cs.paddingRight) },
+          heads: [...el.querySelectorAll('.eyebrow')].map((h) => h.getBoundingClientRect().top),
+        }
+      })
+
+      if (m.heads.length > 2) {
+        // A mega-menu takes the container: its edges land on the wordmark and the
+        // button, which is what makes the width read as chosen.
+        expect(m.panel.left, `${label} left edge`).toBeCloseTo(m.content.left, 1)
+        expect(m.panel.right, `${label} right edge`).toBeCloseTo(m.content.right, 1)
+        // ONE row above xl, so every head shares a top. Balanced CSS columns broke
+        // this silently: the break lands on the text metrics, so a five-item pillar
+        // pushed the head under it out of line with the rest of its row.
+        expect(new Set(m.heads).size, `${label} heads are not on one line`).toBe(1)
+      } else {
+        // A list hangs off the trigger you pointed at, and never past the container.
+        expect(m.panel.left, `${label} left edge`).toBeCloseTo(m.trigger.left, 1)
+        expect(m.panel.right).toBeLessThanOrEqual(m.content.right)
+      }
+
+      // Contiguous with the trigger. A gap is a strip belonging to neither, and
+      // crossing it closes the menu on the way to the thing you are reaching for.
+      expect(m.panel.top, `${label} floats off its trigger`).toBeCloseTo(m.trigger.bottom, 1)
+
+      // A panel widened to the container is the classic way to buy 1-4px of sideways scroll.
+      const { scrollWidth, clientWidth } = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+      }))
+      expect(scrollWidth, `${label} open scrolls sideways`).toBeLessThanOrEqual(clientWidth)
+
+      await page.mouse.move(width / 2, 850)
+      await expect(panel).toHaveCount(0)
+    }
+  })
+}
+
+/* Drag turns the globe, and must not drag-select the hero heading behind it. */
+test('the globe can be turned by hand', async ({ page }) => {
+  await page.goto('/')
+  const canvas = page.locator('canvas').first()
+  const box = (await canvas.boundingBox())!
+
+  const face = () =>
+    canvas.evaluate((el: HTMLCanvasElement) => {
+      const d = el.getContext('2d')!.getImageData(0, 0, el.width, el.height).data
+      let hash = 0
+      for (let i = 0; i < d.length; i += 4 * 97) hash = (hash * 31 + d[i + 3]) % 2147483647
+      return hash
+    })
+
+  const before = await face()
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width / 2 + 240, box.y + box.height / 2, { steps: 10 })
+  await page.mouse.up()
+  expect(await face(), 'dragging did not turn the globe').not.toBe(before)
+  expect(await page.evaluate(() => String(window.getSelection())), 'the drag selected page text').toBe('')
 })

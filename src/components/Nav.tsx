@@ -90,12 +90,17 @@ function Dropdown({ menu }: { menu: Menu }) {
     )
   }
 
+  // A menu with groups to spread is a mega-menu and takes the container; one
+  // group is a list and hangs off its own trigger.
   const wide = menu.columns.length > 2
 
   return (
     <div
       ref={box}
-      className='relative'
+      // STATIC when wide, so the panel's containing block is the header row and
+      // `inset-x-0` resolves to the container. Positioned when narrow, so the
+      // list hangs under the trigger you pointed at.
+      className={wide ? '' : 'relative'}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
@@ -114,15 +119,25 @@ function Dropdown({ menu }: { menu: Menu }) {
         <div
           className={
             // Opaque: at /95 the display heading stayed legible through it.
-            'absolute left-1/2 top-full z-50 -translate-x-1/2 rounded-xl border border-white/15 bg-black p-6 shadow-2xl ' +
-            (wide ? 'w-[860px]' : 'w-[300px]')
+            // `top-full` with no offset, deliberately: a gap between the trigger
+            // and the panel is a strip that belongs to neither, and crossing it
+            // closes the menu. The top border lands exactly on the header's own
+            // hairline, so the two read as one line.
+            'absolute top-full z-50 rounded-b-xl border border-white/15 bg-black p-6 shadow-2xl ' +
+            (wide ? 'inset-x-0' : 'left-0 w-[300px]')
           }
         >
-          {/* Columns, not grid: seven pillars in four columns leave a dead row the
-              height of the tallest. */}
-          <div className={wide ? 'columns-4 gap-x-6 [&>*]:break-inside-avoid' : ''}>
+          {/* A grid, so every head is in row 1 and shares a top by construction.
+              The predecessor balanced these as CSS columns, which puts a break
+              wherever the text metrics fall — a five-item pillar pushed the head
+              below it out of line with the other heads on its row. */}
+          {/* Seven columns once seven fit; four below that, which is two rows
+              whose heads each align rather than one ragged one. The gutter is 16
+              and not 24 because the links carry 8 of their own on each side, so
+              24 would spend 40px on air and make the longest labels wrap. */}
+          <div className={wide ? 'grid grid-cols-4 items-start gap-x-4 gap-y-8 xl:grid-cols-7' : ''}>
             {menu.columns.map((col) => (
-              <div key={col.heading} className={wide ? 'mb-6' : ''}>
+              <div key={col.heading}>
                 <div className='eyebrow'>{col.heading}</div>
                 <ul className='mt-3 space-y-0.5'>
                   {col.items.map((it) => (

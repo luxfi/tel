@@ -33,7 +33,7 @@ export default function Page() {
       <section className='relative flex min-h-[calc(100vh-57px)] items-center overflow-hidden py-16'>
         {/* Full-bleed and behind, at full strength. The globe is the hero, and a
             column could not give it the size it needs to read as a shell. */}
-        <div className='pointer-events-none absolute inset-y-0 right-[-15%] w-[120%] opacity-90 lg:right-0 lg:w-[58%] lg:opacity-100'>
+        <div className='absolute inset-y-0 right-[-15%] w-[120%] opacity-90 lg:right-0 lg:w-[58%] lg:opacity-100'>
           <Globe />
         </div>
         <div className='wrap relative grid items-center gap-12 lg:grid-cols-[minmax(0,560px)_1fr]'>
@@ -86,11 +86,11 @@ export default function Page() {
 
       <section className='band'>
         <div className='wrap'>
-          <p className='eyebrow'>The stack</p>
-          <h2 className='h2 mt-4 max-w-[22ch]'>Six layers, one integration.</h2>
+          <p className='eyebrow'>How it fits together</p>
+          <h2 className='h2 mt-4 max-w-[24ch]'>From the number to the model, one integration.</h2>
           <p className='lede mt-5'>
-            Everything a real-time application needs — the number a call arrives on, the network it crosses, and the
-            model that answers it — under one account.
+            The number a call arrives on, the network it crosses, and the model that answers it. Six layers you would
+            otherwise buy from six companies, and reconcile yourself.
           </p>
           <ol className='mt-10 divide-y divide-white/10 border-y border-white/10'>
             {STACK.map((l) => (
@@ -111,8 +111,12 @@ export default function Page() {
           to from here. */}
       <section className='band'>
         <div className='wrap'>
-          <p className='eyebrow'>What it is bought for</p>
-          <h2 className='h2 mt-4 max-w-[24ch]'>Six problems, named.</h2>
+          <p className='eyebrow'>Where it&rsquo;s used</p>
+          <h2 className='h2 mt-4 max-w-[24ch]'>Six places our customers were stuck.</h2>
+          <p className='lede mt-5'>
+            Every one started as a call that would not connect, a site nobody would quote, or a fleet that needed forty
+            SIM contracts. Find yours and we will tell you exactly how it works.
+          </p>
           <div className='mt-10 divide-y divide-white/10 border-y border-white/10'>
             {SOLUTIONS.map((s) => (
               <Link
@@ -136,11 +140,11 @@ export default function Page() {
 
       <section className='band'>
         <div className='wrap'>
-          <p className='eyebrow'>Primitives</p>
-          <h2 className='h2 mt-4 max-w-[24ch]'>Everything provisions from one API.</h2>
+          <p className='eyebrow'>Products</p>
+          <h2 className='h2 mt-4 max-w-[24ch]'>Thirty-one building blocks, one API key.</h2>
           <p className='lede mt-5'>
-            A number, a SIM, a terminal, a trunk and an agent are the same kind of object: declared, versioned and
-            billed together.
+            A number, a SIM, a satellite terminal and a voice agent are provisioned the same way, on the same key, and
+            arrive on the same invoice.
           </p>
           <div className='mt-10 space-y-12'>
             {PILLARS.map((pillar) => (
@@ -176,8 +180,8 @@ export default function Page() {
 
       <section className='band'>
         <div className='wrap'>
-          <p className='eyebrow'>Why it is different</p>
-          <h2 className='h2 mt-4 max-w-[26ch]'>One account instead of five.</h2>
+          <p className='eyebrow'>Why teams move</p>
+          <h2 className='h2 mt-4 max-w-[26ch]'>One account instead of five, and one number to call.</h2>
           <div className='mt-8 grid gap-4 md:grid-cols-2'>
             {DIFFERENTIATORS.map((d) => (
               <div key={d.claim} className='card'>
@@ -192,10 +196,10 @@ export default function Page() {
 
       <section className='band'>
         <div className='wrap max-w-3xl text-center'>
-          <h2 className='h2'>Talk to us</h2>
+          <h2 className='h2'>Tell us what you&rsquo;re connecting.</h2>
           <p className='mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/60'>
-            Tell us what you are connecting — an application that needs to make calls, a fleet that needs to stay
-            online, a site that needs a link — and we will come back with specifics.
+            An application that needs to make calls. A fleet that needs to stay online in forty countries. A site
+            nobody will run fibre to. Say which, and we will come back with what it takes and what it costs.
           </p>
           <a href={contactHref('Lux Tel')} className='btn btn-solid mt-8'>
             {CONTACT_EMAIL}
