@@ -135,7 +135,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
         {/* Status is the one place a hue earns its keep: it is the fact somebody
             acts on, and it is read at a glance or not at all. */}
         <a
-          href='https://status.lux.tel'
+          href='https://status.lux.network'
           className='m-3 flex min-h-[44px] items-center gap-2 rounded-full border border-white/10 px-4 text-sm text-white/60 transition-colors hover:border-white/20 hover:text-white'
         >
           <span className='dot dot-live' aria-hidden='true' />
