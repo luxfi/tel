@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Mark } from '@/components/Mark'
 import { PILLARS, STATUS_LABEL } from '@/content/catalog'
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ export default function Products() {
               {pillar.primitives.map((p) => (
                 <Link key={p.slug} href={`/products/${p.slug}`} className="grid gap-2 py-6 md:grid-cols-[280px_1fr] md:gap-10">
                   <div className="flex items-center gap-2">
-                    <span className={`dot dot-${p.status}`} aria-hidden="true" />
+                    <Mark slug={p.slug} />
                     <span className="h3">{p.name}</span>
                   </div>
                   <div className="flex flex-wrap items-baseline justify-between gap-3">
