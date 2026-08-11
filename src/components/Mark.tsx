@@ -42,6 +42,8 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
+import { PRIMITIVES } from '@/content/catalog'
+
 /**
  * The mark for a product, by slug.
  *
@@ -104,6 +106,13 @@ const MARKS: Record<string, LucideIcon> = {
   storage: Database,
   state: Layers,
 }
+
+// Loud rather than approximate, the way console/suites refuses a nav entry it
+// cannot find. A product with no mark would otherwise wear a generic box and
+// read as finished, which is how forty pages can look right and be wrong. The
+// catalog is the source of truth, so the gap fails the build instead.
+const gaps = PRIMITIVES.filter((p) => !MARKS[p.slug]).map((p) => p.slug)
+if (gaps.length) throw new Error(`Mark: no icon for ${gaps.join(', ')} — add one to MARKS`)
 
 export function Mark({ slug, className = 'h-4 w-4 shrink-0 text-white/45' }: { slug: string; className?: string }) {
   // Boxes is the fallback rather than a blank: a product with no mark yet should
