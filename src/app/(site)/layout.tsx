@@ -32,12 +32,21 @@ const Header: React.FC = () => (
         </a>
         {/* The menu projects from the catalogue — see components/Nav. */}
         <Nav />
+        {/* Two jobs, not one. Login is for somebody who already has an account and
+            wants the console; Get started is for somebody who does not. A single
+            'Talk to us' served neither of them. */}
         <div className='flex items-center gap-1 sm:gap-2'>
           <a
-            href={contactHref('Lux Tel')}
+            href='https://console.lux.tel'
+            className='hidden min-h-[44px] items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white sm:inline-flex'
+          >
+            Login
+          </a>
+          <a
+            href='/start'
             className='inline-flex min-h-[44px] items-center rounded-md bg-white px-4 text-sm font-medium text-black transition-colors hover:bg-white/90'
           >
-            Talk to us
+            Get started
           </a>
           <MobileNav />
         </div>

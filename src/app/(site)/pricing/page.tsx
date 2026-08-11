@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const PRINCIPLES = [
   {
     heading: 'Usage by default',
-    body: 'Every primitive meters what it does — a minute, a message, a gigabyte, a terminal-month, a token. No seat licences on infrastructure, and no charge for capacity sitting idle.',
+    body: 'Everything here meters what it does — a minute, a message, a gigabyte, a terminal-month, a token. No seat licences on infrastructure, and no charge for capacity sitting idle.',
   },
   {
     heading: 'Commit only where it pays you back',

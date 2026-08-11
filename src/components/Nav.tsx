@@ -59,24 +59,50 @@ const MENUS: readonly Menu[] = [
   },
 ]
 
-/** A dropdown that opens on hover AND on click, and closes on Escape or blur. */
+/**
+ * A dropdown that opens on hover AND on click, and closes on Escape or blur.
+ *
+ * PORTALLED to the body, and it has to be: the panel spans the VIEWPORT, and the
+ * header both constrains its children to a max width and sets `backdrop-filter`,
+ * which makes it the containing block for anything fixed inside it. Either alone
+ * would cap the panel at the container.
+ *
+ * Portalling costs the hover relationship — the panel is no longer a descendant of
+ * the trigger, so leaving the trigger fires immediately, on the way to the thing
+ * you are reaching for. A short grace period, cancelled by entering the panel,
+ * makes the two behave as one control.
+ */
 function Dropdown({ menu }: { menu: Menu }) {
   const [open, setOpen] = useState(false)
-  const box = useRef<HTMLDivElement | null>(null)
+  const [mounted, setMounted] = useState(false)
+  const [top, setTop] = useState(56)
+  const trigger = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => setMounted(true), [])
+
+  const shut = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hold = () => {
+    if (shut.current) clearTimeout(shut.current)
+    shut.current = null
+  }
+  const leave = () => {
+    hold()
+    shut.current = setTimeout(() => setOpen(false), 140)
+  }
+  // MEASURED, not assumed: the panel hangs off the header's real bottom edge, so a
+  // header that changes height does not leave a gap the pointer has to cross.
+  const show = () => {
+    hold()
+    const header = trigger.current?.closest('header')
+    if (header) setTop(header.getBoundingClientRect().bottom)
+    setOpen(true)
+  }
 
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
-    // Pointer, not click: click fires after the link and leaves the panel open.
-    const onDown = (e: PointerEvent) => {
-      if (box.current && !box.current.contains(e.target as Node)) setOpen(false)
-    }
     document.addEventListener('keydown', onKey)
-    document.addEventListener('pointerdown', onDown)
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      document.removeEventListener('pointerdown', onDown)
-    }
+    return () => document.removeEventListener('keydown', onKey)
   }, [open])
 
   if (!menu.columns) {
@@ -90,85 +116,71 @@ function Dropdown({ menu }: { menu: Menu }) {
     )
   }
 
-  // A menu with groups to spread is a mega-menu and takes the container; one
-  // group is a list and hangs off its own trigger.
   const wide = menu.columns.length > 2
 
   return (
-    <div
-      ref={box}
-      // STATIC when wide, so the panel's containing block is the header row and
-      // `inset-x-0` resolves to the container. Positioned when narrow, so the
-      // list hangs under the trigger you pointed at.
-      className=''
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
+    <div ref={trigger} onMouseEnter={show} onMouseLeave={leave}>
       <button
         type='button'
         aria-expanded={open}
         aria-haspopup='true'
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => (open ? setOpen(false) : show())}
         className='inline-flex min-h-[44px] items-center gap-1 rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
       >
         {menu.label}
         <ChevronDown className={'h-3.5 w-3.5 transition-transform ' + (open ? 'rotate-180' : '')} aria-hidden='true' />
       </button>
 
-      {open ? (
-        <div
-          className={
-            // Opaque: at /95 the display heading stayed legible through it.
-            // `top-full` with no offset, deliberately: a gap between the trigger
-            // and the panel is a strip that belongs to neither, and crossing it
-            // closes the menu. The top border lands exactly on the header's own
-            // hairline, so the two read as one line.
-            'absolute top-full z-50 rounded-b-2xl border-x border-b border-white/10 p-6 bg-black/70 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_24px_60px_rgba(0,0,0,0.55)] ' +
-                'inset-x-0'
-          }
-        >
-          {/* A grid, so every head is in row 1 and shares a top by construction.
-              The predecessor balanced these as CSS columns, which puts a break
-              wherever the text metrics fall — a five-item pillar pushed the head
-              below it out of line with the other heads on its row. */}
-          {/* Seven columns once seven fit; four below that, which is two rows
-              whose heads each align rather than one ragged one. The gutter is 16
-              and not 24 because the links carry 8 of their own on each side, so
-              24 would spend 40px on air and make the longest labels wrap. */}
-          <div
-                className={wide ? 'megagrid gap-x-4 gap-y-8' : ''}
-                style={wide ? ({ ['--cols' as string]: String(menu.columns.length) } as React.CSSProperties) : undefined}
-              >
-            {menu.columns.map((col) => (
-              <div key={col.heading}>
-                <div className='eyebrow'>{col.heading}</div>
-                <ul className={'mt-3 space-y-0.5 ' + (wide ? '' : 'columns-2 sm:columns-3')}>
-                  {col.items.map((it) => (
-                    <li key={it.href}>
-                      <Link
-                        href={it.href}
-                        onClick={() => setOpen(false)}
-                        className='block rounded-md px-2 py-1.5 text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white'
-                      >
-                        {it.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div className='mt-5 border-t border-white/10 pt-4'>
-            <Link
-              href={menu.href}
-              onClick={() => setOpen(false)}
-              className='inline-flex min-h-[44px] items-center text-sm text-white transition-colors hover:text-white/70'
+      {open && mounted
+        ? createPortal(
+            <div
+              onMouseEnter={hold}
+              onMouseLeave={leave}
+              style={{ top }}
+              // OPAQUE and edge to edge. Glass let the globe move behind the links,
+              // which is motion under text somebody is reading.
+              className='fixed inset-x-0 z-40 border-b border-white/10 bg-black shadow-[0_24px_60px_rgba(0,0,0,0.6)]'
             >
-              All {menu.label.toLowerCase()} &rarr;
-            </Link>
-          </div>
-        </div>
-      ) : null}
+              {/* Full bleed panel, container-aligned content: the links land under
+                  the wordmark, which is where the eye already is. */}
+              <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
+                <div
+                  className={wide ? 'megagrid gap-x-4 gap-y-8' : ''}
+                  style={wide ? ({ ['--cols' as string]: String(menu.columns.length) } as React.CSSProperties) : undefined}
+                >
+                  {menu.columns.map((col) => (
+                    <div key={col.heading}>
+                      <div className='eyebrow'>{col.heading}</div>
+                      <ul className={'mt-3 space-y-0.5 ' + (wide ? '' : 'columns-2 sm:columns-3')}>
+                        {col.items.map((it) => (
+                          <li key={it.href}>
+                            <Link
+                              href={it.href}
+                              onClick={() => setOpen(false)}
+                              className='block rounded-md px-2 py-1.5 text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white'
+                            >
+                              {it.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+                <div className='mt-6 border-t border-white/10 pt-4'>
+                  <Link
+                    href={menu.href}
+                    onClick={() => setOpen(false)}
+                    className='inline-flex min-h-[44px] items-center text-sm text-white transition-colors hover:text-white/70'
+                  >
+                    All {menu.label.toLowerCase()} &rarr;
+                  </Link>
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   )
 }
