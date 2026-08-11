@@ -82,17 +82,13 @@ jobs:
       # arrive corrupt under a 200. The artifact path sniffs the archive.
       - run: tar -czf site.tar.gz -C out .
 
-      # api.hanzo.ai, NOT api.lux.cloud. They are two different deployments of
-      # cloud — different versions, different object storage, different billing state —
-      # and lux.tel is served by the sites plane behind THIS one (its responses carry
-      # `x-hanzo-site: tel`). Deploying to the other host wrote to a plane lux.tel never
-      # reads: it answered 402 insufficient_balance, and had the balance been fixed it
-      # would have succeeded into somewhere nobody serves from. The 402 was hiding a
-      # no-op.
+      # api.hanzo.ai, NOT api.lux.cloud — two different deployments of cloud, and
+      # lux.tel is served by the plane behind this one (`x-hanzo-site: tel`). The
+      # other answered 402, which hid the fact that a success would have written
+      # somewhere nobody serves from.
       #
-      # X-Org-Id is REQUIRED. This route reads the org from the HEADER while project
-      # create reads it from the TOKEN, so without it the two disagree and a project
-      # that exists answers 404 project not found.
+      # X-Org-Id is required: deploy reads the org from the header, create from the
+      # token, and without it a project that exists answers 404.
       - name: Ship it
         env:
           TOKEN: ${{ secrets.LUX_DEPLOY_TOKEN }}

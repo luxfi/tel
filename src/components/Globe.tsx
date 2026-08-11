@@ -5,39 +5,18 @@ import { useEffect, useRef } from 'react'
 import { isLand } from '@/content/land'
 
 /**
- * The constellation over the Earth, propagated rather than animated.
+ * The constellation over the Earth, propagated from the wall clock.
  *
- * Every position here is computed from the wall clock, so two people opening the
- * page see the same satellites over the same ground at the same moment, and the
- * picture at 03:00 is the picture the orbits actually put there at 03:00. A loop
- * that merely advances a phase looks similar for about a minute and then means
- * nothing.
- *
- * What is real:
- *   - The Earth is drawn from coastlines (see content/land), on a lattice whose
- *     longitude step widens with latitude so dot spacing stays even on a sphere
- *     rather than crowding at the poles.
- *   - The planet is turned by Greenwich mean sidereal time, so the face toward you
- *     is the face actually toward you. Spinning by a phase turns at the right RATE
- *     but from an arbitrary start, and is wrong by a fixed angle forever.
- *   - The constellation is a Walker STAR: near-polar planes whose ascending nodes
- *     span 180°, not 360°, because a polar plane at Ω and one at Ω+180° are the
- *     same ring travelled in opposite directions. That is why one seam of the mesh
- *     is counter-rotating and carries no cross-links.
- *   - The period comes from the altitude via Kepler's third law, not from a
- *     number chosen to look right.
- *   - A ground link exists only above a real mask angle; a cross-plane link drops
- *     near the poles, where the planes converge and the relative pointing rate
- *     runs away from the antenna. Both are geometry deciding, not decoration.
+ * Real coastlines (content/land), real sidereal orientation, Keplerian period from
+ * the altitude, and a Walker star — nodes spanning 180°, so one seam counter-rotates
+ * and carries no cross-links.
  */
 
 const RAD = Math.PI / 180
 const EARTH_KM = 6371
 const MU = 398600.4418 // km^3/s^2
 
-// A near-polar mesh at low altitude: the design that gets pole-to-pole coverage
-// from the fewest satellites, which is why every polar constellation converges on
-// roughly these numbers.
+// Near-polar: pole-to-pole coverage from the fewest satellites.
 const ALT_KM = 780
 const INCLINATION = 86.4
 const PLANES = 6
@@ -110,16 +89,10 @@ function view(p: Vec, spin: number, tilt: number): Vec {
 }
 
 /**
- * Greenwich mean sidereal time, in radians — how far the Earth has turned under
- * the stars right now.
+ * Greenwich mean sidereal time, radians. IAU 1982.
  *
- * This is what makes the orientation true rather than merely continuous. Spinning
- * by `t mod 86164` also turns once per sidereal day, but starts from wherever the
- * Unix epoch happened to leave it, so the globe would show the wrong face by some
- * fixed unknown angle forever. With GMST the meridian under the top of the screen
- * is the meridian actually there.
- *
- * IAU 1982 series. Good to well under a degree over any span this page will see.
+ * A phase turns at the right rate from an arbitrary start, so it shows the wrong
+ * face by a fixed angle forever. This shows the right one.
  */
 function gmst(nowMs: number): number {
   const jd = nowMs / 86400000 + 2440587.5
@@ -154,9 +127,8 @@ export function Globe({ height = 560 }: { height?: number }) {
     let width = 0
     let h = 0
 
-    // The dot lattice, built once. Longitude step widens by 1/cos(lat) so the dots
-    // stay about as far apart in kilometres at 60° as they are at the equator —
-    // a fixed step in degrees packs the poles solid and reads as a bullseye.
+    // Longitude step widens by 1/cos(lat): a fixed step in degrees packs the poles
+    // solid and reads as a bullseye.
     const dots: Vec[] = []
     for (let lat = -84; lat <= 84; lat += 2) {
       const step = 2 / Math.max(0.12, Math.cos(lat * RAD))
@@ -184,18 +156,15 @@ export function Globe({ height = 560 }: { height?: number }) {
       const tilt = -22 * RAD
       const t = nowMs / 1000
 
-      // Earth-fixed frames rotate with the planet; the orbits are already inertial.
-      // Rather than carry two frames through the drawing, the ground is rotated by
-      // GMST and the satellites by 0 — the same relative motion, one transform.
+      // The orbits are inertial; rotating the ground by GMST is the same relative
+      // motion in one transform.
       const spin = gmst(nowMs)
       const px = (p: Vec) => cx + p.x * r
       const py = (p: Vec) => cy - p.y * r
 
       c.clearRect(0, 0, width, h)
 
-      // The globe's body. Space is black, so the sphere is implied by its limb and
-      // a faint interior wash — enough to read "solid" and stop the far-side dots
-      // from being mistaken for near ones.
+      // Limb and a faint wash: enough to read solid.
       c.beginPath()
       c.arc(cx, cy, r, 0, Math.PI * 2)
       c.fillStyle = 'rgba(255,255,255,0.035)'
@@ -204,14 +173,11 @@ export function Globe({ height = 560 }: { height?: number }) {
       c.lineWidth = 1
       c.stroke()
 
-      // Land. Dots on the far hemisphere are dropped entirely rather than dimmed:
-      // the planet is opaque, and drawing through it is the single clearest tell
-      // that a globe is a picture of a sphere rather than a model of one.
+      // Far-side dots are dropped, not dimmed — the planet is opaque.
       for (const d of dots) {
         const q = view(d, spin, tilt)
         if (q.z < 0) continue
-        // Fade toward the limb, where a flat dot would otherwise sit on a surface
-        // turned nearly edge-on and read brighter than the face pointing at you.
+        // Fade toward the limb, where the surface is edge-on.
         const a = 0.34 + 0.56 * q.z
         c.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`
         c.fillRect(px(q) - 0.9, py(q) - 0.9, 1.8, 1.8)
@@ -227,17 +193,14 @@ export function Globe({ height = 560 }: { height?: number }) {
         c.fill()
       }
 
-      // Propagate the constellation. Mean motion is exact for the altitude, so the
-      // whole thing advances at the rate the orbit actually has.
+      // Mean motion is exact for the altitude.
       const n = (Math.PI * 2) / PERIOD_S
       const inc = INCLINATION * RAD
       const sats: { p: Vec; q: Vec; plane: number; slot: number; lat: number }[] = []
       for (let plane = 0; plane < PLANES; plane++) {
-        // 180°, not 360° — see the Walker star note above.
-        const raan = (plane / PLANES) * Math.PI
+        const raan = (plane / PLANES) * Math.PI // 180°, not 360° — Walker star
         for (let slot = 0; slot < PER_PLANE; slot++) {
-          // Adjacent planes are offset by half a slot so satellites interleave
-          // instead of flying in rows, which is what keeps the gaps small.
+          // Half-slot offset so planes interleave instead of flying in rows.
           const u = n * t + (slot / PER_PLANE) * Math.PI * 2 + (plane % 2) * (Math.PI / PER_PLANE)
           const p = orbital(u, raan, inc)
           const q = view(p, 0, tilt)
@@ -245,15 +208,14 @@ export function Globe({ height = 560 }: { height?: number }) {
         }
       }
 
-      // Inter-satellite mesh. Drawn before the satellites so the dots sit on top.
+      // Mesh, drawn under the satellites.
       c.lineWidth = 1
       for (const s of sats) {
         const fore = sats[s.plane * PER_PLANE + ((s.slot + 1) % PER_PLANE)]
         link(s, fore, 0.17)
 
-        // Cross-plane, one direction only so each pair is drawn once. The last
-        // plane's neighbour is the counter-rotating seam: those two planes pass
-        // each other at twice orbital speed and are not linked in any real design.
+        // One direction only. The last plane's neighbour is the counter-rotating
+        // seam — those two pass at twice orbital speed and are never linked.
         if (s.plane === PLANES - 1) continue
         if (Math.abs(s.lat) > CROSSLINK_LAT) continue
         let best: (typeof sats)[number] | null = null
@@ -272,9 +234,7 @@ export function Globe({ height = 560 }: { height?: number }) {
 
       function link(a: { p: Vec; q: Vec }, b: { p: Vec; q: Vec }, alpha: number) {
         if (a.q.z < 0 && b.q.z < 0) return
-        // Behind the planet is behind the planet: a chord whose midpoint falls
-        // inside the disc AND on the far side is occluded, and drawing it makes
-        // the mesh look like a wireframe ball instead of a shell around a solid.
+        // A chord whose midpoint is inside the disc and behind it is occluded.
         const mx = (a.p.x + b.p.x) / 2
         const my = (a.p.y + b.p.y) / 2
         const mz = (a.p.z + b.p.z) / 2
@@ -287,11 +247,8 @@ export function Globe({ height = 560 }: { height?: number }) {
         c.stroke()
       }
 
-      // Feeder links. A terminal TRACKS ONE satellite — the highest in its sky —
-      // and acquires the next before dropping the first, so a site shows one bright
-      // link and one faint one during handover. Drawing every satellite above the
-      // mask angle instead put a dozen chords across the planet at once, which is
-      // not what a terminal does and read as noise rather than as coverage.
+      // A terminal tracks ONE satellite plus the next during handover. Drawing every
+      // one above the mask angle put a dozen chords across the planet.
       for (const g of ground) {
         if (g.q.z < -0.1) continue
         let best: (typeof sats)[number] | null = null
@@ -310,8 +267,7 @@ export function Globe({ height = 560 }: { height?: number }) {
             nextEl = el
           }
         }
-        // Brightest overhead, faint at the horizon — which is also how the link
-        // budget behaves.
+        // Brightest overhead, as the link budget is.
         if (best) feeder(g.q, best.q, 0.14 + 0.5 * (bestEl / 90))
         if (next) feeder(g.q, next.q, 0.06 + 0.16 * (nextEl / 90))
       }
@@ -326,8 +282,7 @@ export function Globe({ height = 560 }: { height?: number }) {
 
       for (const s of sats) {
         const near = s.q.z >= 0
-        // A satellite over the far side is still there; it is drawn faintly rather
-        // than dropped, because the shell is the thing being shown.
+        // Far-side satellites stay, faint: the shell is the subject.
         c.beginPath()
         c.arc(px(s.q), py(s.q), near ? 1.9 : 1.3, 0, Math.PI * 2)
         c.fillStyle = near ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.2)'

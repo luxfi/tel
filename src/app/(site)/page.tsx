@@ -28,17 +28,13 @@ export default function Page() {
 
   return (
     <>
-      {/* The constellation is propagated from the clock, not animated — see
-          components/Globe. It gets a column of its own rather than a wash behind
-          the copy: at 70% opacity under text the mesh was unreadable, and a picture
-          you cannot read is decoration no matter how honestly it was computed. */}
+      {/* A column of its own: at 70% opacity behind the copy the mesh was
+          unreadable, and an unreadable picture is decoration. */}
       <section className='overflow-hidden py-20 lg:py-24'>
         <div className='wrap grid items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-10'>
           <div>
-            {/* The original heading, kept deliberately. It says what Lux sells in the
-                reader's own words — voice, messaging, satellite — where the version
-                that replaced it ("connectivity on one network") named the
-                architecture instead, which is our concern and not theirs. */}
+            {/* Kept deliberately: it says what Lux sells in the reader's words,
+                where "connectivity on one network" named the architecture. */}
             <p className='eyebrow'>Telecommunications &amp; satellite</p>
             <h1 className='display mt-4 max-w-[18ch]'>Voice, messaging, and satellite connectivity.</h1>
             <p className='lede mt-6'>
@@ -73,10 +69,8 @@ export default function Page() {
         </div>
       </section>
 
-      {/* The argument, once, at full size. Every other section on this page is a
-          heading over a grid; this one is a sentence over nothing, because the
-          claim it makes is the reason to read the rest and it was previously
-          buried as the fourth paragraph of the fourth band. */}
+      {/* The argument once, at full size — every other section here is a heading
+          over a grid. */}
       <section className='band'>
         <div className='wrap'>
           <p className='display max-w-[20ch]'>
@@ -109,9 +103,8 @@ export default function Page() {
         </div>
       </section>
 
-      {/* What people actually buy this for. It lived only on /solutions, which is
-          the page nobody reaches from a home page that never mentions it — and a
-          named operating problem persuades where a feature list does not. */}
+      {/* What people buy it for. It lived only on /solutions, which nothing linked
+          to from here. */}
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>What it is bought for</p>

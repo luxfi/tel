@@ -98,48 +98,35 @@ privacy law; legal process needs a higher standard for content than for records.
 
 ## The globe is propagated, not illustrated
 
-`components/Globe.tsx` is the hero. Illustration reproduces the picture but not
-the relationship, and the relationship is the argument: coverage is where the
-satellites are, and it changes while you watch.
-
-Four things are computed rather than chosen to look right, and each is the reason
-the picture holds up to someone who knows the domain:
+`components/Globe.tsx` is the hero. Coverage is where the satellites are, and it
+changes while you watch — which is the argument, and why it is computed.
 
 | | |
 |---|---|
-| Land | Real coastlines. `scripts/land.mjs` rasterises Natural Earth geometry into `content/land.ts` — a 240×120 bitmask, 3,600 bytes, filled by scanline so lakes fall out of the even-odd rule rather than needing ring winding. |
-| Orientation | Greenwich mean sidereal time. Turning by a phase advances at the right RATE from an arbitrary start, so it is wrong by a fixed angle forever; with GMST the face toward you is the face actually toward you. |
-| Orbits | Period from altitude by Kepler's third law. A Walker STAR — nodes spanning 180°, not 360°, because a polar plane at Ω and at Ω+180° are one ring travelled opposite ways. Hence one counter-rotating seam with no cross-links, and cross-links dropping near the poles where the planes converge faster than an antenna follows. |
-| Links | A terminal tracks ONE satellite plus the next during handover. Drawing every satellite above the mask angle put a dozen chords across the planet at once — not what a terminal does, and it read as noise rather than coverage. |
+| Land | Real coastlines. `scripts/land.mjs` rasterises Natural Earth into `content/land.ts` — 240×120 bits, 3,600 bytes, scanline with even-odd fill so lakes need no ring winding. |
+| Orientation | Greenwich mean sidereal time. A phase turns at the right rate from an arbitrary start, so it is wrong by a fixed angle forever. |
+| Orbits | Period from altitude by Kepler. A Walker star — nodes spanning 180°, so one seam counter-rotates and carries no cross-links, and cross-links drop near the poles. |
+| Links | A terminal tracks ONE satellite plus the next during handover. Every one above the mask angle put a dozen chords across the planet. |
 
-The mask is data about the Earth and says nothing about drawing; the renderer picks
-its own dot lattice and asks it. Changing dot density regenerates nothing.
+The mask is data about the Earth, not about drawing: the renderer picks its own
+lattice and asks it.
 
-Honours `prefers-reduced-motion` with a single still frame. It is covered by e2e
-because both of its failures are silent — a canvas that threw is simply blank, and
-a canvas drawn from a fixed phase is indistinguishable from a propagated one in any
-single frame. The test asserts it drew, and that what it drew moves.
+Honours `prefers-reduced-motion`. Covered by e2e because both failures are silent —
+a canvas that threw is blank, and a fixed phase is indistinguishable from a
+propagated one in any single frame.
 
 ## The menu projects from the catalogue
 
-`components/Nav.tsx` builds Products from `PILLARS` and Solutions from
-`SOLUTIONS`, so a primitive added to the catalogue appears in the header on the
-same commit. A menu holding its own list is a menu that stops matching what it
-links to, and the mismatch is always found by somebody trying to buy something.
-`SOLUTIONS` moved out of the solutions page into `content/` for exactly that
-reason.
+`components/Nav.tsx` builds Products from `PILLARS` and Solutions from `SOLUTIONS`,
+so the header cannot drift from what the pages sell. `SOLUTIONS` moved out of the
+solutions page into `content/` for that reason.
 
-**The phone menu is portalled to `document.body`, and it has to be.** The header
-sets `backdrop-blur`; `backdrop-filter` makes an element a CONTAINING BLOCK for
-fixed-position descendants, so `fixed inset-0` resolved against the header's own
-44px box rather than the viewport. The panel rendered, its background painted, all
-44 links existed — inside a 44px window, with the page showing through below the
-first line. It read as a background that would not paint. The e2e test measures
-the panel's HEIGHT against the viewport, because existing is what it was already
-doing.
+**The phone menu is portalled to `document.body`.** The header sets
+`backdrop-blur`, which makes it a containing block for fixed descendants, so
+`fixed inset-0` resolved to its 44px box. Everything rendered — inside a 44px
+window. The test measures HEIGHT, because existing is what it was already doing.
 
-Before this there was no phone navigation at all: below `sm` every link was
-`hidden` and nothing replaced them.
+Before this there was no phone navigation at all.
 
 ## Design vocabulary
 
@@ -191,61 +178,43 @@ into the log rather than discovered later by wondering why the site did not chan
 
 ### api.hanzo.ai and api.lux.cloud are DIFFERENT deployments
 
-Not two names for one service — two builds of cloud (`v1.801.476` against
-`sha-60fdadd`), with different object storage and different billing state. lux.tel
-is served by the sites plane behind **api.hanzo.ai**; its responses carry
-`x-hanzo-site: tel`.
+Two builds of cloud, different storage, different billing state. lux.tel is served
+by the plane behind **api.hanzo.ai** (`x-hanzo-site: tel`).
 
-The deploy job pointed at the other one for weeks. It answered
-`402 insufficient_balance`, which read as a funding problem and was not: had the
-balance been topped up, the deploy would have SUCCEEDED into a plane nobody serves
-lux.tel from. The 402 was hiding a no-op, and this org needed no credit at all.
+The deploy job pointed at the other one and answered `402 insufficient_balance`,
+which read as a funding problem and was not: a success would have written into a
+plane nobody serves lux.tel from. No credit was ever needed.
 
-⛔ Two hosts that both answer 200 on `/v1/projects` are not therefore the same
-plane. Compare `x-api-version`, and check which one the live site's headers name.
+⛔ Both answer 200 on `/v1/projects`. Compare `x-api-version`.
 
-### The project's ORG is not in the request body — and three routes disagree on it
+### The project's ORG comes from two places
 
-`POST /v1/projects` takes the org from the CALLER's token. `GET /v1/projects` and
-`POST /v1/projects/:slug/deploy` take it from the **`X-Org-Id`** header. A create
-without that header lands the project in whatever org the token belongs to, and the
-deploy then answers `404 project not found` for a project that demonstrably exists.
+Create takes it from the token; list and deploy take it from **`X-Org-Id`**. Create
+without the header lands the project in the token's org and deploy then 404s on a
+project that exists — create said 409, list said `[]`, deploy said 404, all true
+about different orgs. Send `X-Org-Id: lux` on every call.
 
-This surfaced as three answers to the same question in one minute: create said
-`409 project slug already exists in this org`, list said `[]`, deploy said `404`.
-All three were telling the truth about DIFFERENT orgs. Send `X-Org-Id: lux` on
-every call — create included — and they agree.
-
-The live project is `proj_COjngPJawoyS-OpDqxQMEw`, org `lux`, bucket `hanzo-sites`,
-prefix `lux/tel`.
+Live project: `proj_COjngPJawoyS-OpDqxQMEw`, org `lux`, prefix `lux/tel`.
 
 ### Binding a domain does NOT route it — that takes an Ingress
 
-The bind records the host in the projects app's own store. It does not create a
-k8s Ingress, so the origin terminates nothing for that name and TLS fails at SNI
-with `tlsv1 unrecognized name` — which reads like a certificate problem and is
-really a missing route. The three hosts are declared in
-`hanzo/universe → charts/app/values/hanzo/hanzo-domains.yaml`, each backing
-`cloud:8000`, exactly like `console.lux.cloud` beside them. cert-manager issues
-per-host certs over DNS-01 once the Ingress exists.
+The bind writes a row in the projects store and creates no Ingress, so TLS fails at
+SNI with `tlsv1 unrecognized name` — reads like a certificate problem, is a missing
+route. The three hosts are declared in `hanzo/universe →
+charts/app/values/hanzo/hanzo-domains.yaml`, backing `cloud:8000`. cert-manager
+issues per-host certs once the Ingress exists.
 
-### The zone was on `flexible` SSL, and the apex was owned by the Worker
+### Cloudflare: `full` SSL first, then detach the Worker
 
-Two things had to change in Cloudflare, in this order:
+1. **SSL `flexible` → `full`**, first — flexible talks HTTP to the origin and loops
+   against the ingress redirect.
+2. **Detach the Worker Custom Domain.** The apex was `AAAA 100::`, read-only
+   (`code 1043`) until the Worker domain is deleted at
+   `/accounts/:id/workers/domains/:id`. An empty `workers/routes` does not mean
+   unbound.
 
-1. **SSL mode `flexible` → `full`.** Flexible makes Cloudflare talk plain HTTP to
-   the origin; the ingress answers with a redirect to HTTPS and the two loop.
-   Every working zone in the estate is `full`. Changing it first means there is no
-   window in which the origin is reached over HTTP.
-2. **Detach the Worker Custom Domain.** `lux.tel` and `www.lux.tel` were
-   `AAAA 100::` proxied — the discard address a Worker custom domain parks on.
-   Those records are **read-only** while the Worker holds them (`code 1043`); the
-   Worker domain has to be deleted at
-   `/accounts/:id/workers/domains/:id` before the A records can be written.
-
-All three hosts are now `A 129.212.164.5` proxied — the hanzo-k8s ingress LB.
-A newly created proxied record 522s for its first ~30 seconds; that is edge
-propagation, not an origin fault, and it clears on its own.
+All three hosts are `A 129.212.164.5` proxied. A new proxied record 522s for ~30s —
+edge propagation, not the origin.
 
 ## Contact
 

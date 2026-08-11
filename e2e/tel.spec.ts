@@ -135,12 +135,8 @@ test('no endpoint is printed as product copy', async ({ page }) => {
   }
 })
 
-/*
-  The globe is the hero's whole argument, and both ways it can fail are silent: a
-  canvas that threw during setup is simply blank, and a canvas drawn from a fixed
-  phase looks identical to one propagated from the clock in any single screenshot.
-  So this asserts it drew SOMETHING, and that what it drew MOVES.
-*/
+/* Both ways it fails are silent: a canvas that threw is blank, and a fixed phase
+   is indistinguishable from a propagated one in any single frame. */
 test('the globe draws the Earth and keeps propagating', async ({ page }) => {
   await page.goto('/')
   const canvas = page.locator('canvas').first()
@@ -153,8 +149,7 @@ test('the globe draws the Earth and keeps propagating', async ({ page }) => {
       const d = ctx.getImageData(0, 0, el.width, el.height).data
       let lit = 0
       let hash = 0
-      // Every 41st pixel: enough to see the picture, cheap enough to run twice,
-      // and a stride coprime with the width so it does not sample one column.
+      // Every 41st pixel — coprime with the width, so not one column.
       for (let i = 0; i < d.length; i += 4 * 41) {
         if (d[i + 3] > 24) {
           lit++
@@ -164,29 +159,18 @@ test('the globe draws the Earth and keeps propagating', async ({ page }) => {
       return { lit, hash }
     })
 
-  // A blank canvas samples 0; the globe samples ~330 at the default viewport. The
-  // bar sits between those rather than near the measurement, because the count
-  // scales with viewport and this test is asking "did it draw", not "how much".
+  // Blank samples 0; the globe ~330. The bar sits between, not at either.
   const first = await sample()
   expect(first.lit, 'the globe rendered nothing').toBeGreaterThan(100)
 
-  // One second is ~6 km of orbital travel and about 0.004° of Earth rotation —
-  // small, but every satellite and every link endpoint moves, so the frame differs.
+  // One second is ~6km of orbital travel; every endpoint moves.
   await page.waitForTimeout(1000)
   const second = await sample()
   expect(second.hash, 'the globe is a still image').not.toBe(first.hash)
 })
 
-/*
-  The phone menu must COVER the page, and the way it failed is invisible to every
-  other check: the header sets `backdrop-blur`, backdrop-filter makes an element a
-  containing block for fixed-position descendants, and so `fixed inset-0` resolved
-  against the header's own 44px box rather than the viewport. The panel rendered,
-  its background painted, all 44 links existed — inside a 44px window. It read as a
-  background that would not paint.
-
-  So this asserts the panel's HEIGHT against the viewport, not its existence.
-*/
+/* Measures HEIGHT, not existence: the panel rendered fine inside a 44px box when
+   the header's backdrop-blur made it the containing block. */
 test('the phone menu covers the viewport and reaches every section', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
