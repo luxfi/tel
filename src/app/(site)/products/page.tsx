@@ -12,7 +12,7 @@ export default function Products() {
     <>
       <section className="wrap pt-16 pb-10">
         <div className="eyebrow">Products</div>
-        <h1 className="display mt-5 max-w-[16ch]">One network, addressed as parts.</h1>
+        <h1 className="display mt-5 max-w-[16ch]">Building blocks for the connected business.</h1>
         <p className="lede mt-6">
           Each of these is provisioned through the same API, under one identity model and one bill. A dot means it is
           in service; a ring means it is in field trial and we will say so before you build on it.

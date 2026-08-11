@@ -6,7 +6,7 @@ const description =
 export default {
   metadataBase: new URL('https://lux.tel'),
   title: {
-    default: 'Lux Tel — voice, messaging, and satellite connectivity',
+    default: 'Lux Tel — communications, connectivity and agentic AI, as one service',
     template: '%s | Lux Tel',
   },
   description,
@@ -18,12 +18,12 @@ export default {
     type: 'website',
     url: 'https://lux.tel',
     siteName: 'Lux Tel',
-    title: 'Lux Tel — voice, messaging, and satellite connectivity',
+    title: 'Lux Tel — communications, connectivity and agentic AI, as one service',
     description,
   },
   twitter: {
     card: 'summary',
-    title: 'Lux Tel — voice, messaging, and satellite connectivity',
+    title: 'Lux Tel — communications, connectivity and agentic AI, as one service',
     description,
     site: '@luxfi',
   },

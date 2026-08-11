@@ -113,7 +113,7 @@ export const STACK: readonly Layer[] = [
     name: 'Network',
     claim: 'The layer holding it together.',
     detail:
-      'Private networking, VPN, routing, failover and multi-network deployments — designed around what has to stay online rather than around a single provider\u2019s footprint.',
+      'Private networking, VPN, routing, failover and multi-network deployments, designed around what has to stay online rather than around one provider\u2019s footprint — and carried with post-quantum key exchange, so traffic captured today is not readable later.',
   },
 ]
 
