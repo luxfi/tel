@@ -100,7 +100,7 @@ function Dropdown({ menu }: { menu: Menu }) {
       // STATIC when wide, so the panel's containing block is the header row and
       // `inset-x-0` resolves to the container. Positioned when narrow, so the
       // list hangs under the trigger you pointed at.
-      className={wide ? '' : 'relative'}
+      className=''
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
@@ -123,8 +123,8 @@ function Dropdown({ menu }: { menu: Menu }) {
             // and the panel is a strip that belongs to neither, and crossing it
             // closes the menu. The top border lands exactly on the header's own
             // hairline, so the two read as one line.
-            'absolute top-full z-50 rounded-b-xl border border-white/15 bg-black p-6 shadow-2xl ' +
-            (wide ? 'inset-x-0' : 'left-0 w-[300px]')
+            'absolute top-full z-50 rounded-b-2xl border-x border-b border-white/10 p-6 bg-black/70 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_24px_60px_rgba(0,0,0,0.55)] ' +
+                'inset-x-0'
           }
         >
           {/* A grid, so every head is in row 1 and shares a top by construction.
@@ -139,7 +139,7 @@ function Dropdown({ menu }: { menu: Menu }) {
             {menu.columns.map((col) => (
               <div key={col.heading}>
                 <div className='eyebrow'>{col.heading}</div>
-                <ul className='mt-3 space-y-0.5'>
+                <ul className={'mt-3 space-y-0.5 ' + (wide ? '' : 'columns-2 sm:columns-3')}>
                   {col.items.map((it) => (
                     <li key={it.href}>
                       <Link
