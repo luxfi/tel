@@ -44,7 +44,7 @@ const Header: React.FC = () => (
           </a>
           <a
             href='/start'
-            className='inline-flex min-h-[44px] items-center rounded-md bg-white px-4 text-sm font-medium text-black transition-colors hover:bg-white/90'
+            className='inline-flex min-h-[44px] items-center rounded-md bg-white px-3.5 text-[13px] font-medium text-black transition-colors hover:bg-white/90'
           >
             Get started
           </a>

@@ -97,28 +97,16 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
           </Link>
           <Suites />
 
-          <div className='my-3 border-t border-white/10' />
-          {[
-            ['/console/reporting', 'Reporting'],
-            ['/console/debugging', 'Debugging'],
-          ].map(([href, label]) => (
-            <Link
-              key={href}
-              href={href}
-              className='flex min-h-[44px] items-center rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
-            >
-              {label}
-            </Link>
-          ))}
+          {/* Reporting, Debugging and the assistant are NOT linked here.
 
+              They were, and all three answered 404: the pages were never written,
+              and the API behind them (/v1/tel in hanzo/cloud) is in source but
+              unreleased, so it 404s in production too. A nav item is the one thing
+              nobody re-checks after writing it.
+
+              Put them back when the route and the endpoint both answer. `every
+              internal link resolves` fails the build if a link goes back first. */}
           <div className='my-3 border-t border-white/10' />
-          <Link
-            href='/console/assistant'
-            className='flex min-h-[44px] items-center gap-2 rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
-          >
-            <Triangle className='h-3 w-3' />
-            Ask our AI assistant
-          </Link>
           <a
             href='mailto:hi@lux.tel?subject=Lux%20Tel'
             className='flex min-h-[44px] items-center rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
@@ -162,8 +150,8 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
             {/* The triangle IS the AI affordance. The reference uses a sparkle;
                 ours is the mark, which is the one glyph this product already owns. */}
             <Link
-              href='/console/assistant'
-              aria-label='Ask our AI assistant'
+              href='/products/chat'
+              aria-label='Lux Chat'
               className='inline-flex h-11 w-11 items-center justify-center rounded-md text-white/70 transition-colors hover:bg-white/5 hover:text-white'
             >
               <Triangle className='h-4 w-4' />

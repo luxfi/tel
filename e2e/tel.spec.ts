@@ -301,3 +301,36 @@ test('the globe can be turned by hand', async ({ page }) => {
   expect(await face(), 'dragging did not turn the globe').not.toBe(before)
   expect(await page.evaluate(() => String(window.getSelection())), 'the drag selected page text').toBe('')
 })
+
+/*
+  EVERY internal link resolves.
+
+  The console's sidebar linked to /console/assistant, /console/reporting and
+  /console/debugging for as long as it existed. All three 404'd. Nothing caught it
+  because every other test visits pages it already knows about, and a nav item is
+  exactly the thing nobody re-checks after writing it.
+
+  This crawls what the site actually links to rather than a list kept beside it, so
+  a link added tomorrow is covered without anyone remembering to add it here.
+*/
+test('every internal link resolves', async ({ page, request }) => {
+  const seen = new Set<string>()
+  const bad: string[] = []
+
+  for (const path of ['/', '/products', '/solutions', '/network', '/company', '/pricing', '/legal', '/console', '/start']) {
+    await page.goto(path)
+    const hrefs = await page.locator('a[href]').evaluateAll((els) =>
+      els.map((e) => e.getAttribute('href') ?? '').filter((h) => h.startsWith('/')),
+    )
+    for (const h of hrefs) {
+      const url = h.split('#')[0]
+      if (!url || seen.has(url)) continue
+      seen.add(url)
+      const res = await request.get(url)
+      if (!res.ok()) bad.push(`${url} -> ${res.status()} (linked from ${path})`)
+    }
+  }
+
+  expect(seen.size, 'crawled nothing — the selector is wrong').toBeGreaterThan(30)
+  expect(bad, `dead internal links:\n${bad.join('\n')}`).toEqual([])
+})
