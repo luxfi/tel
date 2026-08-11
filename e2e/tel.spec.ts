@@ -207,14 +207,16 @@ test('the phone menu covers the viewport and reaches every section', async ({ pa
   offset.
 */
 for (const width of [1280, 1920]) {
-  test(`the header menus align to the container at ${width}px`, async ({ page }) => {
+  test(`the header menus span the viewport at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/')
 
     for (const label of ['Products', 'Solutions', 'Company']) {
       const trigger = page.getByRole('button', { name: label, exact: false }).first()
       await trigger.hover()
-      const panel = page.locator('header nav div.absolute').first()
+
+      // The panel is PORTALLED to the body, so it is not under `header` any more.
+      const panel = page.locator('body > div.fixed.inset-x-0').first()
       await expect(panel).toBeVisible()
 
       const m = await panel.evaluate((el) => {
@@ -222,33 +224,49 @@ for (const width of [1280, 1920]) {
         const cs = getComputedStyle(nav)
         const n = nav.getBoundingClientRect()
         const p = el.getBoundingClientRect()
-        const t = el.parentElement!.querySelector('button')!.getBoundingClientRect()
+        // CONTENT box, not the border box: both the nav and the panel's inner
+        // container carry the same responsive padding, so comparing border boxes
+        // compares two paddings rather than two alignments.
+        const innerEl = el.firstElementChild as HTMLElement
+        const innerCs = getComputedStyle(innerEl)
+        const innerRect = innerEl.getBoundingClientRect()
+        const inner = {
+          left: innerRect.left + parseFloat(innerCs.paddingLeft),
+          right: innerRect.right - parseFloat(innerCs.paddingRight),
+        }
         return {
           panel: { left: p.left, right: p.right, top: p.top },
-          trigger: { left: t.left, bottom: t.bottom },
+          inner,
+          header: document.querySelector('header')!.getBoundingClientRect().bottom,
           content: { left: n.left + parseFloat(cs.paddingLeft), right: n.right - parseFloat(cs.paddingRight) },
           heads: [...el.querySelectorAll('.eyebrow')].map((h) => h.getBoundingClientRect().top),
+          opaque: getComputedStyle(el).backgroundColor,
+          viewport: window.innerWidth,
         }
       })
 
-              // EVERY menu takes the container, mega or list: its edges land on the
-        // wordmark and the button. A 300px panel beside a full-width one read
-        // as two components, which is the rule this replaced.
-        expect(m.panel.left, `${label} left edge`).toBeCloseTo(m.content.left, 1)
-        expect(m.panel.right, `${label} right edge`).toBeCloseTo(m.content.right, 1)
+      // EDGE TO EDGE. The panel escapes the container; only its content is held to
+      // the grid, so the links still land under the wordmark.
+      expect(m.panel.left, `${label} left edge`).toBeCloseTo(0, 1)
+      expect(m.panel.right, `${label} right edge`).toBeCloseTo(m.viewport, 1)
+      expect(m.inner.left, `${label} content left`).toBeCloseTo(m.content.left, 1)
+      expect(m.inner.right, `${label} content right`).toBeCloseTo(m.content.right, 1)
 
+      // OPAQUE. Glass put the moving globe under text somebody is reading.
+      expect(m.opaque, `${label} is not opaque`).toBe('rgb(0, 0, 0)')
+
+      // One row, so every group head shares a top. Balanced columns broke this
+      // silently: the break lands on the text metrics, so a long group pushed the
+      // head under it out of line with the rest of its row.
       if (m.heads.length > 2) {
-        // ONE row above xl, so every head shares a top. Balanced CSS columns broke
-        // this silently: the break lands on the text metrics, so a five-item pillar
-        // pushed the head under it out of line with the rest of its row.
         expect(new Set(m.heads).size, `${label} heads are not on one line`).toBe(1)
       }
 
-      // Contiguous with the trigger. A gap is a strip belonging to neither, and
+      // Contiguous with the header. A gap is a strip belonging to neither, and
       // crossing it closes the menu on the way to the thing you are reaching for.
-      expect(m.panel.top, `${label} floats off its trigger`).toBeCloseTo(m.trigger.bottom, 1)
+      expect(m.panel.top, `${label} floats off the header`).toBeCloseTo(m.header, 1)
 
-      // A panel widened to the container is the classic way to buy 1-4px of sideways scroll.
+      // A panel widened past the container is the classic way to buy sideways scroll.
       const { scrollWidth, clientWidth } = await page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,

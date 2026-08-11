@@ -16,8 +16,8 @@ export default function Solutions() {
         <div className="eyebrow">Solutions</div>
         <h1 className="display mt-5 max-w-[16ch]">What people build on it.</h1>
         <p className="lede mt-6">
-          Six problems we are bought for. Each names the primitives that answer it, because a solution that names no
-          product is a brochure.
+          Seven situations people arrive with. Each one names the products that answer it, because a solution that
+          names no product is a brochure.
         </p>
       </section>
 
