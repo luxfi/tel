@@ -27,7 +27,16 @@ export default {
     description,
     site: '@luxfi',
   },
+  /*
+    /favicon.ico is a WELL-KNOWN path, not a preference: browsers, bookmark
+    stores, feed readers and link unfurlers probe the site root whether or not a
+    <link rel="icon"> is declared. Ours lived only under /assets, so the root
+    probe fell through to the 404 route and handed back 12KB of HTML pretending
+    to be an image. The .ico now sits where the convention looks for it, and is
+    declared here too so this list stays the one place icons are named.
+  */
   icons: [
+    { rel: 'icon', type: 'image/x-icon', sizes: '16x16 32x32', url: '/favicon.ico' },
     { rel: 'icon', type: 'image/png', sizes: '16x16', url: '/assets/lux-site-icons/favicon-16x16.png' },
     { rel: 'icon', type: 'image/png', sizes: '32x32', url: '/assets/lux-site-icons/favicon-32x32.png' },
     { rel: 'icon', type: 'image/png', sizes: '192x192', url: '/assets/lux-site-icons/android-chrome-192x192.png' },

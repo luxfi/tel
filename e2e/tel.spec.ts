@@ -341,6 +341,46 @@ test('every internal link resolves', async ({ page, request }) => {
 })
 
 /*
+  The links that leave the site, limited to hosts WE run.
+
+  A link to status.lux.tel sat in the console shell beside a green dot that said
+  everything was fine. The host had never existed — no A record, no CNAME — so
+  every console page shipped a confident lie, and the internal crawl above could
+  not see it because the href left the site. Third-party links are somebody
+  else's uptime and are deliberately not asserted here; ours are ours, and a
+  host we name is a host we are claiming to run.
+*/
+test('every link to a host we run resolves', async ({ page, request }) => {
+  const ours = /(^|\.)(lux|hanzo|zoo)\.(tel|network|cloud|id|ai|ngo)$/
+  const seen = new Set<string>()
+  const bad: string[] = []
+
+  for (const path of ['/', '/products', '/solutions', '/network', '/company', '/pricing', '/legal', '/console']) {
+    await page.goto(path)
+    const hrefs = await page.locator('a[href]').evaluateAll((els) =>
+      els.map((e) => e.getAttribute('href') ?? '').filter((h) => h.startsWith('http')),
+    )
+    for (const h of hrefs) {
+      let host = ''
+      try {
+        host = new URL(h).host
+      } catch {
+        continue
+      }
+      if (!ours.test(host) || seen.has(host)) continue
+      seen.add(host)
+      let res = await request.get(`https://${host}`, { failOnStatusCode: false }).catch(() => null)
+      if (!res) res = await request.get(`https://${host}`, { failOnStatusCode: false }).catch(() => null)
+      if (!res) bad.push(`${host} does not resolve (linked from ${path})`)
+      else if (res.status() >= 500) bad.push(`${host} -> ${res.status()} (linked from ${path})`)
+    }
+  }
+
+  expect(seen.size, 'found no first-party outbound links — the filter is wrong').toBeGreaterThan(0)
+  expect(bad, `links to hosts we run that do not answer:\n${bad.join('\n')}`).toEqual([])
+})
+
+/*
   The console's record views, in every state a real account passes through.
 
   A signed-out visitor is the only state a browser reaches without a Lux ID, so the
