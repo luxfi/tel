@@ -78,31 +78,13 @@ export default function Page() {
           already live with. */}
       <section className='band'>
         <div className='wrap'>
-          <p className='eyebrow'>Why people call us</p>
-          <h2 className='h2 mt-4 max-w-[26ch]'>
-            Connectivity arrives as five contracts and nobody who answers for all of it.
-          </h2>
-          <div className='mt-8 grid gap-8 md:grid-cols-3'>
-            {[
-              [
-                'The numbers are one company',
-                'The SIMs are another, the satellite terminal a third, and the model that answers the call has never seen your network.',
-              ],
-              [
-                'Nobody owns the fault',
-                'Audio breaks up and every vendor points at the next one. You run the investigation, on your time, while the customer waits.',
-              ],
-              [
-                'Five invoices, five renewals',
-                'Different terms, different meters, different desks. Nobody can tell you what a call actually costs end to end.',
-              ],
-            ].map(([t, d]) => (
-              <div key={t}>
-                <div className='h3'>{t}</div>
-                <p className='mt-2 text-sm leading-relaxed text-white/60'>{d}</p>
-              </div>
-            ))}
-          </div>
+          <p className='eyebrow'>The shift</p>
+          <h2 className='h2 mt-4 max-w-[24ch]'>For a century, being reachable meant being near a wire.</h2>
+          <p className='lede mt-6'>
+            Then a tower, then fibre. Everything else was a blank space on a coverage map, and the people working there
+            — on a ship, at a mine, after a storm took the tower down — were simply unreachable. That was a fact about
+            the world, and it stopped being true.
+          </p>
         </div>
       </section>
 
@@ -110,25 +92,53 @@ export default function Page() {
           over a grid. */}
       <section className='band'>
         <div className='wrap'>
-          <p className='display max-w-[20ch]'>
-            A call, a SIM, a terminal, and the model that answers.{' '}
-            <span className='text-white/40'>One network, one API, one invoice.</span>
+          <p className='display max-w-[22ch]'>
+            Anywhere on Earth is a phone number now.{' '}
+            <span className='text-white/40'>And what answers it can think.</span>
           </p>
+        </div>
+      </section>
+
+      {/* The reader this page is really for: whoever owns capacity and wants it to
+          be a service someone can buy. It sits directly under the claim because it
+          is the most valuable conversation on the site, not a footnote to it. */}
+      <section className='band'>
+        <div className='wrap grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16'>
+          <div>
+            <p className='eyebrow'>For network and satellite operators</p>
+            <h2 className='h2 mt-4 max-w-[20ch]'>A constellation is not a telephone company.</h2>
+          </div>
+          <div>
+            <p className='text-base leading-relaxed text-white/70 sm:text-lg'>
+              You can put capacity over every ocean and every desert. Turning it into something a person can buy is a
+              different company entirely: a number that rings in each country, interconnect with the carriers your
+              subscribers already use, an emergency call that reaches the right dispatcher, lawful process handled per
+              jurisdiction, and a bill a regulator will accept.
+            </p>
+            <p className='mt-5 text-base leading-relaxed text-white/70 sm:text-lg'>
+              That is licences and integrations measured in years, and it is what we already operate. Bring the
+              capacity. We will make it a phone company.
+            </p>
+            <a href={contactHref('Operator partnership')} className='btn btn-solid mt-8'>
+              Talk to our carrier team
+              <ArrowRight className='h-4 w-4' aria-hidden='true' />
+            </a>
+          </div>
         </div>
       </section>
 
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>How it fits together</p>
-          <h2 className='h2 mt-4 max-w-[24ch]'>From the number to the model, one integration.</h2>
+          <h2 className='h2 mt-4 max-w-[24ch]'>The whole path a call takes, from one company.</h2>
           <p className='lede mt-5'>
-            The number a call arrives on, the network it crosses, and the model that answers it. Six layers you would
-            otherwise buy from six companies, and reconcile yourself.
+            The number it arrives on, the interconnect it crosses, the wireless or orbital link at the far end, and
+            the compute that answers — assembled once, so you integrate against a network instead of a procurement
+            exercise.
           </p>
           <ol className='mt-10 divide-y divide-white/10 border-y border-white/10'>
             {STACK.map((l) => (
-              <li key={l.n} className='grid gap-3 py-7 md:grid-cols-[56px_240px_1fr] md:gap-8'>
-                <div className='eyebrow pt-1'>{l.n}</div>
+              <li key={l.n} className='grid gap-3 py-7 md:grid-cols-[280px_1fr] md:gap-10'>
                 <div>
                   <div className='h3'>{l.name}</div>
                   <div className='mt-1 text-sm text-white/40'>{l.claim}</div>
@@ -145,10 +155,10 @@ export default function Page() {
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>Where it&rsquo;s used</p>
-          <h2 className='h2 mt-4 max-w-[24ch]'>Six places our customers were stuck.</h2>
+          <h2 className='h2 mt-4 max-w-[26ch]'>The work that happens away from the wire.</h2>
           <p className='lede mt-5'>
-            Every one started as a call that would not connect, a site nobody would quote, or a fleet that needed forty
-            SIM contracts. Find yours and we will tell you exactly how it works.
+            Ships, rigs, convoys, disaster zones, factory floors and trading desks. Find the one that looks like
+            yours and we will tell you exactly how it is put together.
           </p>
           <div className='mt-10 divide-y divide-white/10 border-y border-white/10'>
             {SOLUTIONS.map((s) => (
@@ -174,10 +184,10 @@ export default function Page() {
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>Products</p>
-          <h2 className='h2 mt-4 max-w-[24ch]'>Thirty-one building blocks, one API key.</h2>
+          <h2 className='h2 mt-4 max-w-[24ch]'>All of it, on one key.</h2>
           <p className='lede mt-5'>
-            A number, a SIM, a satellite terminal and a voice agent are provisioned the same way, on the same key, and
-            arrive on the same invoice.
+            A number, a SIM, a satellite terminal and a voice agent are the same kind of thing here: something you
+            create with one call and cancel with another.
           </p>
           <div className='mt-10 space-y-12'>
             {PILLARS.map((pillar) => (
@@ -185,7 +195,7 @@ export default function Page() {
                 <div className='flex flex-wrap items-baseline justify-between gap-3 border-b border-white/10 pb-3'>
                   <h3 className='font-heading text-lg font-bold'>{pillar.name}</h3>
                   <Link href={`/products#${pillar.slug}`} className='inline-flex min-h-[44px] items-center text-sm text-white/40 transition-colors hover:text-white'>
-                    All {pillar.primitives.length}
+                    See all
                   </Link>
                 </div>
                 <p className='mt-4 max-w-3xl text-sm leading-relaxed text-white/60'>{pillar.summary}</p>
@@ -214,7 +224,7 @@ export default function Page() {
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>Why teams move</p>
-          <h2 className='h2 mt-4 max-w-[26ch]'>One account instead of five, and one number to call.</h2>
+          <h2 className='h2 mt-4 max-w-[26ch]'>When a call breaks, one company answers for it.</h2>
           <div className='mt-8 grid gap-4 md:grid-cols-2'>
             {DIFFERENTIATORS.map((d) => (
               <div key={d.claim} className='card'>
@@ -232,7 +242,7 @@ export default function Page() {
       <section className='band'>
         <div className='wrap'>
           <p className='eyebrow'>What happens next</p>
-          <h2 className='h2 mt-4 max-w-[24ch]'>Three steps, and you are on the network.</h2>
+          <h2 className='h2 mt-4 max-w-[26ch]'>You will be talking to an engineer, not a form.</h2>
           <ol className='mt-10 divide-y divide-white/10 border-y border-white/10'>
             {[
               [
@@ -247,9 +257,8 @@ export default function Page() {
                 'Go live, and keep the same everything',
                 'Same key, same invoice, same desk. Adding a country, a terminal or a voice agent later is a call to the API, not a new contract.',
               ],
-            ].map(([t, d], i) => (
-              <li key={t} className='grid gap-3 py-7 md:grid-cols-[56px_280px_1fr] md:gap-8'>
-                <div className='eyebrow tabular pt-1'>{String(i + 1).padStart(2, '0')}</div>
+            ].map(([t, d]) => (
+              <li key={t} className='grid gap-3 py-7 md:grid-cols-[280px_1fr] md:gap-10'>
                 <div className='h3'>{t}</div>
                 <p className='text-sm leading-relaxed text-white/60'>{d}</p>
               </li>
