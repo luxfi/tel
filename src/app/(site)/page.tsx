@@ -30,8 +30,13 @@ export default function Page() {
     <>
       {/* A column of its own: at 70% opacity behind the copy the mesh was
           unreadable, and an unreadable picture is decoration. */}
-      <section className='overflow-hidden py-20 lg:py-24'>
-        <div className='wrap grid items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-10'>
+      <section className='relative flex min-h-[calc(100vh-57px)] items-center overflow-hidden py-16'>
+        {/* Full-bleed and behind, at full strength. The globe is the hero, and a
+            column could not give it the size it needs to read as a shell. */}
+        <div className='pointer-events-none absolute inset-y-0 right-[-15%] w-[120%] opacity-90 lg:right-0 lg:w-[58%] lg:opacity-100'>
+          <Globe />
+        </div>
+        <div className='wrap relative grid items-center gap-12 lg:grid-cols-[minmax(0,560px)_1fr]'>
           <div>
             {/* Kept deliberately: it says what Lux sells in the reader's words,
                 where "connectivity on one network" named the architecture. */}
@@ -52,13 +57,12 @@ export default function Page() {
             </div>
           </div>
 
-          <div className='-mx-6 sm:mx-0'>
-            <Globe height={560} />
-          </div>
         </div>
+      </section>
 
+      <section className='band'>
         <div className='wrap'>
-          <dl className='mt-16 grid gap-x-8 gap-y-8 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4'>
+          <dl className='grid gap-x-8 gap-y-8 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4'>
             {CAPABILITIES.map((c) => (
               <div key={c.headline}>
                 <dt className='h3'>{c.headline}</dt>
