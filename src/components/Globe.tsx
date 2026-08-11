@@ -149,6 +149,67 @@ export function Globe({ height }: { height?: number }) {
 
     const sats = build()
 
+    // The model is right and invisible at 1x: the Earth turns 15 degrees an hour and
+    // a satellite crosses 0.06 a second, so a ten-second look shows nothing moving.
+    // Time is scaled, not faked — the clock starts at the true present, so the first
+    // frame is the real sky and everything after it is that sky run forward.
+    const T0 = Date.now()
+    const SCALE = 60
+
+    // Where the viewer has dragged to. Yaw adds to sidereal rotation; pitch tilts.
+    // Velocity carries after release and decays, because a globe that stops dead
+    // under your finger feels like a picture of one.
+    let yaw = 0
+    let pitch = 0
+    let vYaw = 0
+    let vPitch = 0
+    let dragging = false
+    let lastX = 0
+    let lastY = 0
+    let hoverX = -1
+    let hoverY = -1
+
+    const onDown = (e: PointerEvent) => {
+      // Without this the browser starts a text-selection drag and paints the hero
+      // heading blue while the globe turns underneath it.
+      e.preventDefault()
+      dragging = true
+      canvas.style.cursor = 'grabbing'
+      lastX = e.clientX
+      lastY = e.clientY
+      vYaw = 0
+      vPitch = 0
+      canvas.setPointerCapture(e.pointerId)
+    }
+    const onMove = (e: PointerEvent) => {
+      const box = canvas.getBoundingClientRect()
+      hoverX = e.clientX - box.left
+      hoverY = e.clientY - box.top
+      if (!dragging) return
+      const dx = e.clientX - lastX
+      const dy = e.clientY - lastY
+      lastX = e.clientX
+      lastY = e.clientY
+      vYaw = dx * 0.005
+      vPitch = dy * 0.004
+      yaw += vYaw
+      pitch = Math.max(-1.1, Math.min(1.1, pitch + vPitch))
+    }
+    const onUp = (e: PointerEvent) => {
+      dragging = false
+      canvas.style.cursor = 'grab'
+      if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId)
+    }
+    const onLeave = () => {
+      hoverX = -1
+      hoverY = -1
+    }
+    canvas.addEventListener('pointerdown', onDown)
+    canvas.addEventListener('pointermove', onMove)
+    canvas.addEventListener('pointerup', onUp)
+    canvas.addEventListener('pointercancel', onUp)
+    canvas.addEventListener('pointerleave', onLeave)
+
     // Longitude step widens by 1/cos(lat): a fixed step in degrees packs the poles
     // solid and reads as a bullseye.
     const dots: Vec[] = []
@@ -213,12 +274,21 @@ export function Globe({ height }: { height?: number }) {
       const cx = width / 2
       const cy = h / 2
       const r = Math.min(width, h) * 0.42
-      const tilt = -22 * RAD
-      const t = nowMs / 1000
+
+      const simMs = T0 + (nowMs - T0) * SCALE
+      const t = simMs / 1000
+
+      if (!dragging) {
+        yaw += vYaw
+        pitch = Math.max(-1.1, Math.min(1.1, pitch + vPitch))
+        vYaw *= 0.94
+        vPitch *= 0.94
+      }
+      const tilt = -22 * RAD + pitch
 
       // The orbits are inertial; rotating the ground by GMST is the same relative
-      // motion in one transform.
-      const spin = gmst(nowMs)
+      // motion in one transform. Yaw rides on top of it.
+      const spin = gmst(simMs) + yaw
       const ct = Math.cos(tilt)
       const st = Math.sin(tilt)
 
@@ -327,10 +397,30 @@ export function Globe({ height }: { height?: number }) {
           c.fill()
         }
 
+        // Under the pointer, the site says what it is and what it is working
+        // through. The elevation is the number that decides whether the link
+        // exists at all, so it is the one worth showing.
+        const near_ = Math.hypot(hoverX - gx, hoverY - gy) < 26
         c.beginPath()
-        c.arc(gx, gy, 2.6, 0, Math.PI * 2)
+        c.arc(gx, gy, near_ ? 4 : 2.6, 0, Math.PI * 2)
         c.fillStyle = 'rgba(255,255,255,0.95)'
         c.fill()
+        if (near_) {
+          c.beginPath()
+          c.arc(gx, gy, 9, 0, Math.PI * 2)
+          c.strokeStyle = 'rgba(255,255,255,0.5)'
+          c.stroke()
+          const label = best ? `${g.name} · ${bestEl.toFixed(0)}° elevation` : `${g.name} · acquiring`
+          c.font = '500 12px ui-sans-serif, system-ui, sans-serif'
+          const w = c.measureText(label).width
+          const lx = Math.min(Math.max(gx + 14, 4), width - w - 14)
+          c.fillStyle = 'rgba(0,0,0,0.82)'
+          c.fillRect(lx - 6, gy - 19, w + 12, 22)
+          c.strokeStyle = 'rgba(255,255,255,0.16)'
+          c.strokeRect(lx - 6, gy - 19, w + 12, 22)
+          c.fillStyle = 'rgba(255,255,255,0.92)'
+          c.fillText(label, lx, gy - 4)
+        }
       }
     }
 
@@ -346,6 +436,11 @@ export function Globe({ height }: { height?: number }) {
 
     return () => {
       window.removeEventListener('resize', resize)
+      canvas.removeEventListener('pointerdown', onDown)
+      canvas.removeEventListener('pointermove', onMove)
+      canvas.removeEventListener('pointerup', onUp)
+      canvas.removeEventListener('pointercancel', onUp)
+      canvas.removeEventListener('pointerleave', onLeave)
       cancelAnimationFrame(raf)
     }
   }, [])
@@ -354,7 +449,15 @@ export function Globe({ height }: { height?: number }) {
   return (
     <canvas
       ref={ref}
-      style={height ? { width: '100%', height } : { width: '100%', height: '100%' }}
+      // pan-y so a vertical swipe still scrolls the page; a horizontal drag turns
+      // the globe. Grabbing the canvas outright would trap a phone on the hero.
+      style={{
+        ...(height ? { height } : { height: '100%' }),
+        width: '100%',
+        touchAction: 'pan-y',
+        cursor: 'grab',
+        userSelect: 'none',
+      }}
       role="img"
       aria-label={`${total} satellites in two shells, their coverage footprints, and the ground sites currently in view`}
     />

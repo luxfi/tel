@@ -15,24 +15,30 @@ const Wordmark: React.FC<{ className?: string }> = ({ className = '' }) => (
 
 const Header: React.FC = () => (
   <header className='sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur'>
-    <nav className='mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-8'>
-      <a
-        href='/'
-        className='-ml-2 inline-flex min-h-[44px] items-center rounded-sm px-2 text-lg'
-        aria-label='Lux Tel, home'
-      >
-        <Wordmark />
-      </a>
-      {/* The menu projects from the catalogue — see components/Nav. */}
-      <Nav />
-      <div className='flex items-center gap-1 sm:gap-2'>
+    <nav className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+      {/* This row is the menus' containing block, and it is the only reason a
+          mega-menu can span the container: its box IS the container's content
+          box, so a panel says `inset-x-0` and lands on the wordmark's left edge
+          and the button's right edge without restating the padding scale. */}
+      <div className='relative flex items-center justify-between gap-2'>
         <a
-          href={contactHref('Lux Tel')}
-          className='inline-flex min-h-[44px] items-center rounded-md bg-white px-4 text-sm font-medium text-black transition-colors hover:bg-white/90'
+          href='/'
+          className='-ml-2 inline-flex min-h-[44px] items-center rounded-sm px-2 text-lg'
+          aria-label='Lux Tel, home'
         >
-          Talk to us
+          <Wordmark />
         </a>
-        <MobileNav />
+        {/* The menu projects from the catalogue — see components/Nav. */}
+        <Nav />
+        <div className='flex items-center gap-1 sm:gap-2'>
+          <a
+            href={contactHref('Lux Tel')}
+            className='inline-flex min-h-[44px] items-center rounded-md bg-white px-4 text-sm font-medium text-black transition-colors hover:bg-white/90'
+          >
+            Talk to us
+          </a>
+          <MobileNav />
+        </div>
       </div>
     </nav>
   </header>
