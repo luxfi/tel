@@ -15,7 +15,7 @@ function Roster({ title, people }: { title: string; people: readonly Person[] })
       <ul className="mt-6 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
         {people.map((p) => (
           <li key={p.name} className="bg-neutral-900/50 px-5 py-4">
-            <div className="text-[15px] font-medium">{p.name}</div>
+            <div className="text-lg font-medium">{p.name}</div>
             <div className="mt-0.5 text-sm text-white/40">{p.title}</div>
           </li>
         ))}
@@ -68,13 +68,13 @@ export default function Company() {
             ].map(([label, address]) => (
               <div key={address} className="bg-neutral-900/50 px-5 py-4">
                 <div className="eyebrow">{label}</div>
-                <a href={`mailto:${address}`} className="inline-flex min-h-[44px] items-center mt-1 text-[15px] hover:underline">{address}</a>
+                <a href={`mailto:${address}`} className="inline-flex min-h-tap items-center mt-1 text-lg hover:underline">{address}</a>
               </div>
             ))}
           </div>
           <p className="mt-8 text-sm text-white/40">
             Policies, retention periods and how we answer legal process are set out under{' '}
-            <Link href="/legal" className="inline-flex min-h-[44px] items-center underline">Legal</Link>.
+            <Link href="/legal" className="inline-flex min-h-tap items-center underline">Legal</Link>.
           </p>
         </div>
       </section>

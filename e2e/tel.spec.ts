@@ -1,6 +1,10 @@
 import { test, expect, type Page } from '@playwright/test'
+import { KEY } from '@hanzo/appearance/state'
 
-const WIDTHS = [390, 768, 1280, 1920]
+/* 375 is the narrowest phone still in wide use, and it is the width the hero
+   breaks at first: every rung above it had room to hide a layout that only just
+   fits. */
+const WIDTHS = [375, 390, 768, 1280, 1920]
 
 const gotoClean = async (page: Page) => {
   const errors: string[] = []
@@ -55,6 +59,92 @@ for (const width of WIDTHS) {
     expect(small).toEqual([])
   })
 }
+
+/*
+  The hero reads globe, then headline — and it is the ORDER that is asserted,
+  because every other property of this section survived the bug.
+
+  The globe was absolute at every width: full-bleed wallpaper behind the copy,
+  dimmed to 90%, with the scrim that makes text legible over it suppressed under
+  lg. It rendered, it propagated, it never overflowed, and every check in this
+  file passed while a phone showed body copy laid over a field of moving dots.
+  Nothing here can see "unreadable", so what is pinned instead is the geometry
+  that made it so: on a phone the canvas ENDS above where the headline STARTS.
+
+  Wide, the same one canvas goes back beside the copy — asserted from the same
+  numbers, so a change that fixes one width by breaking the other fails here.
+*/
+test('narrow, the globe sits above the headline; wide, beside it', async ({ page }) => {
+  const geometry = async () =>
+    page.evaluate(() => {
+      const r = (s: string) => {
+        const el = document.querySelector(s)
+        if (!el) return null
+        const b = el.getBoundingClientRect()
+        return { top: b.top + scrollY, bottom: b.bottom + scrollY, left: b.left, right: b.right }
+      }
+      return { globe: r('canvas'), headline: r('h1') }
+    })
+
+  for (const width of [375, 390, 768]) {
+    await page.setViewportSize({ width, height: 844 })
+    await page.goto('/')
+    const { globe, headline } = await geometry()
+    expect(globe, `no globe at ${width}`).not.toBeNull()
+    expect(globe!.bottom, `the globe is not clear of the headline at ${width}`).toBeLessThanOrEqual(headline!.top)
+  }
+
+  for (const width of [1280, 1920]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    const { globe, headline } = await geometry()
+    // BESIDE, which is a vertical fact: the two share a band rather than
+    // following one another. They also overlap horizontally, by design and at
+    // full bleed — the scrim exists precisely because they do — so the side is
+    // read from the canvas's midpoint, not from its near edge.
+    expect(globe!.bottom, `the globe stacked above the headline at ${width}`).toBeGreaterThan(headline!.top)
+    expect((globe!.left + globe!.right) / 2, `the globe left the right half at ${width}`).toBeGreaterThan(width / 2)
+  }
+})
+
+/*
+  The scale is @hanzo/appearance's to move, and this proves the page answers it.
+
+  The knobs are two custom properties on <html>; every rung in tailwind.config.ts
+  is a calc() against them, so type and spacing travel together. The failure this
+  guards is silent and total: point one utility at a literal and the site still
+  renders perfectly at the default, having quietly stopped listening. Written
+  against the package's own storage key rather than a copy of it, and driven the
+  way a person would — store a preference, load the page — so it also fails if
+  the site stops applying what it finds.
+*/
+test('a stored preference retunes type and spacing together', async ({ page }) => {
+  const measure = () =>
+    page.evaluate(() => {
+      const cs = (s: string, p: string) => parseFloat(getComputedStyle(document.querySelector(s)!).getPropertyValue(p))
+      return { headline: cs('h1', 'font-size'), lede: cs('.lede', 'font-size'), band: cs('.band', 'padding-top') }
+    })
+
+  await page.goto('/')
+  const published = await measure()
+
+  await page.addInitScript(
+    ([k, v]) => localStorage.setItem(k, v),
+    [KEY, JSON.stringify({ type: 1.3, density: 'comfortable' })] as const,
+  )
+  await page.goto('/')
+  // WAITED FOR, not snapshotted. The preference lands on mount rather than in an
+  // inline head script (see src/appearance.tsx for why), so measuring as soon as
+  // `goto` resolves races hydration — and losing that race reports "the page
+  // ignores the knob", which is the failure this test exists to find. Waiting for
+  // the property asserts nothing on its own; the sizes below are still the claim.
+  await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--type-scale') !== '')
+  const larger = await measure()
+
+  expect(larger.headline, 'type did not follow --type-scale').toBeCloseTo(published.headline * 1.3, 0)
+  expect(larger.lede, 'the ramp moved by rung rather than as a whole').toBeCloseTo(published.lede * 1.3, 0)
+  expect(larger.band, 'spacing did not follow --density').toBeCloseTo(published.band * 1.15, 0)
+})
 
 /*
   Nothing on this site names anyone but Lux. Carriers, satellite operators,
