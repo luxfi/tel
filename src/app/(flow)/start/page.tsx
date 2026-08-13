@@ -163,7 +163,7 @@ export default function Start() {
       {/* The wordmark and a way out. Everything else on this screen is an exit from
           the one thing it is for. */}
       <header className='flex h-16 shrink-0 items-center justify-between px-4 sm:px-6 lg:px-8'>
-        <Link href='/' className='inline-flex min-h-[44px] items-center text-lg' aria-label='Lux Tel, home'>
+        <Link href='/' className='inline-flex min-h-tap items-center text-lg' aria-label='Lux Tel, home'>
           <span className='font-heading font-bold tracking-tight'>LUX</span>
           <span className='text-white/40'>&nbsp;tel</span>
         </Link>

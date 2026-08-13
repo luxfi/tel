@@ -41,7 +41,7 @@ function Suites() {
               type='button'
               aria-expanded={isOpen}
               onClick={() => setOpen(isOpen ? null : s.slug)}
-              className='flex min-h-[44px] w-full items-center justify-between rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
+              className='flex min-h-tap w-full items-center justify-between rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
             >
               {s.name}
               <ChevronRight
@@ -92,7 +92,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
         <nav className='flex flex-1 flex-col gap-0.5 overflow-y-auto p-3'>
           <Link
             href='/console'
-            className='flex min-h-[44px] items-center rounded-md bg-white/10 px-3 text-sm font-medium text-white'
+            className='flex min-h-tap items-center rounded-md bg-white/10 px-3 text-sm font-medium text-white'
           >
             Home
           </Link>
@@ -117,7 +117,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
             <Link
               key={href}
               href={href}
-              className='flex min-h-[44px] items-center rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
+              className='flex min-h-tap items-center rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
             >
               {label}
             </Link>
@@ -126,7 +126,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
           <div className='my-3 border-t border-white/10' />
           <a
             href='mailto:hi@lux.tel?subject=Lux%20Tel'
-            className='flex min-h-[44px] items-center rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
+            className='flex min-h-tap items-center rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
           >
             Chat with us
           </a>
@@ -136,7 +136,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
             acts on, and it is read at a glance or not at all. */}
         <a
           href='https://status.lux.network'
-          className='m-3 flex min-h-[44px] items-center gap-2 rounded-full border border-white/10 px-4 text-sm text-white/60 transition-colors hover:border-white/20 hover:text-white'
+          className='m-3 flex min-h-tap items-center gap-2 rounded-full border border-white/10 px-4 text-sm text-white/60 transition-colors hover:border-white/20 hover:text-white'
         >
           <span className='dot dot-live' aria-hidden='true' />
           Platform status
@@ -158,7 +158,7 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
               placeholder='Search'
               className='min-h-[40px] w-full bg-transparent text-sm outline-none placeholder:text-white/40'
             />
-            <kbd className='hidden shrink-0 rounded border border-white/10 px-1.5 py-0.5 text-[10px] text-white/40 md:block'>
+            <kbd className='hidden shrink-0 rounded border border-white/10 px-1.5 py-0.5 text-xs text-white/40 md:block'>
               ⌘K
             </kbd>
           </label>

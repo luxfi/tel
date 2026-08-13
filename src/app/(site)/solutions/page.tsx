@@ -27,14 +27,14 @@ export default function Solutions() {
             <div key={s.slug} className="grid gap-5 py-10 md:grid-cols-[300px_1fr] md:gap-12">
               <h2 className="h3">{s.name}</h2>
               <div>
-                <p className="text-[15px] text-white/40">{s.problem}</p>
-                <p className="mt-4 text-[15px] text-white/60">{s.answer}</p>
+                <p className="text-lg text-white/40">{s.problem}</p>
+                <p className="mt-4 text-lg text-white/60">{s.answer}</p>
                 <div className="mt-5 flex flex-wrap gap-2">
                   {s.uses.map((u) => (
                     <Link
                       key={u}
                       href={`/products/${u}`}
-                      className="inline-flex min-h-[44px] items-center rounded-full border border-white/10 px-4 text-[11px] font-semibold uppercase tracking-wider text-white/60 transition-colors hover:border-white/20 hover:text-white"
+                      className="inline-flex min-h-tap items-center rounded-full border border-white/10 px-4 text-xs font-semibold uppercase tracking-wider text-white/60 transition-colors hover:border-white/20 hover:text-white"
                     >
                       {u.replace(/-/g, ' ')}
                     </Link>

@@ -33,8 +33,8 @@ export default function Products() {
                     <span className="h3">{p.name}</span>
                   </div>
                   <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <p className="text-[15px] text-white/60">{p.blurb}</p>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-white/40">
+                    <p className="text-lg text-white/60">{p.blurb}</p>
+                    <span className="font-mono text-xs uppercase tracking-wider text-white/40">
                       {STATUS_LABEL[p.status]}
                     </span>
                   </div>

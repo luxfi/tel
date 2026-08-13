@@ -20,10 +20,10 @@ export default async function Policy({ params }: { params: Promise<{ slug: strin
   return (
     <>
       <section className="wrap pt-16 pb-10">
-        <Link href="/legal" className="inline-flex min-h-[44px] items-center eyebrow hover:text-white">Legal</Link>
+        <Link href="/legal" className="inline-flex min-h-tap items-center eyebrow hover:text-white">Legal</Link>
         <h1 className="display mt-5 max-w-[16ch]">{p.title}</h1>
         <p className="lede mt-6">{p.summary}</p>
-        <p className="mt-5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+        <p className="mt-5 text-xs font-semibold uppercase tracking-wider text-white/40">
           Effective {EFFECTIVE} · {COMPANY.legalName}
         </p>
         {/* The flag is the gate and this is what it gates. A carrier publishing
@@ -46,7 +46,7 @@ export default async function Policy({ params }: { params: Promise<{ slug: strin
                 <div className="eyebrow tabular pt-1">{String(i + 1).padStart(2, '0')}</div>
                 <div>
                   <h2 className="h3">{s.heading}</h2>
-                  <div className="prose mt-3 space-y-3 text-[15px]">
+                  <div className="prose mt-3 space-y-3 text-lg">
                     {s.body.map((b) => (
                       <p key={b}>{b}</p>
                     ))}
@@ -58,11 +58,11 @@ export default async function Policy({ params }: { params: Promise<{ slug: strin
 
           <div className="mt-10 text-sm text-white/60">
             Questions about this policy go to{' '}
-            <a className="inline-flex min-h-[44px] items-center underline" href={`mailto:${COMPANY.contact.general}`}>{COMPANY.contact.general}</a>. Privacy
+            <a className="inline-flex min-h-tap items-center underline" href={`mailto:${COMPANY.contact.general}`}>{COMPANY.contact.general}</a>. Privacy
             requests go to{' '}
-            <a className="inline-flex min-h-[44px] items-center underline" href={`mailto:${COMPANY.contact.general}`}>{COMPANY.contact.general}</a>, and
+            <a className="inline-flex min-h-tap items-center underline" href={`mailto:${COMPANY.contact.general}`}>{COMPANY.contact.general}</a>, and
             legal process is served on{' '}
-            <a className="inline-flex min-h-[44px] items-center underline" href={`mailto:${COMPANY.contact.general}`}>{COMPANY.contact.general}</a>.
+            <a className="inline-flex min-h-tap items-center underline" href={`mailto:${COMPANY.contact.general}`}>{COMPANY.contact.general}</a>.
           </div>
         </div>
       </section>
