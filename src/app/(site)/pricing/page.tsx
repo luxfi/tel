@@ -63,7 +63,7 @@ export default function Pricing() {
             {PRINCIPLES.map((p) => (
               <div key={p.heading} className="bg-neutral-900/50 p-7">
                 <div className="h3">{p.heading}</div>
-                <p className="mt-2 text-[15px] text-white/60">{p.body}</p>
+                <p className="mt-2 text-lg text-white/60">{p.body}</p>
               </div>
             ))}
           </div>
@@ -74,7 +74,7 @@ export default function Pricing() {
         <div className="wrap">
           <div className="eyebrow">How each thing meters</div>
           <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[640px] border-collapse text-left text-[15px]">
+            <table className="w-full min-w-[640px] border-collapse text-left text-lg">
               <thead>
                 <tr className="border-b border-white/10">
                   <th className="eyebrow py-3 pr-6 font-normal">Service</th>

@@ -1,3 +1,19 @@
+/*
+  The scale, before anything that reads it.
+
+  Two sheets, and only two: the type ramp and the spacing ramp. Each rung is the
+  published value multiplied by a knob — `--type-scale` and `--density` — and
+  those two knobs are exactly what `@hanzo/appearance` writes onto <html>. So a
+  person's reading of this site is three numbers, not a second stylesheet, and
+  tailwind.config.ts resolves every utility through them.
+
+  The BRAND is not taken from here. Lux's typefaces, its monochrome surface and
+  its opacity ladder are declared below and in tailwind.config.ts; what is shared
+  is the ARITHMETIC of the ramp, which has no brand in it.
+*/
+@import '@hanzo/design/tokens/typography.css';
+@import '@hanzo/design/tokens/spacing.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -72,11 +88,15 @@
   }
 
   .eyebrow {
-    @apply text-[10px] font-semibold uppercase tracking-wider text-white/40;
+    @apply text-xs font-semibold uppercase tracking-wider text-white/40;
   }
 
+  /* Rungs, not pixels. The ramp's own steps read 26 / 32 / 40 where this used to
+     say 26 / 36 / 48 — tighter at every width, and the sizes now move together
+     when the scale is retuned instead of the phone size sitting still while the
+     other two shrink. The leading stays a RATIO so it holds at any of them. */
   .display {
-    @apply font-heading text-[26px] font-bold leading-[1.15] sm:text-4xl lg:text-5xl;
+    @apply font-heading text-3xl font-bold leading-[1.15] sm:text-4xl lg:text-5xl;
     text-wrap: balance;
   }
 
@@ -113,7 +133,7 @@
 
   /* Tap targets stay at 44px — the e2e suite measures them at 390/768/1280. */
   .btn {
-    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md px-6 text-sm font-medium transition-colors;
+    @apply inline-flex min-h-tap items-center justify-center gap-2 rounded-md px-6 text-sm font-medium transition-colors;
   }
   .btn-solid {
     @apply bg-white text-black hover:bg-white/90;

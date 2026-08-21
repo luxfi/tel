@@ -1,6 +1,7 @@
 import React, { type PropsWithChildren } from 'react'
 import type { Viewport } from 'next'
 
+import { Appearance } from '@/appearance'
 import metadata from '@/metadata'
 import './globals.css'
 
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang='en' className='dark'>
       <body className='flex min-h-full flex-col bg-black text-white'>
+        <Appearance />
         {children}
       </body>
     </html>

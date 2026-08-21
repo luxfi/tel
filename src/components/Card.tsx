@@ -23,7 +23,7 @@ export function Card({ primitive }: { primitive: Primitive }) {
       </div>
       <p className='mt-2 text-sm leading-relaxed text-white/60'>{primitive.blurb}</p>
       {primitive.status !== 'live' ? (
-        <p className='mt-3 text-[10px] font-semibold uppercase tracking-wider text-white/60'>
+        <p className='mt-3 text-xs font-semibold uppercase tracking-wider text-white/60'>
           {STATUS_LABEL[primitive.status]}
         </p>
       ) : null}

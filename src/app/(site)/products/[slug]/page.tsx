@@ -23,7 +23,7 @@ export default async function Primitive({ params }: { params: Promise<{ slug: st
   return (
     <>
       <section className="wrap pt-16 pb-12">
-        <Link href={`/products#${p.pillar.slug}`} className="inline-flex min-h-[44px] items-center eyebrow hover:text-white">
+        <Link href={`/products#${p.pillar.slug}`} className="inline-flex min-h-tap items-center eyebrow hover:text-white">
           {p.pillar.name}
         </Link>
         <h1 className="display mt-5 max-w-[14ch]">{p.name}</h1>
@@ -39,7 +39,7 @@ export default async function Primitive({ params }: { params: Promise<{ slug: st
           <div className="eyebrow">What you get</div>
           <ul className="mt-8 divide-y divide-white/10 border-y border-white/10">
             {p.facts.map((f) => (
-              <li key={f} className="py-5 text-[15px] text-white/60">{f}</li>
+              <li key={f} className="py-5 text-lg text-white/60">{f}</li>
             ))}
           </ul>
           <div className="mt-10 flex flex-wrap gap-3">

@@ -19,7 +19,7 @@ export default function Legal() {
           lawful process, retention, and specific protections on what the network knows about you. All of it is
           here rather than in a contract you only see after signing.
         </p>
-        <p className="mt-4 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+        <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-white/40">
           Effective {EFFECTIVE} · {COMPANY.legalName}
         </p>
         {!REVIEWED ? (
@@ -36,7 +36,7 @@ export default function Legal() {
           {POLICIES.map((p) => (
             <Link key={p.slug} href={`/legal/${p.slug}`} className="grid gap-2 py-7 md:grid-cols-[300px_1fr] md:gap-10">
               <span className="h3">{p.title}</span>
-              <span className="text-[15px] text-white/60">{p.summary}</span>
+              <span className="text-lg text-white/60">{p.summary}</span>
             </Link>
           ))}
         </div>

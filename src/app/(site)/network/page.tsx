@@ -94,7 +94,7 @@ export default function Network() {
             {GROUND.map((g) => (
               <div key={g.label}>
                 <dt className="eyebrow">{g.label}</dt>
-                <dd className="mt-3 text-[24px] font-semibold leading-tight tracking-tight">{g.value}</dd>
+                <dd className="mt-3 text-2xl font-semibold leading-tight tracking-tight">{g.value}</dd>
                 <dd className="mt-2 text-sm text-white/40">{g.note}</dd>
               </div>
             ))}
@@ -111,7 +111,7 @@ export default function Network() {
               <div key={i.n} className="bg-neutral-900/50 p-8">
                 <div className="eyebrow">{i.n}</div>
                 <div className="h3 mt-3">{i.heading}</div>
-                <p className="mt-2 text-[15px] text-white/60">{i.body}</p>
+                <p className="mt-2 text-lg text-white/60">{i.body}</p>
               </div>
             ))}
           </div>
@@ -126,7 +126,7 @@ export default function Network() {
             {ORBIT_PILLAR.primitives.map((p) => (
               <div key={p.slug} className="grid gap-4 py-8 md:grid-cols-[260px_1fr] md:gap-10">
                 <div>
-                  <Link href={`/products/${p.slug}`} className="inline-flex min-h-[44px] items-center h3 hover:underline">
+                  <Link href={`/products/${p.slug}`} className="inline-flex min-h-tap items-center h3 hover:underline">
                     {p.name}
                   </Link>
                   <div className="mt-2 flex items-center gap-2 text-sm text-white/40">
@@ -135,7 +135,7 @@ export default function Network() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[15px] text-white/60">{p.detail}</p>
+                  <p className="text-lg text-white/60">{p.detail}</p>
                   <ul className="mt-4 space-y-1.5">
                     {p.facts.map((f) => (
                       <li key={f} className="flex gap-3 text-sm text-white/60">
