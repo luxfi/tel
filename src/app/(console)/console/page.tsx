@@ -142,7 +142,7 @@ export default function Console() {
                 <p className='mt-2 text-sm leading-relaxed text-white/60'>{n.body}</p>
                 <Link
                   href={n.href}
-                  className='mt-3 inline-flex min-h-[44px] items-center gap-1 text-sm text-white/70 transition-colors hover:text-white'
+                  className='mt-3 inline-flex min-h-tap items-center gap-1 text-sm text-white/70 transition-colors hover:text-white'
                 >
                   Read more
                   <ArrowUpRight className='h-3.5 w-3.5' aria-hidden='true' />

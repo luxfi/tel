@@ -48,35 +48,48 @@ export default function Page() {
 
   return (
     <>
-      {/* A column of its own: at 70% opacity behind the copy the mesh was
-          unreadable, and an unreadable picture is decoration. */}
-      <section className='relative flex min-h-[calc(100vh-57px)] items-center overflow-hidden py-16'>
-        {/* Full-bleed and behind, at full strength. The globe is the hero, and a
-            column could not give it the size it needs to read as a shell. */}
-        <div className='absolute inset-y-0 right-[-15%] w-[120%] opacity-90 lg:right-0 lg:w-[58%] lg:opacity-100'>
+      {/*
+        ONE globe, placed two ways.
+
+        Narrow, it is a BLOCK at the top of the page and the copy follows it, so
+        the reading order down the screen is globe, headline, then the rest. It
+        used to be absolute at every width — full-bleed wallpaper behind the
+        copy at 90% opacity, with the scrim below suppressed under lg. So a phone
+        got the worst of both: a picture too faint to read as a planet, and body
+        text laid directly over a field of moving dots. The desktop scrim exists
+        because that combination is unreadable; narrow simply had no answer.
+
+        Wide, it goes back out of flow against the right edge, which is the only
+        way it gets the size to read as a shell rather than as an illustration.
+        A second <Globe /> for the phone would have been a second canvas and a
+        second propagation loop for one picture.
+      */}
+      <section className='relative overflow-hidden lg:flex lg:min-h-[calc(100svh-var(--tap-target))] lg:items-center lg:py-16'>
+        <div className='relative h-56 sm:h-72 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[58%]'>
           <Globe />
         </div>
-        {/* A scrim over the globe's left edge. The copy column and the canvas
-            overlap by design — the globe is full bleed — and body text on a field
-            of moving dots is unreadable at exactly the place someone is reading.
-            Gradient, not a box: a hard edge would read as a panel. */}
+        {/* A scrim over the globe's left edge, wide only — narrow, nothing
+            overlaps any more. The copy column and the canvas overlap by design
+            there, and body text on a field of moving dots is unreadable at
+            exactly the place someone is reading. Gradient, not a box: a hard edge
+            would read as a panel. */}
         <div
           className='pointer-events-none absolute inset-0 hidden lg:block'
           aria-hidden='true'
           style={{ background: 'linear-gradient(90deg, #000 0%, #000 34%, rgba(0,0,0,0.85) 46%, rgba(0,0,0,0) 62%)' }}
         />
-        <div className='wrap relative grid items-center gap-12 lg:grid-cols-[minmax(0,560px)_1fr]'>
+        <div className='wrap relative pb-12 lg:grid lg:grid-cols-[minmax(0,560px)_1fr] lg:items-center lg:gap-12 lg:pb-0'>
           <div>
             {/* Kept deliberately: it says what Lux sells in the reader's words,
                 where "connectivity on one network" named the architecture. */}
             <p className='eyebrow'>Internet · Cellular · Voice · Messaging · AI</p>
-            <h1 className='display mt-4 max-w-[16ch]'>Everything your business needs to connect.</h1>
-            <p className='lede mt-6'>
+            <h1 className='display mt-3 max-w-[16ch]'>Everything your business needs to connect.</h1>
+            <p className='lede mt-4'>
               Lux brings communications, connectivity and intelligent automation into one platform — one account, one
               bill, one team behind it. From a phone number, to a remote site, to an agent that can answer, act and
               operate on your behalf.
             </p>
-            <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
+            <div className='mt-6 flex flex-col gap-2 sm:flex-row'>
               <a href={contactHref('Lux Tel')} className='btn btn-solid'>
                 Tell us what you&rsquo;re connecting
                 <ArrowRight className='h-4 w-4' aria-hidden='true' />
@@ -241,7 +254,7 @@ export default function Page() {
               <div key={pillar.slug} id={pillar.slug} className='scroll-mt-20'>
                 <div className='flex flex-wrap items-baseline justify-between gap-3 border-b border-white/10 pb-3'>
                   <h3 className='font-heading text-lg font-bold'>{pillar.name}</h3>
-                  <Link href={`/products#${pillar.slug}`} className='inline-flex min-h-[44px] items-center text-sm text-white/40 transition-colors hover:text-white'>
+                  <Link href={`/products#${pillar.slug}`} className='inline-flex min-h-tap items-center text-sm text-white/40 transition-colors hover:text-white'>
                     See all
                   </Link>
                 </div>

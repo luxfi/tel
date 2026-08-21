@@ -109,7 +109,7 @@ function Dropdown({ menu }: { menu: Menu }) {
     return (
       <Link
         href={menu.href}
-        className='inline-flex min-h-[44px] items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
+        className='inline-flex min-h-tap items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
       >
         {menu.label}
       </Link>
@@ -125,7 +125,7 @@ function Dropdown({ menu }: { menu: Menu }) {
         aria-expanded={open}
         aria-haspopup='true'
         onClick={() => (open ? setOpen(false) : show())}
-        className='inline-flex min-h-[44px] items-center gap-1 rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
+        className='inline-flex min-h-tap items-center gap-1 rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
       >
         {menu.label}
         <ChevronDown className={'h-3.5 w-3.5 transition-transform ' + (open ? 'rotate-180' : '')} aria-hidden='true' />
@@ -171,7 +171,7 @@ function Dropdown({ menu }: { menu: Menu }) {
                   <Link
                     href={menu.href}
                     onClick={() => setOpen(false)}
-                    className='inline-flex min-h-[44px] items-center text-sm text-white transition-colors hover:text-white/70'
+                    className='inline-flex min-h-tap items-center text-sm text-white transition-colors hover:text-white/70'
                   >
                     All {menu.label.toLowerCase()} &rarr;
                   </Link>
@@ -227,7 +227,12 @@ export function MobileNav() {
       {open && mounted
         ? createPortal(
             <div className='fixed inset-0 z-[60] flex flex-col bg-black'>
-          <div className='flex h-[57px] shrink-0 items-center justify-between border-b border-white/10 px-4'>
+          {/* Exactly the header's height, because both are one tap target tall —
+              the bar takes its height from the controls in it. Said as `57px`
+              here and again in the hero's min-height, it was wrong in both: the
+              header measures 44, so opening the menu dropped the wordmark and
+              the ✕ 6.5px below the ☰ they replaced. */}
+          <div className='flex h-tap shrink-0 items-center justify-between border-b border-white/10 px-4'>
             <span className='text-lg'>
               <span className='font-heading font-bold tracking-tight'>LUX</span>
               <span className='text-white/40'> tel</span>
@@ -248,7 +253,7 @@ export function MobileNav() {
                 <Link
                   href={m.href}
                   onClick={() => setOpen(false)}
-                  className='flex min-h-[44px] items-center font-heading text-lg font-bold'
+                  className='flex min-h-tap items-center font-heading text-lg font-bold'
                 >
                   {m.label}
                 </Link>
@@ -261,7 +266,7 @@ export function MobileNav() {
                           <Link
                             href={it.href}
                             onClick={() => setOpen(false)}
-                            className='flex min-h-[44px] items-center text-sm text-white/60 transition-colors hover:text-white'
+                            className='flex min-h-tap items-center text-sm text-white/60 transition-colors hover:text-white'
                           >
                             {it.label}
                           </Link>

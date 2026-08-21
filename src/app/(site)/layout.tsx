@@ -25,7 +25,7 @@ const Header: React.FC = () => (
       <div className='relative flex items-center justify-between gap-2'>
         <a
           href='/'
-          className='-ml-2 inline-flex min-h-[44px] items-center rounded-sm px-2 text-lg'
+          className='-ml-2 inline-flex min-h-tap items-center rounded-sm px-2 text-lg'
           aria-label='Lux Tel, home'
         >
           <Wordmark />
@@ -38,13 +38,13 @@ const Header: React.FC = () => (
         <div className='flex items-center gap-1 sm:gap-2'>
           <a
             href='https://console.lux.tel'
-            className='hidden min-h-[44px] items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white sm:inline-flex'
+            className='hidden min-h-tap items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white sm:inline-flex'
           >
             Login
           </a>
           <a
             href='/start'
-            className='inline-flex min-h-[44px] items-center rounded-md bg-white px-3.5 text-[13px] font-medium text-black transition-colors hover:bg-white/90'
+            className='inline-flex min-h-tap items-center rounded-md bg-white px-3.5 text-sm font-medium text-black transition-colors hover:bg-white/90'
           >
             Get started
           </a>
@@ -67,25 +67,25 @@ const Footer: React.FC = () => (
       <div className='flex flex-wrap items-center gap-x-2 gap-y-1 text-sm'>
         <a
           href={contactHref('Lux Tel')}
-          className='inline-flex min-h-[44px] items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
+          className='inline-flex min-h-tap items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
         >
           Contact
         </a>
         <a
           href='/legal/privacy'
-          className='inline-flex min-h-[44px] items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
+          className='inline-flex min-h-tap items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
         >
           Privacy
         </a>
         <a
           href='/legal'
-          className='inline-flex min-h-[44px] items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
+          className='inline-flex min-h-tap items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
         >
           Legal
         </a>
         <a
           href='https://lux.network'
-          className='inline-flex min-h-[44px] items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
+          className='inline-flex min-h-tap items-center rounded-sm px-2 text-white/60 transition-colors hover:text-white'
           target='_blank'
           rel='noopener noreferrer'
         >
