@@ -2,7 +2,7 @@ import type { Config } from 'tailwindcss'
 
 /*
   Lux tokens, per luxfi/brand DESIGN.md §2.2 (dark surface) and the
-  @luxfi/ui type vocabulary: Druk Wide headings, Inter body.
+  @luxfi/ui type vocabulary: Zen headings, Inter body.
 
   The BRAND is Lux's — typefaces, the monochrome surface, the opacity ladder.
   The SCALE is the shared one: `@hanzo/design` publishes the type ramp and the
@@ -51,7 +51,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['DrukWide', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['Zen', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {

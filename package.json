@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@hanzo/appearance": "^0.1.4",
-    "@hanzo/design": "^0.5.1",
+    "@hanzo/design": "^0.5.21",
+    "@hanzo/font": "^1.8.1",
     "lucide-react": "0.470.0",
     "next": "15.1.6",
     "react": "18.3.1",
