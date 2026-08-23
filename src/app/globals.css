@@ -20,20 +20,6 @@
 
 @layer base {
   @font-face {
-    font-family: 'DrukWide';
-    src: url('/fonts/Druk-Wide-Medium.ttf') format('truetype');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: 'DrukWide';
-    src: url('/fonts/Druk-Wide-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
     font-family: 'Inter';
     src: url('/fonts/InterVariable.woff2') format('woff2');
     font-weight: 100 900;
@@ -48,6 +34,19 @@
 
   body {
     @apply bg-black text-white font-sans antialiased;
+  }
+
+  /* The display voice: Zen at the wide, monumental cut the headings were set in.
+     Weight and tracking are the `.zen-wide` preset's own variables, so a refit of
+     the family arrives by bumping @hanzo/font and this file does not move. Living
+     in `base` means a `tracking-*` utility on the same element still wins.
+
+     The horizontal scale that completes the fit is the preset's `.zen-wide` class,
+     deliberately NOT applied here: a transform does not reflow, so a heading takes
+     it only where its container has the room. */
+  .font-heading {
+    font-variation-settings: 'wght' var(--zen-wide-wght);
+    letter-spacing: var(--zen-wide-track);
   }
 
   :focus-visible {
