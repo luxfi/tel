@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { Box } from '@hanzo/ui'
 
 import { complete, onConsoleHost } from '@/console/auth'
 
@@ -18,19 +19,19 @@ export default function Callback() {
   }, [])
 
   return (
-    <section className='wrap py-24'>
-      <p className='eyebrow'>Console</p>
+    <Box tag="section" className='wrap py-24'>
+      <Box tag="p" className='eyebrow'>Console</Box>
       {error ? (
         <>
-          <h1 className='h2 mt-3'>That sign-in did not finish.</h1>
-          <p className='lede mt-4'>{error}</p>
-          <a href={onConsoleHost() ? '/' : '/console'} className='btn btn-solid mt-8'>
+          <Box tag="h1" className='h2 mt-3'>That sign-in did not finish.</Box>
+          <Box tag="p" className='lede mt-4'>{error}</Box>
+          <Box tag="a" href={onConsoleHost() ? '/' : '/console'} className='btn btn-solid mt-8'>
             Try again
-          </a>
+          </Box>
         </>
       ) : (
-        <h1 className='h2 mt-3'>Signing you in…</h1>
+        <Box tag="h1" className='h2 mt-3'>Signing you in…</Box>
       )}
-    </section>
+    </Box>
   )
 }

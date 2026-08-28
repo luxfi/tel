@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Box, css } from '@hanzo/ui'
 import Link from 'next/link'
 import { COMPANY } from '@/content/company'
 
@@ -47,68 +48,68 @@ const SHAPES = [
 export default function Pricing() {
   return (
     <>
-      <section className="wrap pt-16 pb-10">
-        <div className="eyebrow">Pricing</div>
-        <h1 className="display mt-5 max-w-[16ch]">You pay for traffic, not for seats.</h1>
-        <p className="lede mt-6">
+      <Box tag="section" className="wrap pt-16 pb-10">
+        <Box className="eyebrow">Pricing</Box>
+        <Box tag="h1" className="display mt-5 max-w-[16ch]">You pay for traffic, not for seats.</Box>
+        <Box tag="p" className="lede mt-6">
           Numbering, wireless and orbital rates are set per jurisdiction and per site, so a single published number
           would be wrong for most people reading it. What does not change is how the charging works.
-        </p>
-      </section>
+        </Box>
+      </Box>
 
-      <section className="band">
-        <div className="wrap">
-          <div className="eyebrow">Principles</div>
-          <div className="mt-8 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 md:grid-cols-2">
+      <Box tag="section" className="band">
+        <Box className="wrap">
+          <Box className="eyebrow">Principles</Box>
+          <Box className="mt-8 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 md:grid-cols-2">
             {PRINCIPLES.map((p) => (
-              <div key={p.heading} className="bg-neutral-900/50 p-7">
-                <div className="h3">{p.heading}</div>
-                <p className="mt-2 text-lg text-white/60">{p.body}</p>
-              </div>
+              <Box key={p.heading} className="bg-neutral-900/50 p-7">
+                <Box className="h3">{p.heading}</Box>
+                <Box tag="p" className="mt-2 text-lg text-white/60">{p.body}</Box>
+              </Box>
             ))}
-          </div>
-        </div>
-      </section>
+          </Box>
+        </Box>
+      </Box>
 
-      <section className="band">
-        <div className="wrap">
-          <div className="eyebrow">How each thing meters</div>
-          <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[640px] border-collapse text-left text-lg">
+      <Box tag="section" className="band">
+        <Box className="wrap">
+          <Box className="eyebrow">How each thing meters</Box>
+          <Box className="mt-8 overflow-x-auto">
+            <Box tag="table" className="w-full min-w-[640px] border-collapse text-left text-lg">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th className="eyebrow py-3 pr-6 font-normal">Service</th>
-                  <th className="eyebrow py-3 pr-6 font-normal">Unit</th>
-                  <th className="eyebrow py-3 font-normal">Notes</th>
-                </tr>
+                <Box tag="tr" className="border-b border-white/10">
+                  <Box tag="th" className="eyebrow py-3 pr-6 font-normal">Service</Box>
+                  <Box tag="th" className="eyebrow py-3 pr-6 font-normal">Unit</Box>
+                  <Box tag="th" className="eyebrow py-3 font-normal">Notes</Box>
+                </Box>
               </thead>
               <tbody>
                 {SHAPES.map((s) => (
-                  <tr key={s.what} className="border-b border-white/10">
-                    <td className="py-4 pr-6 font-medium">{s.what}</td>
-                    <td className="py-4 pr-6 text-white/60">{s.unit}</td>
-                    <td className="py-4 text-white/40">{s.note}</td>
-                  </tr>
+                  <Box tag="tr" key={s.what} className="border-b border-white/10">
+                    <Box tag="td" className="py-4 pr-6 font-medium">{s.what}</Box>
+                    <Box tag="td" className="py-4 pr-6 text-white/60">{s.unit}</Box>
+                    <Box tag="td" className="py-4 text-white/40">{s.note}</Box>
+                  </Box>
                 ))}
               </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
-      <section className="band">
-        <div className="wrap">
-          <h2 className="h2 max-w-[22ch]">Send us the shape of your traffic.</h2>
-          <p className="lede mt-4">
+      <Box tag="section" className="band">
+        <Box className="wrap">
+          <Box tag="h2" className="h2 max-w-[22ch]">Send us the shape of your traffic.</Box>
+          <Box tag="p" className="lede mt-4">
             Countries, volumes and coordinates. A quote comes back with the rate, the service level and the
             provisioning time for each one.
-          </p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <a href={`mailto:${COMPANY.contact.general}`} className="btn btn-solid">Request a quote</a>
-            <Link href="/products" className="btn btn-ghost">See what is available</Link>
-          </div>
-        </div>
-      </section>
+          </Box>
+          <Box className="mt-7 flex flex-wrap gap-3">
+            <Box tag="a" href={`mailto:${COMPANY.contact.general}`} className="btn btn-solid">Request a quote</Box>
+            <Link href="/products" className={'btn btn-ghost'} style={css('btn btn-ghost')}>See what is available</Link>
+          </Box>
+        </Box>
+      </Box>
     </>
   )
 }

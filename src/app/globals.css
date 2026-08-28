@@ -5,59 +5,74 @@
   published value multiplied by a knob — `--type-scale` and `--density` — and
   those two knobs are exactly what `@hanzo/appearance` writes onto <html>. So a
   person's reading of this site is three numbers, not a second stylesheet, and
-  tailwind.config.ts resolves every utility through them.
+  the vocabulary below resolves every value through them.
 
   The BRAND is not taken from here. Lux's typefaces, its monochrome surface and
-  its opacity ladder are declared below and in tailwind.config.ts; what is shared
-  is the ARITHMETIC of the ramp, which has no brand in it.
+  its opacity ladder are declared below; what is shared is the ARITHMETIC of the
+  ramp, which has no brand in it.
+
+  There is no utility engine. The vocabulary used to be written as `@apply`
+  strings, which needed one — and the strings were the only place the values
+  lived, so the file read as a list of class names rather than as a design. It is
+  plain CSS now, resolving through the same `var(--text-*)` and `var(--space-*)`
+  rungs the config used to resolve them through: the arithmetic is unchanged and
+  there is no build step between this file and the browser.
 */
 @import '@hanzo/design/tokens/typography.css';
 @import '@hanzo/design/tokens/spacing.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* The element ground and the token set — reset, type ramp, spacing, the measure.
+   @hanzo/ui ships them, so this file states only what is Lux. */
+@import '@hanzo/ui/theme.css';
+@import '@hanzo/ui/styles.css';
 
-@layer base {
-  @font-face {
-    font-family: 'Inter';
-    src: url('/fonts/InterVariable.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-  }
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 
-  html {
-    -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
 
-  body {
-    @apply bg-black text-white font-sans antialiased;
-  }
+body {
+  /* One column, floored at 0 so long content wraps rather than widening the
+     page. Stated here rather than as classes on <body>, which sits outside the
+     provider and so reads none of them. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100%;
+  background: #000;
+  color: #fff;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* The display voice: Zen at the wide, monumental cut the headings were set in.
-     Weight and tracking are the `.zen-wide` preset's own variables, so a refit of
-     the family arrives by bumping @hanzo/font and this file does not move. Living
-     in `base` means a `tracking-*` utility on the same element still wins.
+/* The display voice: Zen at the wide, monumental cut the headings were set in.
+   Weight and tracking are the `.zen-wide` preset's own variables, so a refit of
+   the family arrives by bumping @hanzo/font and this file does not move.
 
-     The horizontal scale that completes the fit is the preset's `.zen-wide` class,
-     deliberately NOT applied here: a transform does not reflow, so a heading takes
-     it only where its container has the room. */
-  .font-heading {
-    font-variation-settings: 'wght' var(--zen-wide-wght);
-    letter-spacing: var(--zen-wide-track);
-  }
+   The horizontal scale that completes the fit is the preset's `.zen-wide` class,
+   deliberately NOT applied here: a transform does not reflow, so a heading takes
+   it only where its container has the room. */
+:root:root .font-heading {
+  font-family: Zen, ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings: 'wght' var(--zen-wide-wght);
+  letter-spacing: var(--zen-wide-track);
+}
 
-  :focus-visible {
-    @apply outline-none ring-2 ring-white/60 ring-offset-2 ring-offset-black rounded-sm;
-  }
+:focus-visible {
+  outline: none;
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px rgb(255 255 255 / 0.6);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  html { scroll-behavior: auto }
   *,
   *::before,
   *::after {
@@ -70,135 +85,185 @@
 /*
   The component vocabulary from luxfi/brand DESIGN.md, named once so pages compose
   it instead of restating class strings. The values are the brand's — #000000
-  surface, white type, secondary at white/60, cards rounded-xl on neutral-800 over
-  neutral-900/50, the opacity ladder in 5-point steps — and this is where they
-  live, so a change to the brand is a change to this file rather than a sweep
-  through every page.
+  surface, white type, secondary at white/60, cards over a glass pane, the opacity
+  ladder in 5-point steps — and this is where they live, so a change to the brand
+  is a change to this file rather than a sweep through every page.
 */
-@layer components {
-  .wrap {
-    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
-  }
 
-  /* A band is a section with a hairline above it. Sections do not set their own
-     vertical margins; the rhythm belongs to the layout. */
-  .band {
-    @apply border-t border-white/10 py-16 lg:py-20;
-  }
+/* ── Why the vocabulary is written at :root:root ────────────────────────────
+   A component from @hanzo/ui renders through gui, which emits its styles as
+   atomic classes qualified by `:root` — and INJECTS THEM AT RUNTIME into inline
+   <style> elements, which land after every sheet the document links. So a plain
+   `.display` loses on specificity (0,1,0 against 0,1,1), and an equal-specificity
+   `:root .display` loses on ORDER however late this file is loaded. Neither is
+   reachable from a stylesheet.
 
-  .eyebrow {
-    @apply text-xs font-semibold uppercase tracking-wider text-white/40;
-  }
+   Doubling the qualifier is (0,2,1) and settles it by specificity, where order
+   cannot reach. Measured before this: a 40px heading on a 20px leading with its
+   lines overlapping, and a call to action whose `.btn` display never applied, so
+   its label wrapped inside the button.
 
-  /* Rungs, not pixels. The ramp's own steps read 26 / 32 / 40 where this used to
-     say 26 / 36 / 48 — tighter at every width, and the sizes now move together
-     when the scale is retuned instead of the phone size sitting still while the
-     other two shrink. The leading stays a RATIO so it holds at any of them. */
-  .display {
-    @apply font-heading text-3xl font-bold leading-[1.15] sm:text-4xl lg:text-5xl;
-    text-wrap: balance;
-  }
+   The right way round: the library states a default, the site states its design.
+*/
 
-  .h2 {
-    @apply font-heading text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl;
-    text-wrap: balance;
-  }
-
-  .h3 {
-    @apply font-semibold;
-  }
-
-  .lede {
-    @apply max-w-3xl text-base leading-relaxed text-white/60 sm:text-lg;
-  }
-
-  .prose p {
-    @apply max-w-[68ch] leading-relaxed text-white/60;
-  }
-
-  /* A card is a glass pane. The brand's card recipe (rounded-xl on neutral-800
-     over neutral-900/50) is what this replaces — same geometry, same weight, with
-     the refraction the surface asks for. */
-  .card {
-    @apply glass block p-6;
-    @apply rounded-xl;
-  }
-  a.card {
-    @apply transition-colors;
-  }
-  a.card:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  /* Tap targets stay at 44px — the e2e suite measures them at 390/768/1280. */
-  .btn {
-    @apply inline-flex min-h-tap items-center justify-center gap-2 rounded-md px-6 text-sm font-medium transition-colors;
-  }
-  .btn-solid {
-    @apply bg-white text-black hover:bg-white/90;
-  }
-  .btn-ghost {
-    @apply border border-white/20 hover:border-white/40;
-  }
-
-  /* Status without hue. A filled dot is in service, a ring is in field trial —
-     the difference is FORM, which survives a monochrome brand and colour
-     blindness alike, where green-vs-amber survives neither. Every entry also
-     carries its status in words, so the dot is a glance and never the only
-     carrier of the fact. */
-  .dot {
-    @apply inline-block h-1.5 w-1.5 flex-none rounded-full;
-  }
-  .dot-live {
-    @apply bg-white;
-  }
-  .dot-beta,
-  .dot-soon {
-    @apply bg-transparent ring-1 ring-inset ring-white/70;
-    height: 7px;
-    width: 7px;
-  }
-
-  /* Liquid glass, monochrome. A pane is a blurred slab of the page behind it with
-     a bright top edge and a dark bottom one — refraction read as light entering
-     the top face and falling off the bottom. No hue: the prism is in the GRADIENT
-     and the blur, not in a spectrum, which is what keeps it Lux rather than a
-     screensaver. */
-  .glass {
-    @apply relative overflow-hidden rounded-2xl border border-white/10;
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02) 42%, rgba(255, 255, 255, 0.05));
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.45);
-  }
-  /* The specular sweep: one soft band across the top face, which is what makes a
-     flat panel read as a surface with thickness. Decorative, so it is aria-hidden
-     by being a pseudo-element rather than an element. */
-  .glass::before {
-    content: '';
-    position: absolute;
-    inset: -40% -20% auto -20%;
-    height: 70%;
-    background: radial-gradient(60% 100% at 50% 0%, rgba(255, 255, 255, 0.13), transparent 70%);
-    pointer-events: none;
-  }
-
-  /* The mega-menu grid takes its column count from the CONTENT, not from a number
-     in a class name. Pinned counts have now broken twice — seven pillars became
-     eight groups, then nine — and each time the heads fell onto two rows, which
-     reads as a design rather than as a bug. */
-  .megagrid {
-    display: grid;
-    align-items: start;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  @media (min-width: 1280px) {
-    .megagrid {
-      grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-    }
-  }
-
-  .tabular {
-    font-variant-numeric: tabular-nums;
-  }
+:root:root .wrap {
+  margin-inline: auto;
+  max-width: 80rem;
+  padding-inline: calc(1rem * var(--density, 1));
 }
+@media (min-width: 640px) { :root:root .wrap { padding-inline: calc(1.5rem * var(--density, 1)) } }
+@media (min-width: 1024px) { :root:root .wrap { padding-inline: calc(2rem * var(--density, 1)) } }
+
+/* A band is a section with a hairline above it. Sections do not set their own
+   vertical margins; the rhythm belongs to the layout. */
+:root:root .band {
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  padding-block: calc(4rem * var(--density, 1));
+}
+@media (min-width: 1024px) { :root:root .band { padding-block: calc(5rem * var(--density, 1)) } }
+
+:root:root .eyebrow {
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgb(255 255 255 / 0.4);
+}
+
+/* Rungs, not pixels. The sizes move together when the scale is retuned, and the
+   leading stays a RATIO so it holds at any of them. */
+:root:root .display {
+  font-family: Zen, ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings: 'wght' var(--zen-wide-wght);
+  letter-spacing: var(--zen-wide-track);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+@media (min-width: 640px) { :root:root .display { font-size: var(--text-4xl) } }
+@media (min-width: 1024px) { :root:root .display { font-size: var(--text-5xl) } }
+
+:root:root .h2 {
+  font-family: Zen, ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings: 'wght' var(--zen-wide-wght);
+  letter-spacing: var(--zen-wide-track);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+@media (min-width: 640px) { :root:root .h2 { font-size: var(--text-3xl) } }
+@media (min-width: 1024px) { :root:root .h2 { font-size: var(--text-4xl) } }
+
+:root:root .h3 { font-weight: 600 }
+
+:root:root .lede {
+  max-width: 48rem;
+  font-size: var(--text-base);
+  line-height: 1.625;
+  color: rgb(255 255 255 / 0.6);
+}
+@media (min-width: 640px) { :root:root .lede { font-size: var(--text-lg) } }
+
+:root:root .prose p {
+  max-width: 68ch;
+  line-height: 1.625;
+  color: rgb(255 255 255 / 0.6);
+}
+
+/* Liquid glass, monochrome. A pane is a blurred slab of the page behind it with
+   a bright top edge and a dark bottom one — refraction read as light entering the
+   top face and falling off the bottom. No hue: the prism is in the GRADIENT and
+   the blur, not in a spectrum, which is what keeps it Lux rather than a
+   screensaver. */
+:root:root .glass,
+:root:root .card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02) 42%, rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+:root:root .glass { border-radius: 1rem }
+/* The specular sweep: one soft band across the top face, which is what makes a
+   flat panel read as a surface with thickness. Decorative, so it is aria-hidden
+   by being a pseudo-element rather than an element. */
+:root:root .glass::before,
+:root:root .card::before {
+  content: '';
+  position: absolute;
+  inset: -40% -20% auto -20%;
+  height: 70%;
+  background: radial-gradient(60% 100% at 50% 0%, rgba(255, 255, 255, 0.13), transparent 70%);
+  pointer-events: none;
+}
+
+/* A card is a glass pane at the brand's own geometry. */
+:root:root .card {
+  display: block;
+  border-radius: 0.75rem;
+  padding: calc(1.5rem * var(--density, 1));
+}
+:root:root a.card { transition: border-color 150ms }
+:root:root a.card:hover { border-color: rgba(255, 255, 255, 0.2) }
+
+/* Tap targets stay at 44px — the e2e suite measures them at 390/768/1280. The
+   floor does NOT follow density: a person who asked for a compact reading did
+   not ask for targets they cannot hit. */
+:root:root .btn {
+  display: inline-flex;
+  min-height: var(--tap-target);
+  align-items: center;
+  justify-content: center;
+  gap: calc(0.5rem * var(--density, 1));
+  border-radius: 0.375rem;
+  padding-inline: calc(1.5rem * var(--density, 1));
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  font-weight: 500;
+  transition: background-color 150ms, border-color 150ms, color 150ms;
+}
+:root:root .btn-solid { background: #fff; color: #000 }
+:root:root .btn-solid:hover { background: rgb(255 255 255 / 0.9) }
+:root:root .btn-ghost { border: 1px solid rgb(255 255 255 / 0.2) }
+:root:root .btn-ghost:hover { border-color: rgb(255 255 255 / 0.4) }
+
+/* Status without hue. A filled dot is in service, a ring is in field trial — the
+   difference is FORM, which survives a monochrome brand and colour blindness
+   alike, where green-vs-amber survives neither. Every entry also carries its
+   status in words, so the dot is a glance and never the only carrier of the
+   fact. */
+:root:root .dot {
+  display: inline-block;
+  height: 0.375rem;
+  width: 0.375rem;
+  flex: none;
+  border-radius: 9999px;
+}
+:root:root .dot-live { background: #fff }
+:root:root .dot-beta,
+:root:root .dot-soon {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.7);
+  height: 7px;
+  width: 7px;
+}
+
+/* The mega-menu grid takes its column count from the CONTENT, not from a number
+   in a class name. Pinned counts have now broken twice — seven pillars became
+   eight groups, then nine — and each time the heads fell onto two rows, which
+   reads as a design rather than as a bug. */
+:root:root .megagrid {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (min-width: 1280px) {
+  :root:root .megagrid { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)) }
+}
+
+:root:root .tabular { font-variant-numeric: tabular-nums }

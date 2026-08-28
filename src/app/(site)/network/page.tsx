@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Box, css } from '@hanzo/ui'
 import Link from 'next/link'
 import { Globe } from '@/components/Globe'
 import { COMPANY, STACK } from '@/content/company'
@@ -74,113 +75,113 @@ const GROUND = [
 export default function Network() {
   return (
     <>
-      <section className="relative overflow-hidden border-b border-white/10">
-        <div className="pointer-events-none absolute inset-0 opacity-80">
+      <Box tag="section" className="relative overflow-hidden border-b border-white/10">
+        <Box className="pointer-events-none absolute inset-0 opacity-80">
           <Globe height={640} />
-        </div>
-        <div className="wrap relative pt-20 pb-24">
-          <div className="eyebrow">Our network</div>
-          <h1 className="display mt-5 max-w-[15ch]">Every way online, arranged as one.</h1>
-          <p className="lede mt-6">
+        </Box>
+        <Box className="wrap relative pt-20 pb-24">
+          <Box className="eyebrow">Our network</Box>
+          <Box tag="h1" className="display mt-5 max-w-[15ch]">Every way online, arranged as one.</Box>
+          <Box tag="p" className="lede mt-6">
             Satellite is usually a separate link with its own portal, its own contract and its own support queue. Here it
             is provisioned from the same API as everything else you buy from us, and answered by the same people.
-          </p>
-        </div>
-      </section>
+          </Box>
+        </Box>
+      </Box>
 
-      <section className="band">
-        <div className="wrap">
-          <dl className="tabular grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+      <Box tag="section" className="band">
+        <Box className="wrap">
+          <Box tag="dl" className="tabular grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
             {GROUND.map((g) => (
               <div key={g.label}>
-                <dt className="eyebrow">{g.label}</dt>
-                <dd className="mt-3 text-2xl font-semibold leading-tight tracking-tight">{g.value}</dd>
-                <dd className="mt-2 text-sm text-white/40">{g.note}</dd>
+                <Box tag="dt" className="eyebrow">{g.label}</Box>
+                <Box tag="dd" className="mt-3 text-2xl font-semibold leading-tight tracking-tight">{g.value}</Box>
+                <Box tag="dd" className="mt-2 text-sm text-white/40">{g.note}</Box>
               </div>
             ))}
-          </dl>
-        </div>
-      </section>
+          </Box>
+        </Box>
+      </Box>
 
-      <section className="band">
-        <div className="wrap">
-          <div className="eyebrow">Integration</div>
-          <h2 className="h2 mt-4 max-w-[26ch]">What it means for orbit to be part of the network.</h2>
-          <div className="mt-12 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 md:grid-cols-2">
+      <Box tag="section" className="band">
+        <Box className="wrap">
+          <Box className="eyebrow">Integration</Box>
+          <Box tag="h2" className="h2 mt-4 max-w-[26ch]">What it means for orbit to be part of the network.</Box>
+          <Box className="mt-12 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 md:grid-cols-2">
             {INTEGRATION.map((i) => (
-              <div key={i.n} className="bg-neutral-900/50 p-8">
-                <div className="eyebrow">{i.n}</div>
-                <div className="h3 mt-3">{i.heading}</div>
-                <p className="mt-2 text-lg text-white/60">{i.body}</p>
-              </div>
+              <Box key={i.n} className="bg-neutral-900/50 p-8">
+                <Box className="eyebrow">{i.n}</Box>
+                <Box className="h3 mt-3">{i.heading}</Box>
+                <Box tag="p" className="mt-2 text-lg text-white/60">{i.body}</Box>
+              </Box>
             ))}
-          </div>
-        </div>
-      </section>
+          </Box>
+        </Box>
+      </Box>
 
-      <section className="band">
-        <div className="wrap">
-          <div className="eyebrow">Orbital services</div>
-          <h2 className="h2 mt-4 max-w-[24ch]">{ORBIT_PILLAR.summary.split('.')[0]}.</h2>
-          <div className="mt-10 divide-y divide-white/10 border-y border-white/10">
+      <Box tag="section" className="band">
+        <Box className="wrap">
+          <Box className="eyebrow">Orbital services</Box>
+          <Box tag="h2" className="h2 mt-4 max-w-[24ch]">{ORBIT_PILLAR.summary.split('.')[0]}.</Box>
+          <Box className="mt-10 divide-y divide-white/10 border-y border-white/10">
             {ORBIT_PILLAR.primitives.map((p) => (
-              <div key={p.slug} className="grid gap-4 py-8 md:grid-cols-[260px_1fr] md:gap-10">
+              <Box key={p.slug} className="grid gap-4 py-8 md:grid-cols-[260px_1fr] md:gap-10">
                 <div>
-                  <Link href={`/products/${p.slug}`} className="inline-flex min-h-tap items-center h3 hover:underline">
+                  <Link href={`/products/${p.slug}`} className={'inline-flex min-h-[var(--tap-target)] items-center h3 hover:underline'} style={css('inline-flex min-h-[var(--tap-target)] items-center h3 hover:underline')}>
                     {p.name}
                   </Link>
-                  <div className="mt-2 flex items-center gap-2 text-sm text-white/40">
-                    <span className={`dot dot-${p.status}`} aria-hidden="true" />
+                  <Box className="mt-2 flex items-center gap-2 text-sm text-white/40">
+                    <Box tag="span" className={`dot dot-${p.status}`} aria-hidden="true" />
                     {p.status === 'live' ? 'In service' : 'In field trial'}
-                  </div>
+                  </Box>
                 </div>
                 <div>
-                  <p className="text-lg text-white/60">{p.detail}</p>
-                  <ul className="mt-4 space-y-1.5">
+                  <Box tag="p" className="text-lg text-white/60">{p.detail}</Box>
+                  <Box tag="ul" className="mt-4 space-y-1.5">
                     {p.facts.map((f) => (
-                      <li key={f} className="flex gap-3 text-sm text-white/60">
-                        <span className="mt-[9px] h-px w-3 flex-none bg-white/20" aria-hidden="true" />
+                      <Box tag="li" key={f} className="flex gap-3 text-sm text-white/60">
+                        <Box tag="span" className="mt-[9px] h-px w-3 flex-none bg-white/20" aria-hidden="true" />
                         {f}
-                      </li>
+                      </Box>
                     ))}
-                  </ul>
+                  </Box>
                 </div>
-              </div>
+              </Box>
             ))}
-          </div>
-        </div>
-      </section>
+          </Box>
+        </Box>
+      </Box>
 
-      <section className="band">
-        <div className="wrap">
-          <div className="eyebrow">The layers</div>
-          <h2 className="h2 mt-4 max-w-[22ch]">One integration, end to end.</h2>
-          <ol className="mt-10 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 md:grid-cols-3">
+      <Box tag="section" className="band">
+        <Box className="wrap">
+          <Box className="eyebrow">The layers</Box>
+          <Box tag="h2" className="h2 mt-4 max-w-[22ch]">One integration, end to end.</Box>
+          <Box tag="ol" className="mt-10 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 md:grid-cols-3">
             {STACK.map((l) => (
-              <li key={l.n} className="bg-neutral-900/50 p-7">
-                <div className="eyebrow">{l.n}</div>
-                <div className="h3 mt-3">{l.name}</div>
-                <p className="mt-2 text-sm text-white/60">{l.detail}</p>
-              </li>
+              <Box tag="li" key={l.n} className="bg-neutral-900/50 p-7">
+                <Box className="eyebrow">{l.n}</Box>
+                <Box className="h3 mt-3">{l.name}</Box>
+                <Box tag="p" className="mt-2 text-sm text-white/60">{l.detail}</Box>
+              </Box>
             ))}
-          </ol>
-        </div>
-      </section>
+          </Box>
+        </Box>
+      </Box>
 
-      <section className="band">
-        <div className="wrap flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
+      <Box tag="section" className="band">
+        <Box className="wrap flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="h2 max-w-[20ch]">Building on orbit with us?</h2>
-            <p className="lede mt-4">
+            <Box tag="h2" className="h2 max-w-[20ch]">Building on orbit with us?</Box>
+            <Box tag="p" className="lede mt-4">
               We carry capacity, run ground infrastructure, and hold the numbering and wireless licences that turn a
               link into a service. Partnerships go to the address on the right.
-            </p>
+            </Box>
           </div>
-          <a href={`mailto:${COMPANY.contact.general}`} className="btn btn-solid">
+          <Box tag="a" href={`mailto:${COMPANY.contact.general}`} className="btn btn-solid">
             {COMPANY.contact.general}
-          </a>
-        </div>
-      </section>
+          </Box>
+        </Box>
+      </Box>
     </>
   )
 }

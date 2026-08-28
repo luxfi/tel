@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Box, css } from '@hanzo/ui'
 import { Mark } from '@/components/Mark'
 import { STATUS_LABEL, type Primitive } from '@/content/catalog'
 
@@ -16,16 +17,16 @@ import { STATUS_LABEL, type Primitive } from '@/content/catalog'
  */
 export function Card({ primitive }: { primitive: Primitive }) {
   return (
-    <Link href={`/products/${primitive.slug}`} className='card'>
-      <div className='flex items-center gap-2'>
+    <Link href={`/products/${primitive.slug}`} className={'card'} style={css('card')}>
+      <Box className='flex items-center gap-2'>
         <Mark slug={primitive.slug} />
-        <span className='h3'>{primitive.name}</span>
-      </div>
-      <p className='mt-2 text-sm leading-relaxed text-white/60'>{primitive.blurb}</p>
+        <Box tag="span" className='h3'>{primitive.name}</Box>
+      </Box>
+      <Box tag="p" className='mt-2 text-sm leading-relaxed text-white/60'>{primitive.blurb}</Box>
       {primitive.status !== 'live' ? (
-        <p className='mt-3 text-xs font-semibold uppercase tracking-wider text-white/60'>
+        <Box tag="p" className='mt-3 text-xs font-semibold uppercase tracking-wider text-white/60'>
           {STATUS_LABEL[primitive.status]}
-        </p>
+        </Box>
       ) : null}
     </Link>
   )

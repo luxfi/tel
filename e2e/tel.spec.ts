@@ -266,7 +266,7 @@ test('the phone menu covers the viewport and reaches every section', async ({ pa
   await page.goto('/')
   await page.getByRole('button', { name: 'Open menu' }).click()
 
-  const panel = page.locator('div.fixed.inset-0').first()
+  const panel = page.locator('[data-menu="phone"]').first()
   await expect(panel).toBeVisible()
   const { panelH, viewportH } = await panel.evaluate((el) => ({
     panelH: el.getBoundingClientRect().height,
@@ -306,7 +306,7 @@ for (const width of [1280, 1920]) {
       await trigger.hover()
 
       // The panel is PORTALLED to the body, so it is not under `header` any more.
-      const panel = page.locator('body > div.fixed.inset-x-0').first()
+      const panel = page.locator('body > [data-menu="desktop"]').first()
       await expect(panel).toBeVisible()
 
       const m = await panel.evaluate((el) => {

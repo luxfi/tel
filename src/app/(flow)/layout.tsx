@@ -1,4 +1,5 @@
 import React, { type PropsWithChildren } from 'react'
+import { Box } from '@hanzo/ui'
 
 /*
   A route group with NO site chrome.
@@ -8,5 +9,5 @@ import React, { type PropsWithChildren } from 'react'
   and a way out, and nothing else.
 */
 export default function FlowLayout({ children }: PropsWithChildren) {
-  return <div className='min-h-screen'>{children}</div>
+  return <Box className='min-h-screen'>{children}</Box>
 }

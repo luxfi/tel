@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { Box, css } from '@hanzo/ui'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 
@@ -51,111 +52,111 @@ export default function Console() {
   const [token, setToken] = useState<string | null | undefined>(undefined)
   useEffect(() => setToken(stored()), [])
 
-  if (token === undefined) return <div className='p-8 text-white/40'>Loading…</div>
+  if (token === undefined) return <Box className='p-8 text-white/40'>Loading…</Box>
 
   if (!token) {
     return (
-      <section className='mx-auto max-w-2xl px-6 py-24'>
-        <p className='eyebrow'>Console</p>
-        <h1 className='display mt-4'>Build on the network.</h1>
-        <p className='lede mt-6'>
+      <Box tag="section" className='mx-auto max-w-2xl px-6 py-24'>
+        <Box tag="p" className='eyebrow'>Console</Box>
+        <Box tag="h1" className='display mt-4'>Build on the network.</Box>
+        <Box tag="p" className='lede mt-6'>
           Numbers, messaging, wireless, orbital terminals and voice agents, from one API. Sign in with your Lux ID —
           the same identity as every other Lux property.
-        </p>
-        <button type='button' onClick={signIn} className='btn btn-solid mt-8'>
+        </Box>
+        <Box tag="button" type='button' onClick={signIn} className='btn btn-solid mt-8'>
           Sign in with Lux ID
-        </button>
-      </section>
+        </Box>
+      </Box>
     )
   }
 
   return (
-    <div className='p-4 sm:p-6'>
+    <Box className='p-4 sm:p-6'>
       {/* The highlight band. The reference fills it with a green gradient; this is
           a glass pane and a white CTA, so the only bright thing on the page is the
           action. */}
-      <section className='glass p-6 sm:p-8'>
-        <p className='eyebrow'>Product highlight</p>
-        <h1 className='h2 mt-3 max-w-[22ch]'>Conversational AI on your own numbers</h1>
-        <p className='mt-4 max-w-2xl text-sm leading-relaxed text-white/60 sm:text-base'>
+      <Box tag="section" className='glass p-6 sm:p-8'>
+        <Box tag="p" className='eyebrow'>Product highlight</Box>
+        <Box tag="h1" className='h2 mt-3 max-w-[22ch]'>Conversational AI on your own numbers</Box>
+        <Box tag="p" className='mt-4 max-w-2xl text-sm leading-relaxed text-white/60 sm:text-base'>
           Design and deploy voice agents with global telephony and inference co-located with the calls, for
           real-time engagement that answers inside a human turn.
-        </p>
-        <div className='mt-6 flex flex-wrap gap-3'>
-          <Link href='/products/voice-agents' className='btn btn-solid'>
+        </Box>
+        <Box className='mt-6 flex flex-wrap gap-3'>
+          <Link href='/products/voice-agents' className={'btn btn-solid'} style={css('btn btn-solid')}>
             Try a demo
           </Link>
-          <Link href='/products' className='btn btn-ghost'>
+          <Link href='/products' className={'btn btn-ghost'} style={css('btn btn-ghost')}>
             Get started
           </Link>
-        </div>
-      </section>
+        </Box>
+      </Box>
 
-      <div className='mt-8 grid gap-8 xl:grid-cols-[1fr_360px]'>
+      <Box className='mt-8 grid gap-8 xl:grid-cols-[1fr_360px]'>
         <div>
-          <h2 className='font-heading text-lg font-bold'>Explore products</h2>
-          <div className='mt-4 grid gap-4 sm:grid-cols-3'>
+          <Box tag="h2" className='font-heading text-lg font-bold'>Explore products</Box>
+          <Box className='mt-4 grid gap-4 sm:grid-cols-3'>
             {EXPLORE.map((e) => (
-              <div key={e.slug} className='card flex flex-col'>
-                <div className='flex items-center gap-2'>
+              <Box key={e.slug} className='card flex flex-col'>
+                <Box className='flex items-center gap-2'>
                   <Mark slug={e.slug} />
-                  <span className='h3'>{e.title}</span>
-                </div>
-                <p className='mt-2 flex-1 text-sm leading-relaxed text-white/60'>{e.blurb}</p>
-                <Link href={`/products/${e.slug}`} className='btn btn-ghost mt-5 self-start'>
+                  <Box tag="span" className='h3'>{e.title}</Box>
+                </Box>
+                <Box tag="p" className='mt-2 flex-1 text-sm leading-relaxed text-white/60'>{e.blurb}</Box>
+                <Link href={`/products/${e.slug}`} className={'btn btn-ghost mt-5 self-start'} style={css('btn btn-ghost mt-5 self-start')}>
                   {e.action}
                 </Link>
-              </div>
+              </Box>
             ))}
-          </div>
+          </Box>
 
-          <h2 className='mt-10 font-heading text-lg font-bold'>Help and resources</h2>
-          <div className='mt-4 grid gap-4 sm:grid-cols-3'>
+          <Box tag="h2" className='mt-10 font-heading text-lg font-bold'>Help and resources</Box>
+          <Box className='mt-4 grid gap-4 sm:grid-cols-3'>
             {HELP.map((h) =>
               h.external ? (
-                <a key={h.title} href={h.href} className='card' target='_blank' rel='noopener noreferrer'>
-                  <div className='flex items-center gap-2'>
-                    <span className='h3'>{h.title}</span>
-                    <ArrowUpRight className='h-4 w-4 text-white/40' aria-hidden='true' />
-                  </div>
-                  <p className='mt-2 text-sm leading-relaxed text-white/60'>{h.body}</p>
-                </a>
+                <Box tag="a" key={h.title} href={h.href} className='card' target='_blank' rel='noopener noreferrer'>
+                  <Box className='flex items-center gap-2'>
+                    <Box tag="span" className='h3'>{h.title}</Box>
+                    <ArrowUpRight className={'h-4 w-4 text-white/40'} style={css('h-4 w-4 text-white/40')} aria-hidden='true' />
+                  </Box>
+                  <Box tag="p" className='mt-2 text-sm leading-relaxed text-white/60'>{h.body}</Box>
+                </Box>
               ) : (
-                <Link key={h.title} href={h.href} className='card'>
-                  <span className='h3'>{h.title}</span>
-                  <p className='mt-2 text-sm leading-relaxed text-white/60'>{h.body}</p>
+                <Link key={h.title} href={h.href} className={'card'} style={css('card')}>
+                  <Box tag="span" className='h3'>{h.title}</Box>
+                  <Box tag="p" className='mt-2 text-sm leading-relaxed text-white/60'>{h.body}</Box>
                 </Link>
               ),
             )}
-          </div>
+          </Box>
         </div>
 
         <aside>
-          <h2 className='font-heading text-lg font-bold'>What&rsquo;s new</h2>
-          <ol className='mt-4 space-y-3'>
+          <Box tag="h2" className='font-heading text-lg font-bold'>What&rsquo;s new</Box>
+          <Box tag="ol" className='mt-4 space-y-3'>
             {NEWS.map((n) => (
-              <li key={n.title} className='card'>
-                <time dateTime={n.date} className='eyebrow tabular'>
+              <Box tag="li" key={n.title} className='card'>
+                <Box tag="time" dateTime={n.date} className='eyebrow tabular'>
                   {n.date}
-                </time>
-                <h3 className='h3 mt-2'>{n.title}</h3>
-                <p className='mt-2 text-sm leading-relaxed text-white/60'>{n.body}</p>
+                </Box>
+                <Box tag="h3" className='h3 mt-2'>{n.title}</Box>
+                <Box tag="p" className='mt-2 text-sm leading-relaxed text-white/60'>{n.body}</Box>
                 <Link
                   href={n.href}
-                  className='mt-3 inline-flex min-h-tap items-center gap-1 text-sm text-white/70 transition-colors hover:text-white'
+                  className={'mt-3 inline-flex min-h-[var(--tap-target)] items-center gap-1 text-sm text-white/70 transition-colors hover:text-white'} style={css('mt-3 inline-flex min-h-[var(--tap-target)] items-center gap-1 text-sm text-white/70 transition-colors hover:text-white')}
                 >
                   Read more
-                  <ArrowUpRight className='h-3.5 w-3.5' aria-hidden='true' />
+                  <ArrowUpRight className={'h-3.5 w-3.5'} style={css('h-3.5 w-3.5')} aria-hidden='true' />
                 </Link>
-              </li>
+              </Box>
             ))}
-          </ol>
+          </Box>
 
-          <button type='button' onClick={signOut} className='btn btn-ghost mt-6 w-full'>
+          <Box tag="button" type='button' onClick={signOut} className='btn btn-ghost mt-6 w-full'>
             Sign out
-          </button>
+          </Box>
         </aside>
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }

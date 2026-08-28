@@ -41,6 +41,7 @@ import {
   Wifi,
   type LucideIcon,
 } from 'lucide-react'
+import { css } from '@hanzo/ui'
 
 import { PRIMITIVES } from '@/content/catalog'
 
@@ -118,5 +119,5 @@ export function Mark({ slug, className = 'h-4 w-4 shrink-0 text-white/45' }: { s
   // Boxes is the fallback rather than a blank: a product with no mark yet should
   // still line up with the ones that have one.
   const Icon = MARKS[slug] ?? Boxes
-  return <Icon className={className} aria-hidden='true' />
+  return <Icon className={className} style={css(className)} aria-hidden='true' />
 }

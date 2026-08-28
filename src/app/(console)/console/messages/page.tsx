@@ -1,21 +1,22 @@
 'use client'
 
 import React from 'react'
+import { Box } from '@hanzo/ui'
 
 import { Records, type Column } from '@/console/Records'
 import type { Message } from '@/console/api'
 
 const COLUMNS: readonly Column<Message>[] = [
-  { head: 'From', cell: (m) => <span className='tabular'>{m.from}</span> },
-  { head: 'To', cell: (m) => <span className='tabular'>{m.to}</span> },
+  { head: 'From', cell: (m) => <Box tag="span" className='tabular'>{m.from}</Box> },
+  { head: 'To', cell: (m) => <Box tag="span" className='tabular'>{m.to}</Box> },
   {
     head: 'Body',
     // Truncated in the cell, whole in the title: a table that wraps a 1,600
     // character message stops being a table.
     cell: (m) => (
-      <span title={m.body} className='block max-w-[38ch] truncate'>
+      <Box tag="span" title={m.body} className='block max-w-[38ch] truncate'>
         {m.body || '—'}
-      </span>
+      </Box>
     ),
   },
   { head: 'Status', cell: (m) => m.status ?? '—' },

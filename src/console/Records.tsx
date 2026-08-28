@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { Box } from '@hanzo/ui'
 
 import { signIn, stored } from './auth'
 import { list } from './api'
@@ -55,80 +56,80 @@ export function Records<T extends { id: string }>({
     }
   }, [token, path])
 
-  if (token === undefined) return <div className='p-8 text-white/40'>Loading…</div>
+  if (token === undefined) return <Box className='p-8 text-white/40'>Loading…</Box>
 
   if (!token) {
     return (
-      <section className='mx-auto max-w-2xl px-6 py-24'>
-        <h1 className='h2'>{title}</h1>
-        <p className='lede mt-5'>Sign in with your Lux ID to see this account.</p>
-        <button type='button' onClick={signIn} className='btn btn-solid mt-8'>
+      <Box tag="section" className='mx-auto max-w-2xl px-6 py-24'>
+        <Box tag="h1" className='h2'>{title}</Box>
+        <Box tag="p" className='lede mt-5'>Sign in with your Lux ID to see this account.</Box>
+        <Box tag="button" type='button' onClick={signIn} className='btn btn-solid mt-8'>
           Sign in with Lux ID
-        </button>
-      </section>
+        </Box>
+      </Box>
     )
   }
 
   return (
-    <div className='p-4 sm:p-6'>
-      <h1 className='font-heading text-lg font-bold'>{title}</h1>
+    <Box className='p-4 sm:p-6'>
+      <Box tag="h1" className='font-heading text-lg font-bold'>{title}</Box>
 
       {failed ? (
         // The message, not a shrug. 'signed out' is the one a reader can act on,
         // and it is the one an expired token produces.
-        <p className='mt-6 text-sm text-white/60'>
+        <Box tag="p" className='mt-6 text-sm text-white/60'>
           {failed === 'signed out' ? (
             <>
               Your session ended.{' '}
-              <button type='button' onClick={signIn} className='text-white underline underline-offset-4'>
+              <Box tag="button" type='button' onClick={signIn} className='text-white underline underline-offset-4'>
                 Sign in again
-              </button>
+              </Box>
               .
             </>
           ) : (
             failed
           )}
-        </p>
+        </Box>
       ) : rows === null ? (
-        <p className='mt-6 text-sm text-white/40'>Reading…</p>
+        <Box tag="p" className='mt-6 text-sm text-white/40'>Reading…</Box>
       ) : rows.length === 0 ? (
-        <p className='mt-6 max-w-xl text-sm leading-relaxed text-white/60'>{empty}</p>
+        <Box tag="p" className='mt-6 max-w-xl text-sm leading-relaxed text-white/60'>{empty}</Box>
       ) : (
-        <div className='mt-6 overflow-x-auto'>
-          <table className='w-full min-w-[560px] border-collapse text-sm'>
+        <Box className='mt-6 overflow-x-auto'>
+          <Box tag="table" className='w-full min-w-[560px] border-collapse text-sm'>
             <thead>
-              <tr className='border-b border-white/10'>
+              <Box tag="tr" className='border-b border-white/10'>
                 {columns.map((c) => (
-                  <th
+                  <Box tag="th"
                     key={c.head}
                     className={
                       'eyebrow py-3 font-semibold ' + (c.figure ? 'text-right' : 'text-left')
                     }
                   >
                     {c.head}
-                  </th>
+                  </Box>
                 ))}
-              </tr>
+              </Box>
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.id} className='border-b border-white/5'>
+                <Box tag="tr" key={row.id} className='border-b border-white/5'>
                   {columns.map((c) => (
-                    <td
+                    <Box tag="td"
                       key={c.head}
                       className={
                         'py-3 text-white/70 ' + (c.figure ? 'tabular text-right' : 'text-left')
                       }
                     >
                       {c.cell(row)}
-                    </td>
+                    </Box>
                   ))}
-                </tr>
+                </Box>
               ))}
             </tbody>
-          </table>
-        </div>
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   )
 }

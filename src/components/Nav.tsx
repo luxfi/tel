@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
+import { Box, css } from '@hanzo/ui'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { ChevronDown, Menu, X } from 'lucide-react'
@@ -109,7 +110,7 @@ function Dropdown({ menu }: { menu: Menu }) {
     return (
       <Link
         href={menu.href}
-        className='inline-flex min-h-tap items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
+        className={'inline-flex min-h-[var(--tap-target)] items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'} style={css('inline-flex min-h-[var(--tap-target)] items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white')}
       >
         {menu.label}
       </Link>
@@ -120,20 +121,24 @@ function Dropdown({ menu }: { menu: Menu }) {
 
   return (
     <div ref={trigger} onMouseEnter={show} onMouseLeave={leave}>
-      <button
+      <Box tag="button"
         type='button'
         aria-expanded={open}
         aria-haspopup='true'
         onClick={() => (open ? setOpen(false) : show())}
-        className='inline-flex min-h-tap items-center gap-1 rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
+        className='inline-flex min-h-[var(--tap-target)] items-center gap-1 rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
       >
         {menu.label}
-        <ChevronDown className={'h-3.5 w-3.5 transition-transform ' + (open ? 'rotate-180' : '')} aria-hidden='true' />
-      </button>
+        <ChevronDown className={'h-3.5 w-3.5 transition-transform ' + (open ? 'rotate-180' : '')} style={css('h-3.5 w-3.5 transition-transform ' + (open ? 'rotate-180' : ''))} aria-hidden='true' />
+      </Box>
 
       {open && mounted
         ? createPortal(
-            <div
+            <Box
+              // A stable hook for the panel, because it is PORTALLED: nothing in
+              // the header can select it, and selecting it by its utility classes
+              // ties every selector to how it happens to be styled today.
+              data-menu="desktop"
               onMouseEnter={hold}
               onMouseLeave={leave}
               style={{ top }}
@@ -143,41 +148,41 @@ function Dropdown({ menu }: { menu: Menu }) {
             >
               {/* Full bleed panel, container-aligned content: the links land under
                   the wordmark, which is where the eye already is. */}
-              <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
-                <div
+              <Box className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
+                <Box
                   className={wide ? 'megagrid gap-x-4 gap-y-8' : ''}
                   style={wide ? ({ ['--cols' as string]: String(menu.columns.length) } as React.CSSProperties) : undefined}
                 >
                   {menu.columns.map((col) => (
                     <div key={col.heading}>
-                      <div className='eyebrow'>{col.heading}</div>
-                      <ul className={'mt-3 space-y-0.5 ' + (wide ? '' : 'columns-2 sm:columns-3')}>
+                      <Box className='eyebrow'>{col.heading}</Box>
+                      <Box tag="ul" className={'mt-3 space-y-0.5 ' + (wide ? '' : 'columns-2 sm:columns-3')}>
                         {col.items.map((it) => (
                           <li key={it.href}>
                             <Link
                               href={it.href}
                               onClick={() => setOpen(false)}
-                              className='block rounded-md px-2 py-1.5 text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white'
+                              className={'block rounded-md px-2 py-1.5 text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white'} style={css('block rounded-md px-2 py-1.5 text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white')}
                             >
                               {it.label}
                             </Link>
                           </li>
                         ))}
-                      </ul>
+                      </Box>
                     </div>
                   ))}
-                </div>
-                <div className='mt-6 border-t border-white/10 pt-4'>
+                </Box>
+                <Box className='mt-6 border-t border-white/10 pt-4'>
                   <Link
                     href={menu.href}
                     onClick={() => setOpen(false)}
-                    className='inline-flex min-h-tap items-center text-sm text-white transition-colors hover:text-white/70'
+                    className={'inline-flex min-h-[var(--tap-target)] items-center text-sm text-white transition-colors hover:text-white/70'} style={css('inline-flex min-h-[var(--tap-target)] items-center text-sm text-white transition-colors hover:text-white/70')}
                   >
                     All {menu.label.toLowerCase()} &rarr;
                   </Link>
-                </div>
-              </div>
-            </div>,
+                </Box>
+              </Box>
+            </Box>,
             document.body,
           )
         : null}
@@ -187,11 +192,11 @@ function Dropdown({ menu }: { menu: Menu }) {
 
 export function Nav() {
   return (
-    <div className='hidden items-center gap-1 lg:flex'>
+    <Box className='hidden items-center gap-1 lg:flex'>
       {MENUS.map((m) => (
         <Dropdown key={m.href} menu={m} />
       ))}
-    </div>
+    </Box>
   )
 }
 
@@ -211,77 +216,77 @@ export function MobileNav() {
   }, [open])
 
   return (
-    <div className='lg:hidden'>
-      <button
+    <Box className='lg:hidden'>
+      <Box tag="button"
         type='button'
         aria-expanded={open}
         aria-label='Open menu'
         onClick={() => setOpen(true)}
         className='inline-flex h-11 w-11 items-center justify-center rounded-md text-white/70 transition-colors hover:bg-white/5 hover:text-white'
       >
-        <Menu className='h-5 w-5' aria-hidden='true' />
-      </button>
+        <Menu className={'h-5 w-5'} style={css('h-5 w-5')} aria-hidden='true' />
+      </Box>
 
       {/* Portalled, and it has to be: the header's backdrop-blur makes it a
           containing block, so `fixed inset-0` resolved to its 44px box. */}
       {open && mounted
         ? createPortal(
-            <div className='fixed inset-0 z-[60] flex flex-col bg-black'>
+            <Box data-menu="phone" className='fixed inset-0 z-[60] flex flex-col bg-black'>
           {/* Exactly the header's height, because both are one tap target tall —
               the bar takes its height from the controls in it. Said as `57px`
               here and again in the hero's min-height, it was wrong in both: the
               header measures 44, so opening the menu dropped the wordmark and
               the ✕ 6.5px below the ☰ they replaced. */}
-          <div className='flex h-tap shrink-0 items-center justify-between border-b border-white/10 px-4'>
-            <span className='text-lg'>
-              <span className='font-heading font-bold tracking-tight'>LUX</span>
-              <span className='text-white/40'> tel</span>
-            </span>
-            <button
+          <Box className='flex h-[var(--tap-target)] shrink-0 items-center justify-between border-b border-white/10 px-4'>
+            <Box tag="span" className='text-lg'>
+              <Box tag="span" className='font-heading font-bold tracking-tight'>LUX</Box>
+              <Box tag="span" className='text-white/40'> tel</Box>
+            </Box>
+            <Box tag="button"
               type='button'
               aria-label='Close menu'
               onClick={() => setOpen(false)}
               className='inline-flex h-11 w-11 items-center justify-center rounded-md text-white/70 hover:text-white'
             >
-              <X className='h-5 w-5' aria-hidden='true' />
-            </button>
-          </div>
+              <X className={'h-5 w-5'} style={css('h-5 w-5')} aria-hidden='true' />
+            </Box>
+          </Box>
 
-          <nav className='flex-1 overflow-y-auto px-4 py-6'>
+          <Box tag="nav" className='flex-1 overflow-y-auto px-4 py-6'>
             {MENUS.map((m) => (
-              <div key={m.href} className='mb-8'>
+              <Box key={m.href} className='mb-8'>
                 <Link
                   href={m.href}
                   onClick={() => setOpen(false)}
-                  className='flex min-h-tap items-center font-heading text-lg font-bold'
+                  className={'flex min-h-[var(--tap-target)] items-center font-heading text-lg font-bold'} style={css('flex min-h-[var(--tap-target)] items-center font-heading text-lg font-bold')}
                 >
                   {m.label}
                 </Link>
                 {m.columns?.map((col) => (
-                  <div key={col.heading} className='mt-2'>
-                    {m.columns!.length > 1 ? <div className='eyebrow mt-4'>{col.heading}</div> : null}
-                    <ul className='mt-1'>
+                  <Box key={col.heading} className='mt-2'>
+                    {m.columns!.length > 1 ? <Box className='eyebrow mt-4'>{col.heading}</Box> : null}
+                    <Box tag="ul" className='mt-1'>
                       {col.items.map((it) => (
                         <li key={it.href}>
                           <Link
                             href={it.href}
                             onClick={() => setOpen(false)}
-                            className='flex min-h-tap items-center text-sm text-white/60 transition-colors hover:text-white'
+                            className={'flex min-h-[var(--tap-target)] items-center text-sm text-white/60 transition-colors hover:text-white'} style={css('flex min-h-[var(--tap-target)] items-center text-sm text-white/60 transition-colors hover:text-white')}
                           >
                             {it.label}
                           </Link>
                         </li>
                       ))}
-                    </ul>
-                  </div>
+                    </Box>
+                  </Box>
                 ))}
-              </div>
+              </Box>
             ))}
-              </nav>
-            </div>,
+              </Box>
+            </Box>,
             document.body,
           )
         : null}
-    </div>
+    </Box>
   )
 }

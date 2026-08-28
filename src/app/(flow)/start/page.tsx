@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
+import { Box, css } from '@hanzo/ui'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Check, CircleAlert, X } from 'lucide-react'
 
@@ -148,43 +149,43 @@ export default function Start() {
   const done = sent ? 1 : Math.min(1, at / total)
 
   return (
-    <div className='flex min-h-screen flex-col'>
-      <div className='fixed inset-x-0 top-0 z-50 flex gap-1' aria-hidden='true'>
+    <Box className='flex min-h-screen flex-col'>
+      <Box className='fixed inset-x-0 top-0 z-50 flex gap-1' aria-hidden='true'>
         {[0, 1, 2].map((i) => (
-          <div key={i} className='h-[3px] flex-1 overflow-hidden bg-white/10'>
-            <div
+          <Box key={i} className='h-[3px] flex-1 overflow-hidden bg-white/10'>
+            <Box
               className='h-full bg-white transition-[width] duration-500 ease-out'
               style={{ width: `${Math.max(0, Math.min(1, done * 3 - i)) * 100}%` }}
             />
-          </div>
+          </Box>
         ))}
-      </div>
+      </Box>
 
       {/* The wordmark and a way out. Everything else on this screen is an exit from
           the one thing it is for. */}
-      <header className='flex h-16 shrink-0 items-center justify-between px-4 sm:px-6 lg:px-8'>
-        <Link href='/' className='inline-flex min-h-tap items-center text-lg' aria-label='Lux Tel, home'>
-          <span className='font-heading font-bold tracking-tight'>LUX</span>
-          <span className='text-white/40'>&nbsp;tel</span>
+      <Box tag="header" className='flex h-16 shrink-0 items-center justify-between px-4 sm:px-6 lg:px-8'>
+        <Link href='/' className={'inline-flex min-h-[var(--tap-target)] items-center text-lg'} style={css('inline-flex min-h-[var(--tap-target)] items-center text-lg')} aria-label='Lux Tel, home'>
+          <Box tag="span" className='font-heading font-bold tracking-tight'>LUX</Box>
+          <Box tag="span" className='text-white/40'>&nbsp;tel</Box>
         </Link>
         <Link
           href='/'
           aria-label='Leave'
-          className='inline-flex h-11 w-11 items-center justify-center rounded-md text-white/50 transition-colors hover:bg-white/5 hover:text-white'
+          className={'inline-flex h-11 w-11 items-center justify-center rounded-md text-white/50 transition-colors hover:bg-white/5 hover:text-white'} style={css('inline-flex h-11 w-11 items-center justify-center rounded-md text-white/50 transition-colors hover:bg-white/5 hover:text-white')}
         >
-          <X className='h-5 w-5' aria-hidden='true' />
+          <X className={'h-5 w-5'} style={css('h-5 w-5')} aria-hidden='true' />
         </Link>
-      </header>
+      </Box>
 
-      <main className='flex flex-1 items-center px-4 pb-16 sm:px-6 lg:px-8'>
-        <div className='mx-auto w-full max-w-2xl'>
+      <Box tag="main" className='flex flex-1 items-center px-4 pb-16 sm:px-6 lg:px-8'>
+        <Box className='mx-auto w-full max-w-2xl'>
         {!last ? (
           <div>
-            <h2 className='h2 max-w-[20ch]'>{step.question}</h2>
-            {step.hint ? <p className='mt-3 text-sm text-white/50'>{step.hint}</p> : null}
+            <Box tag="h2" className='h2 max-w-[20ch]'>{step.question}</Box>
+            {step.hint ? <Box tag="p" className='mt-3 text-sm text-white/50'>{step.hint}</Box> : null}
 
             {step.open ? (
-              <textarea
+              <Box tag="textarea"
                 autoFocus
                 rows={4}
                 value={answers[step.key] ?? ''}
@@ -193,12 +194,12 @@ export default function Start() {
                 className='mt-6 w-full rounded-xl border border-white/10 bg-white/5 p-4 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-white/30'
               />
             ) : (
-              <ul className='mt-6 space-y-2'>
+              <Box tag="ul" className='mt-6 space-y-2'>
                 {step.options!.map((o) => {
                   const picked = answers[step.key] === o
                   return (
                     <li key={o}>
-                      <button
+                      <Box tag="button"
                         type='button'
                         onClick={() => {
                           setAnswers({ ...answers, [step.key]: o })
@@ -212,103 +213,103 @@ export default function Start() {
                         }
                       >
                         {o}
-                        {picked ? <Check className='h-4 w-4 shrink-0' aria-hidden='true' /> : null}
-                      </button>
+                        {picked ? <Check className={'h-4 w-4 shrink-0'} style={css('h-4 w-4 shrink-0')} aria-hidden='true' /> : null}
+                      </Box>
                     </li>
                   )
                 })}
-              </ul>
+              </Box>
             )}
 
-            <div className='mt-8 flex items-center gap-3'>
+            <Box className='mt-8 flex items-center gap-3'>
               {at > 0 ? (
-                <button type='button' onClick={() => setAt(at - 1)} className='btn btn-ghost'>
-                  <ArrowLeft className='h-4 w-4' aria-hidden='true' />
+                <Box tag="button" type='button' onClick={() => setAt(at - 1)} className='btn btn-ghost'>
+                  <ArrowLeft className={'h-4 w-4'} style={css('h-4 w-4')} aria-hidden='true' />
                   Back
-                </button>
+                </Box>
               ) : null}
-              <button type='button' onClick={() => setAt(at + 1)} className='btn btn-solid'>
+              <Box tag="button" type='button' onClick={() => setAt(at + 1)} className='btn btn-solid'>
                 {answers[step.key] ? 'Next' : 'Skip'}
-                <ArrowRight className='h-4 w-4' aria-hidden='true' />
-              </button>
-            </div>
+                <ArrowRight className={'h-4 w-4'} style={css('h-4 w-4')} aria-hidden='true' />
+              </Box>
+            </Box>
           </div>
         ) : sent ? (
           <div>
-            <Check className='h-8 w-8 text-white' aria-hidden='true' />
-            <h2 className='h2 mt-6 max-w-[20ch]'>That is with us.</h2>
-            <p className='lede mt-5'>
+            <Check className={'h-8 w-8 text-white'} style={css('h-8 w-8 text-white')} aria-hidden='true' />
+            <Box tag="h2" className='h2 mt-6 max-w-[20ch]'>That is with us.</Box>
+            <Box tag="p" className='lede mt-5'>
               An engineer reads it, not a queue. You will get back what it takes and what it costs — and if any of it
               is a bad fit for us, we will say so rather than sell you the nearest thing.
-            </p>
+            </Box>
           </div>
         ) : (
           <form onSubmit={send}>
-            <h2 className='h2 max-w-[20ch]'>Where do we send the answer?</h2>
-            <div className='mt-6 grid gap-3 sm:grid-cols-2'>
-              <input
+            <Box tag="h2" className='h2 max-w-[20ch]'>Where do we send the answer?</Box>
+            <Box className='mt-6 grid gap-3 sm:grid-cols-2'>
+              <Box tag="input"
                 autoFocus
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder='Your name'
                 className='min-h-[52px] rounded-xl border border-white/10 bg-white/5 px-4 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-white/30'
               />
-              <input
+              <Box tag="input"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 placeholder='Company'
                 className='min-h-[52px] rounded-xl border border-white/10 bg-white/5 px-4 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-white/30'
               />
-              <input
+              <Box tag="input"
                 type='email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder='Email'
                 className='min-h-[52px] rounded-xl border border-white/10 bg-white/5 px-4 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-white/30 sm:col-span-2'
               />
-              <textarea
+              <Box tag="textarea"
                 rows={3}
                 value={detail}
                 onChange={(e) => setDetail(e.target.value)}
                 placeholder='Anything else worth knowing'
                 className='rounded-xl border border-white/10 bg-white/5 p-4 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-white/30 sm:col-span-2'
               />
-            </div>
+            </Box>
 
             {/* The composed message, shown. A form that hides what it is about to
                 send on your behalf is one people do not trust with a work address. */}
             <details className='mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-4'>
               <summary className='cursor-pointer text-sm text-white/60'>See exactly what gets sent</summary>
-              <pre className='mt-3 whitespace-pre-wrap text-xs leading-relaxed text-white/50'>{body || '—'}</pre>
+              <Box tag="pre" className='mt-3 whitespace-pre-wrap text-xs leading-relaxed text-white/50'>{body || '—'}</Box>
             </details>
 
-            <div className='mt-8 flex flex-wrap items-center gap-3'>
-              <button type='button' onClick={() => setAt(at - 1)} className='btn btn-ghost'>
-                <ArrowLeft className='h-4 w-4' aria-hidden='true' />
+            <Box className='mt-8 flex flex-wrap items-center gap-3'>
+              <Box tag="button" type='button' onClick={() => setAt(at - 1)} className='btn btn-ghost'>
+                <ArrowLeft className={'h-4 w-4'} style={css('h-4 w-4')} aria-hidden='true' />
                 Back
-              </button>
-              <button type='submit' disabled={sending} className='btn btn-solid disabled:opacity-50'>
+              </Box>
+              <Box tag="button" type='submit' disabled={sending} className='btn btn-solid disabled:opacity-50'>
                 {sending ? 'Sending' : 'Send it'}
-                <ArrowRight className='h-4 w-4' aria-hidden='true' />
-              </button>
-            </div>
+                <ArrowRight className={'h-4 w-4'} style={css('h-4 w-4')} aria-hidden='true' />
+              </Box>
+            </Box>
 
             {failed ? (
-              <div className='mt-6 flex items-start gap-3 rounded-xl border border-white/15 bg-white/[0.04] p-4'>
-                <CircleAlert className='mt-0.5 h-4 w-4 shrink-0 text-white/60' aria-hidden='true' />
-                <div className='text-sm leading-relaxed text-white/70'>
+              <Box className='mt-6 flex items-start gap-3 rounded-xl border border-white/15 bg-white/[0.04] p-4'>
+                <CircleAlert className={'mt-0.5 h-4 w-4 shrink-0 text-white/60'} style={css('mt-0.5 h-4 w-4 shrink-0 text-white/60')} aria-hidden='true' />
+                <Box className='text-sm leading-relaxed text-white/70'>
                   That did not go through — the answers are still here, nothing is lost.{' '}
-                  <a href={href} className='text-white underline underline-offset-4'>
+                  <Box tag="a" href={href} className='text-white underline underline-offset-4'>
                     Send it as an email instead
-                  </a>
+                  </Box>
                   .
-                </div>
-              </div>
+                </Box>
+              </Box>
             ) : null}
           </form>
         )}
-        </div>
-      </main>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   )
 }

@@ -2,6 +2,7 @@ import React, { type PropsWithChildren } from 'react'
 import type { Viewport } from 'next'
 
 import { Appearance } from '@/appearance'
+import { Theme } from '@/theme'
 import metadata from '@/metadata'
 // Zen — the one family, sans and mono. @hanzo/design ships both variable faces and
 // declares their @font-face, so this site vendors no font binary of its own; and
@@ -30,9 +31,16 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang='en' className='dark'>
-      <body className='flex min-h-full flex-col bg-black text-white'>
-        <Appearance />
-        {children}
+      {/* A host element, not a Box: `<Hanzo>` sits INSIDE the body, so a body
+          rendering through gui would ask for a theme not yet in context and
+          the prerender dies on "Missing theme." The body's ground is stated
+          in globals.css, where it needs no provider and no classes. */}
+      <body>
+        {/* The design-system provider, behind a local name — see src/theme.tsx. */}
+        <Theme>
+          <Appearance />
+          {children}
+        </Theme>
       </body>
     </html>
   )
