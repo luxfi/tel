@@ -13,22 +13,22 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@hanzo/appearance": "0.2.2",
-    "@hanzo/design": "0.5.24",
-    "@hanzo/font": "1.9.2",
-    "@hanzo/ui": "8.27.0",
-    "lucide-react": "^1.33.0",
-    "next": "16.3.3",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "react-native-web": "^0.21.2"
+    "@hanzo/appearance": "catalog:",
+    "@hanzo/design": "catalog:",
+    "@hanzo/font": "catalog:",
+    "@hanzo/ui": "catalog:",
+    "lucide-react": "catalog:",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native-web": "catalog:"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
-    "@types/node": "26.4.0",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.5",
-    "typescript": "7.0.2"
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
   },
   "packageManager": "pnpm@11.24.0"
 }
