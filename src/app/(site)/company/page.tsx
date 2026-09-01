@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ADVISORS, ENGINEERING, LEADERSHIP, type Person } from '@/content/team'
 import { COMPANY, CAPABILITIES } from '@/content/company'
 
 export const metadata: Metadata = {
@@ -46,13 +45,6 @@ export default function Company() {
         </div>
       </section>
 
-      <section className="band">
-        <div className="wrap space-y-14">
-          <Roster title="Leadership" people={LEADERSHIP} />
-          <Roster title="Engineering and operations" people={ENGINEERING} />
-          <Roster title="Advisors" people={ADVISORS} />
-        </div>
-      </section>
 
       <section className="band">
         <div className="wrap">
