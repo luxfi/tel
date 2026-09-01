@@ -9,7 +9,6 @@ export interface Person {
 }
 
 export const LEADERSHIP: readonly Person[] = [
-  { name: 'Zach Kelling', title: 'Chief Executive Officer' },
   { name: 'Ari Lerner', title: 'Chief Technology Officer' },
   { name: 'Cyrus Pahlavi', title: 'Executive President' },
   { name: 'Vincent Butta', title: 'Chief Operations Officer' },
