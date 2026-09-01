@@ -19,14 +19,6 @@
 @tailwind utilities;
 
 @layer base {
-  @font-face {
-    font-family: 'Inter';
-    src: url('/fonts/InterVariable.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-  }
-
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;

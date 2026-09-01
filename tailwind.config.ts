@@ -52,7 +52,7 @@ export default {
     extend: {
       fontFamily: {
         heading: ['Zen', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Zen', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         surface: {
