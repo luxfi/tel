@@ -45,7 +45,7 @@ concurrency:
 
 jobs:
   gate:
-    runs-on: [lux-build-linux-amd64]
+    runs-on: [linux-amd64]
     steps:
       - uses: actions/checkout@v4
       # NO `version:`. package.json declares `packageManager: pnpm@10.12.4`, and
@@ -67,7 +67,7 @@ jobs:
   deploy:
     needs: gate
     if: github.event_name == 'push'
-    runs-on: [lux-build-linux-amd64]
+    runs-on: [linux-amd64]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
