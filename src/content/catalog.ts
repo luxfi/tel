@@ -123,6 +123,8 @@ export const PILLARS: readonly Pillar[] = [
           'Download a profile to a device already in the field. No logistics, no truck roll, no second SKU for a second country.',
         facts: [
           'Remote provisioning to consumer and industrial devices',
+          'Consumer plans for one country or the world, installed from a QR code or in your app',
+          'White-label for operators: your name on the profile, per-session usage records behind it',
           'Profiles swap network without swapping hardware',
           'Bulk issuance by API for a production line',
         ],

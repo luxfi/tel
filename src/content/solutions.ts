@@ -70,4 +70,22 @@ export const SOLUTIONS = [
       'Several kinds of connectivity under one service, arranged so that one failed network does not become a failed operation.',
     uses: ['failover', 'orbital-broadband', 'cloud-vpn', 'global-ip'],
   },
+  {
+    slug: 'operator',
+    name: 'A mobile operator selling eSIM under its own name',
+    problem:
+      'A brand with subscribers still needs profiles a handset will accept, roaming in every country its customers land in, and usage records good enough to bill and reward from. Each is a multi-year accreditation or a contract per carrier.',
+    answer:
+      'White-label eSIM for consumer handsets, at home and abroad, issued by API under your name. Usage comes back per subscriber per session, so the plan, the bill and the reward are all computed from the same record.',
+    uses: ['esim', 'mobile-voice', 'numbers', 'sms'],
+  },
+  {
+    slug: 'nation',
+    name: 'A nation that runs the network on its land',
+    problem:
+      'A tribal nation holding a spectrum licence, or a country building national service, wants coverage on its land, service for its people when they leave it, emergency calling that reaches the right dispatcher, and subscriber data that stays under its own law.',
+    answer:
+      'Private wireless on the spectrum the nation holds, an eSIM that keeps working past the last tower, numbers and emergency calling for government and enterprise, and records held under keys the nation controls.',
+    uses: ['private-wireless', 'esim', 'numbers', 'cell-backhaul', 'post-quantum'],
+  },
 ] as const

@@ -7,22 +7,6 @@ export const metadata: Metadata = {
   description: 'Lux Industries Inc — the team behind the platform, and how to reach us.',
 }
 
-function Roster({ title, people }: { title: string; people: readonly Person[] }) {
-  return (
-    <div>
-      <div className="eyebrow">{title}</div>
-      <ul className="mt-6 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
-        {people.map((p) => (
-          <li key={p.name} className="bg-neutral-900/50 px-5 py-4">
-            <div className="text-lg font-medium">{p.name}</div>
-            <div className="mt-0.5 text-sm text-white/40">{p.title}</div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
 export default function Company() {
   return (
     <>
