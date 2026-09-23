@@ -10,12 +10,10 @@ import { stored } from './auth'
  * console already holds. api.hanzo.ai answers the preflight for console.lux.tel
  * with `allow-origin: https://console.lux.tel`, so the browser permits it.
  *
- * X-Org-Id is REQUIRED by these routes: they read the org from the header while
- * other routes read it from the token, and without it a request that is otherwise
- * fine answers 403.
+ * The token is the whole request. The API takes the org from the validated token,
+ * the same as every other route, so the console sends no X-Org-Id.
  */
 export const API = 'https://api.hanzo.ai'
-export const ORG = 'lux'
 
 export interface Number {
   id: string
@@ -51,12 +49,12 @@ export interface Summary {
   messages: number
 }
 
-/** Every read goes through here, so one place knows the token, the org and the shape. */
+/** Every read goes through here, so one place knows the token and the shape. */
 export async function get<T>(path: string): Promise<T> {
   const token = stored()
   if (!token) throw new Error('signed out')
   const res = await fetch(`${API}/v1/tel${path}`, {
-    headers: { Authorization: `Bearer ${token}`, 'X-Org-Id': ORG },
+    headers: { Authorization: `Bearer ${token}` },
   })
   if (res.status === 401 || res.status === 403) throw new Error('signed out')
   if (!res.ok) throw new Error(`${path} answered ${res.status}`)

@@ -523,10 +523,10 @@ for (const v of VIEWS) {
 }
 
 /*
-  The REQUEST, pinned. X-Org-Id is not optional on these routes — they read the org
-  from the header while others read it from the token, so omitting it turns a
-  correct request into a 403. That is invisible from the rendered page, which is
-  why it is asserted on the wire.
+  The REQUEST, pinned. The token is the whole request: /v1/tel takes the org from
+  the validated token, so the console sends no X-Org-Id. A hardcoded org asks for
+  one the user may not belong to, and is invisible from the rendered page, which
+  is why it is asserted on the wire.
 */
 test('the console asks the tel API the way it answers', async ({ page }) => {
   let seen: { url: string; auth: string | undefined; org: string | undefined } | null = null
@@ -542,7 +542,7 @@ test('the console asks the tel API the way it answers', async ({ page }) => {
   expect(seen, 'the page never called the API').not.toBeNull()
   expect(seen!.url).toContain('api.hanzo.ai/v1/tel/numbers')
   expect(seen!.auth, 'the token was not sent').toBe('Bearer test-token')
-  expect(seen!.org, 'X-Org-Id is required by this route and was not sent').toBe('lux')
+  expect(seen!.org, 'the org comes from the token; the console must not send X-Org-Id').toBeUndefined()
 
   // Minor units are money, not a count: 250 GBP-minor is £2.50 and never 250.
   await expect(page.getByText('£2.50')).toBeVisible()
