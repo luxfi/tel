@@ -109,7 +109,7 @@ function Dropdown({ menu }: { menu: Menu }) {
     return (
       <Link
         href={menu.href}
-        className='inline-flex min-h-tap items-center rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
+        className='nav-link inline-flex min-h-tap items-center rounded-sm px-2'
       >
         {menu.label}
       </Link>
@@ -125,7 +125,7 @@ function Dropdown({ menu }: { menu: Menu }) {
         aria-expanded={open}
         aria-haspopup='true'
         onClick={() => (open ? setOpen(false) : show())}
-        className='inline-flex min-h-tap items-center gap-1 rounded-sm px-3 text-sm text-white/60 transition-colors hover:text-white'
+        className='nav-link inline-flex min-h-tap items-center gap-1 rounded-sm px-2'
       >
         {menu.label}
         <ChevronDown className={'h-3.5 w-3.5 transition-transform ' + (open ? 'rotate-180' : '')} aria-hidden='true' />
@@ -187,7 +187,7 @@ function Dropdown({ menu }: { menu: Menu }) {
 
 export function Nav() {
   return (
-    <div className='hidden items-center gap-1 lg:flex'>
+    <div className='hidden items-center gap-3 lg:flex'>
       {MENUS.map((m) => (
         <Dropdown key={m.href} menu={m} />
       ))}
@@ -255,7 +255,7 @@ export function MobileNav({ wordmark }: { wordmark: React.ReactNode }) {
                 <Link
                   href={m.href}
                   onClick={() => setOpen(false)}
-                  className='flex min-h-tap items-center font-heading text-lg font-bold'
+                  className='title flex min-h-tap items-center'
                 >
                   {m.label}
                 </Link>
@@ -268,7 +268,7 @@ export function MobileNav({ wordmark }: { wordmark: React.ReactNode }) {
                           <Link
                             href={it.href}
                             onClick={() => setOpen(false)}
-                            className='flex min-h-tap items-center text-sm text-white/60 transition-colors hover:text-white'
+                            className='nav-link flex min-h-tap items-center'
                           >
                             {it.label}
                           </Link>

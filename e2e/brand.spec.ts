@@ -116,3 +116,104 @@ for (const width of [390, 1280]) {
     expect(ghost.radius).toBe('24px')
   })
 }
+
+/*
+  The headings and the header's links are set in lux.exchange's type, measured.
+
+  The headings used to carry the wide cut's -0.095em tracking without the stretch
+  that tracking was drawn against, so the space between words closed: the hero
+  read "Everythingyourbusiness". Every computed style was plausible, and the page
+  rendered. What was wrong was the distance between two words, so that distance
+  is what is measured: the gap between each word's last glyph and the next word's
+  first, on one line, as a fraction of the size. The exchange's own hero measures
+  0.218em, and the squash measured 0.136em on lux.tel before this.
+
+  The sizes are the exchange's at each of its steps (Tailwind's sm and lg), and
+  the links are its nav links: 17.316 at 497 on the .65 rung.
+*/
+const HERO: Record<number, { size: number; leading: number }> = {
+  390: { size: 40, leading: 48 },
+  768: { size: 52, leading: 62 },
+  1280: { size: 64, leading: 76 },
+  1920: { size: 64, leading: 76 },
+}
+
+for (const [width, want] of Object.entries(HERO).map(([w, v]) => [Number(w), v] as const)) {
+  test(`the hero heading keeps its words apart at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    await page.evaluate(() => document.fonts.ready)
+
+    const h1 = page.locator('main h1')
+
+    // Every adjacent pair of words on one line, from the glyphs' own boxes.
+    const gaps = await h1.evaluate((e) => {
+      const size = parseFloat(getComputedStyle(e).fontSize)
+      const words: { text: string; left: number; right: number; top: number }[] = []
+      const walk = document.createTreeWalker(e, NodeFilter.SHOW_TEXT)
+      for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+        const text = n.textContent ?? ''
+        for (const m of text.matchAll(/\S+/g)) {
+          const r = document.createRange()
+          r.setStart(n, m.index!)
+          r.setEnd(n, m.index! + m[0].length)
+          const boxes = r.getClientRects()
+          words.push({ text: m[0], left: boxes[0].left, right: boxes[boxes.length - 1].right, top: boxes[0].top })
+        }
+      }
+      return words.slice(1).flatMap((w, i) =>
+        Math.abs(w.top - words[i].top) < 2 ? [{ pair: `${words[i].text} ${w.text}`, em: (w.left - words[i].right) / size }] : [],
+      )
+    })
+    expect(gaps.length, 'no two words share a line to measure').toBeGreaterThan(0)
+    for (const g of gaps) expect(g.em, `"${g.pair}" runs together`).toBeGreaterThan(0.2)
+
+    // And the setting that gives that gap, which is the exchange's at this width.
+    const set = await h1.evaluate((e) => {
+      const cs = getComputedStyle(e)
+      const size = parseFloat(cs.fontSize)
+      return {
+        size,
+        leading: parseFloat(cs.lineHeight),
+        weight: cs.fontWeight,
+        track: parseFloat(cs.letterSpacing) / size,
+      }
+    })
+    expect(set.size).toBeCloseTo(want.size, 1)
+    expect(set.leading).toBeCloseTo(want.leading, 0)
+    expect(set.weight).toBe('497')
+    expect(set.track).toBeCloseTo(-0.025, 3)
+  })
+}
+
+const LINK = { size: 17.316, weight: '497', color: 'rgba(255, 255, 255, 0.65)' }
+
+for (const width of [1280, 1920]) {
+  test(`the header's links are lux.exchange's at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    const nav = page.locator('header nav')
+    const links = nav
+      .getByRole('link', { name: 'Network', exact: true })
+      .or(nav.getByRole('button', { name: /^(Products|Solutions|Company)$/ }))
+    await expect(links).toHaveCount(4)
+    for (const el of await links.all()) {
+      const p = await paint(el)
+      expect(family(p.family)).toBe('Zen')
+      expect(p.size).toBeCloseTo(LINK.size, 2)
+      expect(p.weight).toBe(LINK.weight)
+      expect(p.color).toBe(LINK.color)
+    }
+  })
+}
+
+test('the phone menu sets its links as the header does', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Open menu' }).click()
+  const link = page.locator('nav a[href="/products/esim"]')
+  const p = await paint(link)
+  expect(p.size).toBeCloseTo(LINK.size, 2)
+  expect(p.weight).toBe(LINK.weight)
+  expect(p.color).toBe(LINK.color)
+})

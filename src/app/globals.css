@@ -41,21 +41,11 @@
     --ring: rgb(255 255 255 / 0.4);
   }
 
+  /* Every string is read at the book weight, 497, as on the exchange, which sets
+     it on its root for the same reason: font-weight inherits, and the browser's
+     400 is what an unstyled string otherwise gets. */
   body {
-    @apply bg-black text-white font-sans antialiased;
-  }
-
-  /* The display voice: Zen at the wide, monumental cut the headings were set in.
-     Weight and tracking are the `.zen-wide` preset's own variables, so a refit of
-     the family arrives by bumping @hanzo/font and this file does not move. Living
-     in `base` means a `tracking-*` utility on the same element still wins.
-
-     The horizontal scale that completes the fit is the preset's `.zen-wide` class,
-     deliberately NOT applied here: a transform does not reflow, so a heading takes
-     it only where its container has the room. */
-  .font-heading {
-    font-variation-settings: 'wght' var(--zen-wide-wght);
-    letter-spacing: var(--zen-wide-track);
+    @apply bg-black text-white font-sans font-normal antialiased;
   }
 
   /* The exchange's focus: an outline in the focus colour, two out. An outline and
@@ -104,26 +94,111 @@
     @apply text-xs font-semibold uppercase tracking-wider text-white/40;
   }
 
-  /* Rungs, not pixels. The ramp's own steps read 26 / 32 / 40 where this used to
-     say 26 / 36 / 48 — tighter at every width, and the sizes now move together
-     when the scale is retuned instead of the phone size sitting still while the
-     other two shrink. The leading stays a RATIO so it holds at any of them. */
+  /*
+    The type, as lux.exchange sets it, measured on the live site at 390, 640,
+    1024 and 1440. One rule sets every voice below; each class only states its
+    numbers.
+
+      .display  the page's one headline. 40 on 48, 52 on 62 from sm, 64 on 76
+                from lg, tracked in by 0.025em. The exchange's hero.
+      .h2       a section's heading. 32 on 34, 42 on 42 from sm, 52 on 60 from
+                lg, tracked in by 0.02em. Its section headings.
+      .title    a group's heading, over a grid or a menu. 21.164 on 26.386. Its
+                panel titles ("More", "Swap").
+      .h3       an item's name, on a card or in a list. 17.316 on 22.511.
+      .lede     the paragraph under a heading, on the secondary rung. 17.316 on
+                22.511, its hero line.
+      .nav-link the header's links, secondary until a pointer is over one.
+                17.316 on 24.187.
+
+    Zen at the book weight throughout, 497. The exchange marks rank with size
+    and spends weight only on what is pressed, so no heading here is bold. The
+    tracking is the exchange's own at the normal cut, which leaves a word gap of
+    about 0.22em. The wide cut's -0.095em without its horizontal stretch closed
+    that gap and ran the words together.
+
+    The exchange's breakpoints are Tailwind's sm and lg, so the steps land at the
+    same widths. Sizes are multiplied by the type knob and leading is a ratio, so
+    a stored preference moves the whole voice. The 17.316 and 21.164 rungs are
+    18 and 22 at the exchange's 0.962, like the buttons and the wordmark.
+  */
+  .display,
+  .h2,
+  .title,
+  .h3,
+  .lede,
+  .nav-link {
+    /* Custom properties inherit, so a voice inside another would take its
+       parent's tracking. Each starts from none; the two headings then set theirs. */
+    --track: normal;
+    font-size: calc(var(--size) * var(--type-scale, 1));
+    line-height: var(--leading);
+    letter-spacing: var(--track);
+    font-weight: var(--zen-book-wght);
+  }
+
   .display {
-    @apply font-heading text-3xl font-bold leading-[1.15] sm:text-4xl lg:text-5xl;
+    --size: 40px;
+    --leading: calc(48 / 40);
+    --track: -0.025em;
     text-wrap: balance;
+  }
+  @screen sm {
+    .display {
+      --size: 52px;
+      --leading: calc(62 / 52);
+    }
+  }
+  @screen lg {
+    .display {
+      --size: 64px;
+      --leading: calc(76 / 64);
+    }
   }
 
   .h2 {
-    @apply font-heading text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl;
+    --size: 32px;
+    --leading: calc(34 / 32);
+    --track: -0.02em;
     text-wrap: balance;
   }
+  @screen sm {
+    .h2 {
+      --size: 42px;
+      --leading: 1;
+    }
+  }
+  @screen lg {
+    .h2 {
+      --size: 52px;
+      --leading: calc(60 / 52);
+    }
+  }
 
-  .h3 {
-    @apply font-semibold;
+  .title {
+    --size: calc(22px * 0.962);
+    --leading: calc(26.386 / 21.164);
+  }
+
+  .h3,
+  .lede {
+    --size: calc(18px * 0.962);
+    --leading: 1.3;
   }
 
   .lede {
-    @apply max-w-3xl text-base leading-relaxed text-white/60 sm:text-lg;
+    @apply max-w-3xl;
+    color: var(--muted-foreground);
+  }
+
+  .nav-link {
+    --size: calc(18px * 0.962);
+    --leading: calc(24.187 / 17.316);
+    color: var(--muted-foreground);
+    transition: color 150ms cubic-bezier(0, 0, 0.2, 1);
+  }
+  .nav-link:hover {
+    color: var(--primary);
   }
 
   .prose p {

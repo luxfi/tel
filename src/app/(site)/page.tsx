@@ -253,7 +253,7 @@ export default function Page() {
             {PILLARS.map((pillar) => (
               <div key={pillar.slug} id={pillar.slug} className='scroll-mt-20'>
                 <div className='flex flex-wrap items-baseline justify-between gap-3 border-b border-white/10 pb-3'>
-                  <h3 className='font-heading text-lg font-bold'>{pillar.name}</h3>
+                  <h3 className='title'>{pillar.name}</h3>
                   <Link href={`/products#${pillar.slug}`} className='inline-flex min-h-tap items-center text-sm text-white/40 transition-colors hover:text-white'>
                     See all
                   </Link>

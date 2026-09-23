@@ -71,7 +71,7 @@ export function Records<T extends { id: string }>({
 
   return (
     <div className='p-4 sm:p-6'>
-      <h1 className='font-heading text-lg font-bold'>{title}</h1>
+      <h1 className='title'>{title}</h1>
 
       {failed ? (
         // The message, not a shrug. 'signed out' is the one a reader can act on,

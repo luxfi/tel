@@ -51,8 +51,15 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Zen', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         sans: ['Zen', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
+      /* The exchange's three weights, under Tailwind's names: book 497 for what is
+         read, 500 as it is, and medium 606 for what is pressed or named, which
+         is also where `bold` lands. The exchange draws nothing heavier. */
+      fontWeight: {
+        normal: 'var(--zen-book-wght)',
+        semibold: 'var(--zen-medium-wght)',
+        bold: 'var(--zen-medium-wght)',
       },
       colors: {
         surface: {

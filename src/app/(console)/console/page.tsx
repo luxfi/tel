@@ -94,7 +94,7 @@ export default function Console() {
 
       <div className='mt-8 grid gap-8 xl:grid-cols-[1fr_360px]'>
         <div>
-          <h2 className='font-heading text-lg font-bold'>Explore products</h2>
+          <h2 className='title'>Explore products</h2>
           <div className='mt-4 grid gap-4 sm:grid-cols-3'>
             {EXPLORE.map((e) => (
               <div key={e.slug} className='card flex flex-col'>
@@ -110,7 +110,7 @@ export default function Console() {
             ))}
           </div>
 
-          <h2 className='mt-10 font-heading text-lg font-bold'>Help and resources</h2>
+          <h2 className='title mt-10'>Help and resources</h2>
           <div className='mt-4 grid gap-4 sm:grid-cols-3'>
             {HELP.map((h) =>
               h.external ? (
@@ -132,7 +132,7 @@ export default function Console() {
         </div>
 
         <aside>
-          <h2 className='font-heading text-lg font-bold'>What&rsquo;s new</h2>
+          <h2 className='title'>What&rsquo;s new</h2>
           <ol className='mt-4 space-y-3'>
             {NEWS.map((n) => (
               <li key={n.title} className='card'>
