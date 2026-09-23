@@ -41,7 +41,8 @@ const NEWS = [
 
 const HELP = [
   { title: 'Developer docs', body: 'API reference for every primitive.', href: 'https://docs.lux.network', external: true },
-  { title: 'How billing works', body: 'What meters, and what a commitment changes.', href: '/pricing', external: false },
+  { title: 'Billing', body: 'Balance, top-up, plans and invoices.', href: 'https://pay.lux.tel', external: true },
+  { title: 'Rate card', body: 'Every published rate, and the enterprise plan.', href: '/pricing', external: false },
   { title: 'Policies', body: 'Terms, privacy, acceptable use and emergency services.', href: '/legal', external: false },
 ]
 

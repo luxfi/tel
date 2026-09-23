@@ -123,6 +123,22 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
             </Link>
           ))}
 
+          {/* Billing lives at pay.lux.tel: the same Lux ID, the org's balance, top-up,
+              plans and invoices, served by commerce for the lux org. */}
+          <div className='my-3 border-t border-white/10' />
+          {[
+            ['https://pay.lux.tel', 'Billing'],
+            ['https://pay.lux.tel/invoices', 'Invoices'],
+          ].map(([href, label]) => (
+            <a
+              key={href}
+              href={href}
+              className='flex min-h-tap items-center rounded-md px-3 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white'
+            >
+              {label}
+            </a>
+          ))}
+
           <div className='my-3 border-t border-white/10' />
           <a
             href='mailto:hi@lux.tel?subject=Lux%20Tel'
