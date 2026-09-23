@@ -9,7 +9,7 @@ import { test, expect, type Locator } from '@playwright/test'
   with 13px words at 500. It all rendered, and every other check passed.
 
   So what is pinned is what the brand is made of, read off the computed style: the
-  drawn letters and their size, the family, weight and ink of the word beside them,
+  letters' face and size, the family, weight and ink of the word beside them,
   and the fill, ink, cut and height of each button. The numbers are lux.exchange's,
   measured on the live site; globals.css says where each comes from.
 */
@@ -37,22 +37,29 @@ const paint = (el: Locator, pseudo?: '::before') =>
   )
 
 for (const path of ['/', '/console', '/start']) {
-  test(`${path}: the wordmark is the drawn LUX and a Zen "tel"`, async ({ page }) => {
+  test(`${path}: the wordmark is LUX in Zen wide and a Zen "tel"`, async ({ page }) => {
     await page.goto(path)
     const home = page.locator('a[aria-label="Lux Tel, home"]:visible')
     await expect(home, 'one visible way home').toHaveCount(1)
 
-    // The letters are @luxfi/logo's drawing, not type: an SVG that paints, 22px
-    // tall at the wordmark's 63:17. Typed text is what this replaced.
-    const letters = home.locator('[role="img"][aria-label="LUX"]')
-    const art = await letters.evaluate((el) => {
-      const b = el.getBoundingClientRect()
-      return { h: b.height, w: b.width, geometry: el.querySelectorAll('svg path, svg polygon').length }
+    // The letters are Zen's wide preset: weight 650, tracked in, widened by
+    // scaleX, the cut the Lux wordmark is drawn from; caps 22px tall (.71em).
+    const letters = home.locator('.wordmark-letters')
+    await expect(letters).toHaveText('LUX')
+    const l = await letters.evaluate((e) => {
+      const cs = getComputedStyle(e)
+      return { family: cs.fontFamily, axes: cs.fontVariationSettings, track: cs.letterSpacing, transform: cs.transform, size: parseFloat(cs.fontSize), transformText: cs.textTransform }
     })
-    expect(art.geometry, 'the letters draw nothing').toBeGreaterThan(0)
-    expect(art.h).toBeCloseTo(22, 0)
-    expect(art.w).toBeCloseTo((22 * 63) / 17, 0)
-    expect((await home.innerText()).trim(), 'LUX is typed rather than drawn').toBe('tel')
+    expect(family(l.family)).toBe('Zen')
+    expect(l.axes).toContain('650')
+    expect(l.transform).toMatch(/^matrix\(1\.486/)
+    expect(l.size * 0.71).toBeCloseTo(22, 0)
+    expect(l.transformText, 'LUX is typed in capitals, not transformed').toBe('none')
+    expect((await home.innerText()).replace(/\s+/g, ' ').trim()).toBe('LUX tel')
+
+    // The word starts after the widened letters, not inside them.
+    const [lb, wb] = await Promise.all([letters.boundingBox(), home.locator('.wordmark-word').boundingBox()])
+    expect(wb!.x - (lb!.x + lb!.width), 'the word overlaps the letters').toBeGreaterThanOrEqual(8)
 
     // The word: Zen at the book weight, on the secondary rung, lower case as typed.
     const word = home.locator('.wordmark-word')

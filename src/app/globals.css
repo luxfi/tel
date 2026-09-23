@@ -144,21 +144,24 @@
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  /* The wordmark's lockup; components/Wordmark draws it. @luxfi/logo's letters at
-     22px, then the product word on their baseline: Zen at the book weight, on the
-     secondary rung, at the exchange's nav size (18 on its .962 root). Fixed, not
-     on the type knob, because the letters are artwork and do not move either.
+  /* The wordmark's lockup; components/Wordmark sets it. LUX in Zen's wide preset
+     with its caps 22px tall (cap height is .71em, so 22 / .71), then the product
+     word on the same baseline: Zen at the book weight, on the secondary rung, at
+     the exchange's nav size (18 on its .962 root). Fixed, not on the type knob.
 
-     The box is the letters' height and no taller. The word's descent hangs below
-     it rather than into it, so centring the box centres the letters, which is
-     what the eye centres; left to size itself it sat 1.7px high in the header. */
+     .zen-wide widens by transform, which does not reflow: the layout box keeps
+     the unscaled width (1.613em for LUX), so the right margin gives back what the
+     scale adds, and the word sits where the letters end. */
   .wordmark {
-    --mark: 22px;
     display: inline-flex;
-    height: var(--mark);
     align-items: baseline;
     gap: 10px;
     white-space: nowrap;
+  }
+  .wordmark-letters {
+    font-size: calc(22px / 0.71);
+    line-height: 1;
+    margin-right: calc(1.613em * (var(--zen-wide-scale-x) - 1));
   }
   .wordmark-word {
     font-size: calc(1.125rem * 0.962);
