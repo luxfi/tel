@@ -1,8 +1,8 @@
 import type { Config } from 'tailwindcss'
 
 /*
-  Lux tokens, per luxfi/brand DESIGN.md §2.2 (dark surface) and the
-  @luxfi/ui type vocabulary: Zen headings, Inter body.
+  Lux tokens: the dark surface, and Zen for every word, as lux.exchange sets it.
+  The paint the buttons and the wordmark read is in globals.css `:root`.
 
   The BRAND is Lux's — typefaces, the monochrome surface, the opacity ladder.
   The SCALE is the shared one: `@hanzo/design` publishes the type ramp and the

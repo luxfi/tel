@@ -24,6 +24,23 @@
     scroll-behavior: smooth;
   }
 
+  /* lux.exchange's paint, under the names it paints with. The exchange takes its
+     ladder from the Lux brand tokens (@luxfi/tokens `luxDark`: the ink and the
+     ground, and the secondary rung at .65) and the rest from @hanzo/design (the
+     card ground, the hairline and the focus colour), and these are the values
+     that reach its page, measured on lux.exchange rather than read from either
+     package: the two disagree about the hairline (.12 and .08), and the live
+     surface draws .10. One home, so a button and the wordmark cannot drift from
+     each other or from the exchange. */
+  :root {
+    --primary: #ffffff;
+    --primary-foreground: #000000;
+    --muted-foreground: rgb(255 255 255 / 0.65);
+    --card: #0f0f0f;
+    --border: rgb(255 255 255 / 0.1);
+    --ring: rgb(255 255 255 / 0.4);
+  }
+
   body {
     @apply bg-black text-white font-sans antialiased;
   }
@@ -41,8 +58,13 @@
     letter-spacing: var(--zen-wide-track);
   }
 
+  /* The exchange's focus: an outline in the focus colour, two out. An outline and
+     not a ring, because a ring is a shadow and follows nothing a control does to
+     its own corners; it also used to set `rounded-sm`, which squared off every
+     rounded control the moment a keyboard reached it. */
   :focus-visible {
-    @apply outline-none ring-2 ring-white/60 ring-offset-2 ring-offset-black rounded-sm;
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 
@@ -122,15 +144,110 @@
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  /* Tap targets stay at 44px — the e2e suite measures them at 390/768/1280. */
+  /* The wordmark's lockup; components/Wordmark draws it. @luxfi/logo's letters at
+     22px, then the product word on their baseline: Zen at the book weight, on the
+     secondary rung, at the exchange's nav size (18 on its .962 root). Fixed, not
+     on the type knob, because the letters are artwork and do not move either.
+
+     The box is the letters' height and no taller. The word's descent hangs below
+     it rather than into it, so centring the box centres the letters, which is
+     what the eye centres; left to size itself it sat 1.7px high in the header. */
+  .wordmark {
+    --mark: 22px;
+    display: inline-flex;
+    height: var(--mark);
+    align-items: baseline;
+    gap: 10px;
+    white-space: nowrap;
+  }
+  .wordmark-word {
+    font-size: calc(1.125rem * 0.962);
+    line-height: 1;
+    font-weight: var(--zen-book-wght);
+    color: var(--muted-foreground);
+  }
+
+  /*
+    The calls to action, as lux.exchange draws them: two sizes, two grounds.
+
+      .btn        a page's: 48 tall, cut at 24, 16 either side, the words at
+                  17.3 (18 on the exchange's .962 root). Its `Press`.
+      .btn-band   the header's: 34 tall, cut at 12, 12 either side, the words at
+                  13.5 (14 on the root). Its `Connect` and `Get the app`.
+
+      .btn-solid  the ink as ground: white, black words.
+      .btn-ghost  the card ground inside the hairline, which goes to the ink
+                  under a pointer, the one move the exchange makes on an outline.
+
+    Every one is set at Zen's medium weight (606, the preset's own number) and
+    answers a pointer with opacity, .9 over and .8 pressed, in 150ms. The words
+    follow the type knob and the padding follows the density knob, like the rest
+    of the page; the heights are the exchange's rungs and do not move.
+
+    Tap targets stay at 44px (the e2e suite measures every one), which a 34px
+    header button is not. So the band's box is the 44px target and the button is
+    painted inside it, centred, by ::before: the eye sees the exchange's 34 and a
+    thumb gets 44.
+  */
   .btn {
-    @apply inline-flex min-h-tap items-center justify-center gap-2 rounded-md px-6 text-sm font-medium transition-colors;
+    --btn-bg: var(--card);
+    --btn-ink: var(--primary);
+    --btn-line: transparent;
+    @apply relative inline-flex min-h-[48px] items-center justify-center gap-2 rounded-3xl border px-4 py-3 text-center;
+    isolation: isolate;
+    font-size: calc(1.125rem * 0.962 * var(--type-scale, 1));
+    line-height: calc(7 / 6);
+    font-weight: var(--zen-medium-wght);
+    color: var(--btn-ink);
+    background-color: var(--btn-bg);
+    border-color: var(--btn-line);
+    transition-property: opacity, color, background-color, border-color;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+  .btn:hover {
+    opacity: 0.9;
+  }
+  .btn:active {
+    opacity: 0.8;
   }
   .btn-solid {
-    @apply bg-white text-black hover:bg-white/90;
+    --btn-bg: var(--primary);
+    --btn-ink: var(--primary-foreground);
   }
   .btn-ghost {
-    @apply border border-white/20 hover:border-white/40;
+    --btn-line: var(--border);
+  }
+  .btn-ghost:hover {
+    --btn-line: var(--primary);
+  }
+
+  .btn-band {
+    @apply min-h-tap whitespace-nowrap rounded-xl border-0 px-3 py-0;
+    font-size: calc(0.875rem * 0.962 * var(--type-scale, 1));
+    line-height: 1.47;
+    background-color: transparent;
+  }
+  .btn-band::before {
+    content: '';
+    position: absolute;
+    inset: calc(50% - 17px) 0;
+    z-index: -1;
+    border: 1px solid var(--btn-line);
+    border-radius: inherit;
+    background-color: var(--btn-bg);
+    transition: border-color 150ms cubic-bezier(0, 0, 0.2, 1);
+  }
+  /* The header's outline stands on the header itself, not on a card. */
+  .btn-band.btn-ghost {
+    --btn-bg: transparent;
+  }
+  .btn-band:focus-visible {
+    outline: none;
+  }
+  .btn-band:focus-visible::before {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 
   /* Status without hue. A filled dot is in service, a ring is in field trial —

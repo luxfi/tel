@@ -3,13 +3,14 @@ import type { Viewport } from 'next'
 
 import { Appearance } from '@/appearance'
 import metadata from '@/metadata'
-// Zen — the one family, sans and mono. @hanzo/design ships both variable faces and
-// declares their @font-face, so this site vendors no font binary of its own; and
-// @hanzo/font carries the display fittings (`.zen-wide` and its variables, which
-// globals.css reads). Both are imported HERE rather than @import-ed from
-// globals.css: postcss-import resolves neither a package `exports` map nor the
-// url()s inside a package's own sheet.
-import '@hanzo/design/tokens/fonts.css'
+// Zen, the one family, imported exactly as lux.exchange imports it: the faces, then
+// the presets that name its weights (book 497, medium 606, and the wide display
+// cut), whose variables globals.css reads. The faces are self-hosted: the bundler
+// copies the woff2 files out of the package into the export, so this site vendors
+// no font binary and makes no third-party request. Both are imported HERE rather
+// than @import-ed from globals.css: postcss-import resolves neither a package
+// `exports` map nor the url()s inside a package's own sheet.
+import '@hanzo/font/css'
 import '@hanzo/font/presets.css'
 import './globals.css'
 

@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import Link from 'next/link'
-import { ArrowLeft, ArrowRight, Check, CircleAlert, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, CircleAlert } from 'lucide-react'
 
 import { CONTACT_EMAIL } from '@/site'
 
@@ -148,7 +147,7 @@ export default function Start() {
   const done = sent ? 1 : Math.min(1, at / total)
 
   return (
-    <div className='flex min-h-screen flex-col'>
+    <div className='flex flex-1 flex-col'>
       <div className='fixed inset-x-0 top-0 z-50 flex gap-1' aria-hidden='true'>
         {[0, 1, 2].map((i) => (
           <div key={i} className='h-[3px] flex-1 overflow-hidden bg-white/10'>
@@ -159,22 +158,6 @@ export default function Start() {
           </div>
         ))}
       </div>
-
-      {/* The wordmark and a way out. Everything else on this screen is an exit from
-          the one thing it is for. */}
-      <header className='flex h-16 shrink-0 items-center justify-between px-4 sm:px-6 lg:px-8'>
-        <Link href='/' className='inline-flex min-h-tap items-center text-lg' aria-label='Lux Tel, home'>
-          <span className='font-heading font-bold tracking-tight'>LUX</span>
-          <span className='text-white/40'>&nbsp;tel</span>
-        </Link>
-        <Link
-          href='/'
-          aria-label='Leave'
-          className='inline-flex h-11 w-11 items-center justify-center rounded-md text-white/50 transition-colors hover:bg-white/5 hover:text-white'
-        >
-          <X className='h-5 w-5' aria-hidden='true' />
-        </Link>
-      </header>
 
       <main className='flex flex-1 items-center px-4 pb-16 sm:px-6 lg:px-8'>
         <div className='mx-auto w-full max-w-2xl'>

@@ -195,8 +195,13 @@ export function Nav() {
   )
 }
 
-/** The phone menu: one panel, everything expanded. */
-export function MobileNav() {
+/**
+ * The phone menu: one panel, everything expanded.
+ *
+ * The panel's corner carries the wordmark, handed in rather than imported: this is
+ * a client component, and the wordmark is drawn on the server (components/Wordmark).
+ */
+export function MobileNav({ wordmark }: { wordmark: React.ReactNode }) {
   const [open, setOpen] = useState(false)
   // Portals need a DOM; this renders on the server first.
   const [mounted, setMounted] = useState(false)
@@ -233,10 +238,7 @@ export function MobileNav() {
               header measures 44, so opening the menu dropped the wordmark and
               the ✕ 6.5px below the ☰ they replaced. */}
           <div className='flex h-tap shrink-0 items-center justify-between border-b border-white/10 px-4'>
-            <span className='text-lg'>
-              <span className='font-heading font-bold tracking-tight'>LUX</span>
-              <span className='text-white/40'> tel</span>
-            </span>
+            {wordmark}
             <button
               type='button'
               aria-label='Close menu'
