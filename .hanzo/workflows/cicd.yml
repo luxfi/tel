@@ -34,7 +34,7 @@ jobs:
       - run: pnpm test:e2e
       - name: Publish to the Sites plane
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
+        uses: hanzoai/ci/.github/actions/site@v1
         with:
           slug: tel
           dir: out
