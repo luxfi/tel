@@ -1,9 +1,11 @@
 name: CI/CD
 
 # One job: the gate proves the export, and on main the same bytes publish to the
-# Sites plane through the shared action (hanzoai/ci bin/site), declared in hanzo.yml.
-# The action reads the deploy key from KMS; the KMS client identity is a forge
-# org secret. Domains are project records, not a build step.
+# Sites plane through the shared action (hanzoai/ci bin/site), pinned to an exact
+# release: a moving tag would change the code that holds the KMS client identity.
+# This file is the whole deploy declaration. The action reads the deploy key from
+# KMS; the KMS client identity is a forge org secret. Domains are project records,
+# not a build step.
 
 on:
   push:
@@ -38,7 +40,7 @@ jobs:
       - run: pnpm test:e2e
       - name: Publish to the Sites plane
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: hanzoai/ci/.github/actions/site@v1
+        uses: hanzoai/ci/.github/actions/site@v1.0.116
         with:
           slug: tel
           dir: out
