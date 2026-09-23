@@ -30,7 +30,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm tc
       - run: pnpm build
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright install chromium
       - run: pnpm test:e2e
       - name: Publish to the Sites plane
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
