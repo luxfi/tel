@@ -1,0 +1,27 @@
+name: tel
+slug: tel
+version: 0.1.5
+type: site
+
+framework:
+  name: next
+  buildCommand: pnpm build
+  outputDir: out
+
+routing:
+  domain: lux.tel
+  aliases:
+    - www.lux.tel
+    - console.lux.tel
+
+deploy:
+  plane: sites
+  publishScript: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
+
+commerce:
+  org: lux
+  checkoutUrl: https://pay.lux.tel
+
+iam:
+  issuer: https://lux.id
+  clientId: lux-tel

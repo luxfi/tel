@@ -1,57 +1,29 @@
 name: CI/CD
 
-# Two cars: the gate proves the tree, then the export is shipped.
-#
-# It lives at .hanzo/workflows, on the FORGE, because that is where the runners
-# are. github.com has ZERO self-hosted runners for luxfi — measured:
-# /orgs/luxfi/actions/runners is total_count 0 — and an unclaimable job does not
-# fail, it QUEUES until the 24h timeout while the next push stacks behind it.
-# Silence, not an error. Two runs sat queued for six minutes proving it.
-#
-# `runs-on: [lux-build-linux-amd64]` is the label the forge pools advertise, used
-# by 111 workflows across lux. `lux-build-amd64` — one segment short — matches
-# nothing, and four repos carry a comment saying so, which is how this was found
-# rather than guessed.
-#
-# Deploying is a tag pinned in lux/universe, which Hanzo CD reconciles. A workflow
-# that pushed bytes at a running site would be a second way to deploy, and the one
-# that is not declared state is the one that silently disagrees with it.
-#
-#   push / tag v*  -> gate -> deploy
-#
-# A static export is FILES. It needed no container image, no package, no pull
-# secret, no replica count and no liveness probe — and every one of those was a
-# thing to get wrong: two hours went on a registry permission for bytes that are
-# just files. It ships to our own static-site API instead, which already gives it
-# versioned content-addressed releases and rollback as a pointer flip.
-#
-# Semver only: a branch push produces an immutable sha- tag and never a floating
-# one, so nothing that reaches a cluster can move under it.
+# One job: the gate proves the export, and on main the same bytes publish to the
+# Sites plane through the shared action (hanzoai/ci bin/site), declared in hanzo.yml.
+# The action reads the deploy key from KMS; the KMS client identity is a forge
+# org secret. Domains are project records, not a build step.
 
 on:
-  workflow_dispatch:
   push:
     branches: [main]
-    tags: ['v*']
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: tel-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  gate:
-    runs-on: [linux-amd64]
+  site:
+    runs-on: linux-amd64
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      # NO `version:`. package.json declares `packageManager: pnpm@10.12.4`, and
-      # action-setup refuses when both are given — "Multiple versions of pnpm
-      # specified" — so every run died 5s in at this step and `image` never ran.
-      # The manifest is the one place the version is stated.
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: '22', cache: pnpm }
@@ -59,80 +31,13 @@ jobs:
       - run: pnpm tc
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
-      # Drives the BUILT export, so what the gate proves is what the image carries:
-      # the 44px tap targets, no horizontal overflow, no supplier named on any page,
-      # and a console that offers Lux ID and holds no credential.
       - run: pnpm test:e2e
-
-  deploy:
-    needs: gate
-    if: github.event_name == 'push'
-    runs-on: [linux-amd64]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '22', cache: pnpm }
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-
-      # A tar.gz, NOT the JSON file manifest /v1/sites/deploy takes: that endpoint
-      # casts each file's `content` straight to bytes, and a JSON string cannot
-      # carry the Druk Wide and Inter faces this site self-hosts — they would
-      # arrive corrupt under a 200. The artifact path sniffs the archive.
-      - run: tar -czf site.tar.gz -C out .
-
-      # api.hanzo.ai, NOT api.lux.cloud — two different deployments of cloud, and
-      # lux.tel is served by the plane behind this one (`x-hanzo-site: tel`). The
-      # other answered 402, which hid the fact that a success would have written
-      # somewhere nobody serves from.
-      #
-      # The org rides the TOKEN, and only the token: the gateway drops identity
-      # headers off the wire and re-derives them from the validated principal, and
-      # `principal.Org` refuses an org that arrives without a user behind it. So
-      # sending X-Org-Id changed nothing in either direction — it only made a
-      # broken deploy read as a header problem, which cost two misdiagnoses.
-      #
-      # What actually broke it: identity moved into cloud without its capability
-      # allowlists, so `sk-` keys stopped resolving to a principal, and the handler
-      # reported the missing header instead of the missing user. Fixed in
-      # hanzo/universe f7f1e2cfb. A 403 here means read the BODY before believing
-      # the header it names.
-      - name: Ship it
+      - name: Publish to the Sites plane
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
+        with:
+          slug: tel
+          dir: out
         env:
-          TOKEN: ${{ secrets.LUX_DEPLOY_TOKEN }}
-        run: |
-          set -euo pipefail
-          code=$(curl -sS -o out.json -w '%{http_code}' --max-time 180 \
-            -X POST 'https://api.hanzo.ai/v1/projects/tel/deploy' \
-            -H "Authorization: Bearer $TOKEN" \
-            -H 'Content-Type: application/gzip' \
-            --data-binary @site.tar.gz)
-          cat out.json
-          # Read the BODY, not just the code. A 402 (org out of credits) and a 503
-          # both leave the live site exactly as it was, and a step that only checked
-          # for a 2xx would report a deploy that never happened.
-          [ "$code" = "200" ] || { echo "::error::deploy answered $code"; exit 1; }
-
-      # Deploying puts the bytes on the sites edge at tel.hanzo.app; BINDING is what
-      # makes lux.tel serve them. Without it the deploy is green and the domain
-      # still shows whatever it showed before, which is the failure mode this whole
-      # exercise kept hitting in other forms.
-      #
-      # Idempotent: an already-verified host comes back live, an unverified one
-      # comes back pending WITH the DNS records to publish. Non-fatal, because a
-      # domain that is not yet pointed at us must not fail a deploy that succeeded —
-      # but it PRINTS the answer, so the records are in the log rather than
-      # discovered later by wondering why the site did not change.
-      - name: Bind lux.tel to this site
-        env:
-          TOKEN: ${{ secrets.LUX_DEPLOY_TOKEN }}
-        continue-on-error: true
-        run: |
-          set -uo pipefail
-          curl -sS -X POST 'https://api.hanzo.ai/v1/projects/tel/domains' \
-            -H "Authorization: Bearer $TOKEN" \
-            -H 'Content-Type: application/json' \
-            -d '{"domains":["lux.tel","www.lux.tel","console.lux.tel"]}' | tee bound.json
-          echo
-          echo "If a host reads 'pending', publish the records above and it goes live on the next verify."
+          KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+          KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
