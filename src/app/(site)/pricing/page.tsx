@@ -1,17 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { COMPANY } from '@/content/company'
+import { contactHref } from '@/site'
+import { ENTERPRISE, RATES } from '@/content/pricing'
 
 export const metadata: Metadata = {
   title: 'Pricing',
-  description: 'How Lux charges: usage by default, commitments where they earn a discount, and no per-seat licence on infrastructure.',
+  description: 'The Lux rate card, and the enterprise plan: 24/7 support, 99.999% availability and dedicated infrastructure.',
 }
 
-/**
- * Principles rather than a rate card. Numbering, wireless and orbital pricing are
- * per-jurisdiction and per-site, so a published number would be wrong for most
- * readers — and a wrong number costs more trust than an absent one.
- */
 const PRINCIPLES = [
   {
     heading: 'Usage by default',
@@ -35,25 +31,67 @@ const PRINCIPLES = [
   },
 ]
 
-const SHAPES = [
-  { what: 'Numbers', unit: 'Per number, per month', note: 'Plus per-minute or per-message usage. Rates vary by country and by range type.' },
-  { what: 'Voice and messaging', unit: 'Per minute · per message', note: 'Destination-based. Volume tiers apply automatically.' },
-  { what: 'Wireless', unit: 'Per SIM, per month + pooled data', note: 'Data pools across the fleet; unused capacity is not stranded per device.' },
-  { what: 'Orbital', unit: 'Per terminal, per month + capacity', note: 'Quoted per site: coordinate, capacity commitment and service level.' },
-  { what: 'Inference and speech', unit: 'Per token · per second of audio', note: 'Region-pinned. In-region pinning does not carry a surcharge.' },
-  { what: 'Edge compute and storage', unit: 'Per invocation · per GB-month', note: 'Storage billed in the region the data was written.' },
-]
-
 export default function Pricing() {
   return (
     <>
       <section className="wrap pt-16 pb-10">
         <div className="eyebrow">Pricing</div>
-        <h1 className="display mt-5 max-w-[16ch]">You pay for traffic, not for seats.</h1>
+        <h1 className="display mt-5 max-w-[16ch]">Published rates. An enterprise plan when you need the people.</h1>
         <p className="lede mt-6">
-          Numbering, wireless and orbital rates are set per jurisdiction and per site, so a single published number
-          would be wrong for most people reading it. What does not change is how the charging works.
+          Every service bills from one rate card, with no seats and nothing owed until it is switched on. The enterprise
+          plan adds 24/7 engineering, a service level with credits and infrastructure dedicated to you.
         </p>
+      </section>
+
+      <section className="band">
+        <div className="wrap">
+          <div className="eyebrow">{ENTERPRISE.name}</div>
+          <div className="mt-5 flex flex-wrap items-baseline gap-x-3">
+            <span className="display">{ENTERPRISE.price}</span>
+            <span className="lede">{ENTERPRISE.per}</span>
+          </div>
+          <p className="lede mt-4">{ENTERPRISE.note}</p>
+          <div className="mt-8 grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 md:grid-cols-2 lg:grid-cols-3">
+            {ENTERPRISE.includes.map((f) => (
+              <div key={f.heading} className="bg-neutral-900/50 p-7">
+                <div className="h3">{f.heading}</div>
+                <p className="mt-2 text-lg text-white/60">{f.body}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <a href={contactHref('Enterprise plan')} className="btn btn-solid">Talk to us about the enterprise plan</a>
+            <Link href="/start" className="btn btn-ghost">Tell us what you are connecting</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="band">
+        <div className="wrap">
+          <div className="eyebrow">Rate card · United States</div>
+          <p className="lede mt-4">Other countries are quoted on the same card. A volume commitment lowers every rate on it.</p>
+          <div className="mt-8 grid gap-10 md:grid-cols-2">
+            {RATES.map((g) => (
+              <div key={g.name}>
+                <div className="h3">{g.name}</div>
+                <table className="mt-4 w-full border-collapse text-left text-lg">
+                  <tbody>
+                    {g.rates.map((r) => (
+                      <tr key={r.what} className="border-b border-white/10">
+                        <td className="py-3 pr-4 font-medium">{r.what}</td>
+                        <td className="py-3 pr-4 text-right tabular-nums">{r.price}</td>
+                        <td className="py-3 text-white/40">{r.unit}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+          <p className="mt-8 text-lg text-white/40">
+            Orbital capacity, inference and edge compute are quoted per site and per region.
+          </p>
+        </div>
       </section>
 
       <section className="band">
@@ -72,39 +110,13 @@ export default function Pricing() {
 
       <section className="band">
         <div className="wrap">
-          <div className="eyebrow">How each thing meters</div>
-          <div className="mt-8 overflow-x-auto">
-            <table className="w-full min-w-[640px] border-collapse text-left text-lg">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="eyebrow py-3 pr-6 font-normal">Service</th>
-                  <th className="eyebrow py-3 pr-6 font-normal">Unit</th>
-                  <th className="eyebrow py-3 font-normal">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {SHAPES.map((s) => (
-                  <tr key={s.what} className="border-b border-white/10">
-                    <td className="py-4 pr-6 font-medium">{s.what}</td>
-                    <td className="py-4 pr-6 text-white/60">{s.unit}</td>
-                    <td className="py-4 text-white/40">{s.note}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <section className="band">
-        <div className="wrap">
           <h2 className="h2 max-w-[22ch]">Send us the shape of your traffic.</h2>
           <p className="lede mt-4">
             Countries, volumes and coordinates. A quote comes back with the rate, the service level and the
             provisioning time for each one.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <a href={`mailto:${COMPANY.contact.general}`} className="btn btn-solid">Request a quote</a>
+            <a href={contactHref('Quote')} className="btn btn-solid">Request a quote</a>
             <Link href="/products" className="btn btn-ghost">See what is available</Link>
           </div>
         </div>
