@@ -219,29 +219,22 @@
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  /* The wordmark's lockup; components/Wordmark sets it. LUX in Zen's wide preset
-     with its caps 22px tall (cap height is .71em, so 22 / .71), then the product
-     word on the same baseline: Zen at the book weight, on the secondary rung, at
-     the exchange's nav size (18 on its .962 root). Fixed, not on the type knob.
+  /* The wordmark's lockup; components/Wordmark sets it. LUX TEL in Zen's wide
+     preset, caps 22px tall (cap height is .71em, so 22 / .71), TEL on the
+     secondary rung.
 
      .zen-wide widens by transform, which does not reflow: the layout box keeps
-     the unscaled width (1.613em for LUX), so the right margin gives back what the
-     scale adds, and the word sits where the letters end. */
+     the unscaled width (3.25em for "LUX TEL", measured, plus TEL's .2em lead),
+     so the right margin gives back what the scale adds and the link's box
+     covers the letters. The tracked-in space alone read as one word. */
   .wordmark {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 10px;
-    white-space: nowrap;
-  }
-  .wordmark-letters {
     font-size: calc(22px / 0.71);
     line-height: 1;
-    margin-right: calc(1.613em * (var(--zen-wide-scale-x) - 1));
+    white-space: nowrap;
+    margin-right: calc(3.45em * (var(--zen-wide-scale-x) - 1));
   }
   .wordmark-word {
-    font-size: calc(1.125rem * 0.962);
-    line-height: 1;
-    font-weight: var(--zen-book-wght);
+    margin-left: 0.2em;
     color: var(--muted-foreground);
   }
 
