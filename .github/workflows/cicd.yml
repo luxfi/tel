@@ -1,0 +1,46 @@
+name: CI/CD
+
+# GitHub runs this on the platform's runners; the forge mirror runs nothing.
+# Gate: typecheck, build, Playwright against the built export. On main, the same
+# out/ is published to the Sites plane as project lux/tel. The KMS identity is
+# the repo secret pair (lux-ci), which overrides the org's, so the deploy key it
+# reads is the lux one and the release lands in lux/tel.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tel-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  site:
+    runs-on: linux-amd64
+    timeout-minutes: 30
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/ms-playwright
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tc
+      - run: pnpm build
+      - run: pnpm exec playwright install chromium
+      - run: pnpm test:e2e
+      - name: Publish to the Sites plane
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: hanzoai/ci/.github/actions/site@v1.0.116
+        with:
+          slug: tel
+          dir: out
+        env:
+          KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+          KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
