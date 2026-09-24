@@ -37,7 +37,7 @@ const paint = (el: Locator, pseudo?: '::before') =>
   )
 
 for (const path of ['/', '/console', '/start']) {
-  test(`${path}: the wordmark is LUX TEL in Zen wide`, async ({ page }) => {
+  test(`${path}: the wordmark is LUXTEL in Zen wide`, async ({ page }) => {
     await page.goto(path)
     const home = page.locator('a[aria-label="Lux Tel, home"]:visible')
     await expect(home, 'one visible way home').toHaveCount(1)
@@ -45,7 +45,7 @@ for (const path of ['/', '/console', '/start']) {
     // Zen's wide preset: weight 650, tracked in, widened by scaleX, the cut the
     // Lux wordmark is drawn from; caps 22px tall (.71em), typed as capitals.
     const mark = home.locator('.wordmark')
-    await expect(mark).toHaveText('LUX TEL')
+    await expect(mark).toHaveText('LUXTEL')
     const m = await mark.evaluate((e) => {
       const cs = getComputedStyle(e)
       return { family: cs.fontFamily, axes: cs.fontVariationSettings, transform: cs.transform, size: parseFloat(cs.fontSize), caps: cs.textTransform }
@@ -56,12 +56,13 @@ for (const path of ['/', '/console', '/start']) {
     expect(m.size * 0.71).toBeCloseTo(22, 0)
     expect(m.caps, 'typed in capitals, not transformed').toBe('none')
 
-    // TEL shares the face and size, on the secondary rung.
+    // TEL shares the face and size, in a solid grey: an alpha colour double-paints
+    // where the wide cut's glyphs overlap.
     const word = home.locator('.wordmark-word')
     const w = await paint(word)
     expect(family(w.family)).toBe('Zen')
     expect(w.size).toBeCloseTo(m.size, 1)
-    expect(w.color).toBe('rgba(255, 255, 255, 0.65)')
+    expect(w.color).toBe('rgb(97, 97, 97)')
 
     // The widening does not reflow, so the link must still cover the letters.
     const [hb, mb] = await Promise.all([home.boundingBox(), mark.boundingBox()])

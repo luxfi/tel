@@ -219,23 +219,27 @@
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  /* The wordmark's lockup; components/Wordmark sets it. LUX TEL in Zen's wide
-     preset, caps 22px tall (cap height is .71em, so 22 / .71), TEL on the
-     secondary rung.
+  /* The wordmark's lockup; components/Wordmark sets it. LUXTEL as one word in
+     Zen's wide preset, caps 22px tall (cap height is .71em, so 22 / .71), TEL
+     on the exchange's third rung.
+
+     TEL's grey is SOLID (white at .38 over the black ground), not an alpha: the
+     wide cut's tracking overlaps neighbouring glyphs, and an alpha colour paints
+     each overlap twice, so seams showed brighter between T, E and L. The .04em
+     lead keeps X and T from touching.
 
      .zen-wide widens by transform, which does not reflow: the layout box keeps
-     the unscaled width (3.25em for "LUX TEL", measured, plus TEL's .2em lead),
-     so the right margin gives back what the scale adds and the link's box
-     covers the letters. The tracked-in space alone read as one word. */
+     the unscaled width (3.15em for LUXTEL with the lead, measured), so the right
+     margin gives back what the scale adds and the link's box covers the letters. */
   .wordmark {
     font-size: calc(22px / 0.71);
     line-height: 1;
     white-space: nowrap;
-    margin-right: calc(3.45em * (var(--zen-wide-scale-x) - 1));
+    margin-right: calc(3.15em * (var(--zen-wide-scale-x) - 1));
   }
   .wordmark-word {
-    margin-left: 0.2em;
-    color: var(--muted-foreground);
+    margin-left: 0.04em;
+    color: #616161;
   }
 
   /*
